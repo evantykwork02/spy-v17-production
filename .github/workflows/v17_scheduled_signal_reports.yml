@@ -101,17 +101,52 @@ jobs:
           path: ${{ env.WORKING_DIR }}/terminal_output.txt
           retention-days: 30
 
-      - name: Send terminal output to Telegram
+            - name: Send terminal output to Telegram
         if: always()
         working-directory: ${{ env.WORKING_DIR }}
         shell: bash
         run: |
           caption="V17 ${{ steps.label.outputs.run_type }} | exit code ${{ steps.run_model.outputs.exit_code }}"
 
-          curl -s -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendDocument" \
+          echo "Checking Telegram secrets..."
+          if [[ -z "${{ secrets.TELEGRAM_BOT_TOKEN }}" ]]; then
+            echo "ERROR: TELEGRAM_BOT_TOKEN is missing in GitHub repo secrets"
+            exit 1
+          fi
+
+          if [[ -z "${{ secrets.TELEGRAM_CHAT_ID }}" ]]; then
+            echo "ERROR: TELEGRAM_CHAT_ID is missing in GitHub repo secrets"
+            exit 1
+          fi
+
+          echo "Checking terminal_output.txt..."
+          ls -lah
+
+          if [[ ! -f "terminal_output.txt" ]]; then
+            echo "terminal_output.txt missing. Sending fallback message."
+
+            response=$(curl -s -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage" \
+              -d chat_id="${{ secrets.TELEGRAM_CHAT_ID }}" \
+              -d text="V17 workflow ran but terminal_output.txt was not created. Check GitHub Actions logs.")
+
+            echo "Telegram response:"
+            echo "$response"
+
+            echo "$response" | grep '"ok":true'
+            exit $?
+          fi
+
+          echo "Sending terminal_output.txt to Telegram..."
+
+          response=$(curl -s -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendDocument" \
             -F chat_id="${{ secrets.TELEGRAM_CHAT_ID }}" \
             -F document="@terminal_output.txt" \
-            -F caption="$caption"
+            -F caption="$caption")
+
+          echo "Telegram response:"
+          echo "$response"
+
+          echo "$response" | grep '"ok":true'
 
       - name: Fail workflow if model failed
         if: always()
