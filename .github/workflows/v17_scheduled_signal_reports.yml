@@ -2,13 +2,8 @@ name: V17 Scheduled Signal Reports
 
 on:
   schedule:
-    # TEMP TEST: Saturday signal test at 1:53 AM Singapore time
-    - cron: "53 1 * * *"
-      timezone: "Asia/Singapore"
-
-    # Tuesday 9:32 PM Singapore time
-    - cron: "32 21 * * 2"
-      timezone: "Asia/Singapore"
+    # TEMP TEST: runs every 5 minutes. Restore after confirming Telegram works.
+    - cron: "*/5 * * * *"
 
   workflow_dispatch:
     inputs:
@@ -47,12 +42,8 @@ jobs:
         run: |
           if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
             echo "run_type=${{ github.event.inputs.run_type }}" >> "$GITHUB_OUTPUT"
-          elif [[ "${{ github.event.schedule }}" == "53 1 * * *" ]]; then
-            echo "run_type=saturday_signal" >> "$GITHUB_OUTPUT"
-          elif [[ "${{ github.event.schedule }}" == "32 21 * * 2" ]]; then
-            echo "run_type=tuesday_active" >> "$GITHUB_OUTPUT"
           else
-            echo "run_type=unknown" >> "$GITHUB_OUTPUT"
+            echo "run_type=saturday_signal" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Set up Python
