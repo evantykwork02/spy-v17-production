@@ -1,7 +1,7 @@
 # SPY V17 Conservative — Performance & Validation Report
 
 _Report generated for signal date **2026-05-01**_
-_Data source: forced refresh_
+_Data source: offline cache (0.0h old)_
 
 ## Executive summary
 
@@ -81,11 +81,11 @@ _Data source: forced refresh_
 | vs V12 | full | total_return | +611.4% | 0.0000 | highly significant (p<0.01) |
 | vs V12 | full | sharpe | +0.018 | 0.1150 | not significant |
 | vs V12 | full | calmar | +0.047 | 0.2100 | not significant |
-| vs V12 | full | max_drawdown | -0.1% | 0.8500 | not significant |
+| vs V12 | full | max_drawdown | -0.1% | 0.8450 | not significant |
 | vs V12 | holdout_2021_plus | total_return | +15.9% | 0.0150 | significant (p<0.05) |
 | vs V12 | holdout_2021_plus | sharpe | +0.007 | 0.3850 | not significant |
 | vs V12 | holdout_2021_plus | calmar | +0.054 | 0.3350 | not significant |
-| vs V12 | holdout_2021_plus | max_drawdown | -0.2% | 0.8450 | not significant |
+| vs V12 | holdout_2021_plus | max_drawdown | -0.2% | 0.8500 | not significant |
 | vs SPY | full | total_return | +2622.5% | 0.0000 | highly significant (p<0.01) |
 | vs SPY | full | sharpe | +0.333 | 0.0000 | highly significant (p<0.01) |
 | vs SPY | full | calmar | +0.503 | 0.0000 | highly significant (p<0.01) |

@@ -15,7 +15,7 @@
     "SHY": 0.0
   },
   "reason": "Calm-uptrend conditions met (CB only); V17-pro raises exposure to 1.07x.",
-  "data_source": "forced refresh",
+  "data_source": "offline cache (0.0h old)",
   "position_sizing": {
     "SPY": {
       "weight_pct": 96.5,
