@@ -101,7 +101,7 @@ jobs:
           path: ${{ env.WORKING_DIR }}/terminal_output.txt
           retention-days: 30
 
-            - name: Send terminal output to Telegram
+      - name: Send terminal output to Telegram
         if: always()
         working-directory: ${{ env.WORKING_DIR }}
         shell: bash
