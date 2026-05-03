@@ -1,14 +1,10 @@
-name: V17 Scheduled Signal Reports
+name: V17 Signal Reports
 
 on:
-  schedule:
-    # TEMP TEST: runs every 5 minutes. Restore after confirming Telegram works.
-    - cron: "*/5 * * * *"
-
   workflow_dispatch:
     inputs:
       run_type:
-        description: "Which command to run manually"
+        description: "Which command to run"
         required: true
         default: "offline_check"
         type: choice
@@ -40,11 +36,7 @@ jobs:
         id: label
         shell: bash
         run: |
-          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
-            echo "run_type=${{ github.event.inputs.run_type }}" >> "$GITHUB_OUTPUT"
-          else
-            echo "run_type=saturday_signal" >> "$GITHUB_OUTPUT"
-          fi
+          echo "run_type=${{ github.event.inputs.run_type }}" >> "$GITHUB_OUTPUT"
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -143,8 +135,6 @@ jobs:
             exit 1
           fi
 
-          echo "Sending intro message to Telegram..."
-
           intro_response=$(curl -s -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage" \
             -d chat_id="${{ secrets.TELEGRAM_CHAT_ID }}" \
             -d text="$intro_msg")
@@ -153,24 +143,15 @@ jobs:
           echo "$intro_response"
           echo "$intro_response" | grep '"ok":true'
 
-          echo "Checking terminal_output.txt..."
-          ls -lah
-
           if [[ ! -f "terminal_output.txt" ]]; then
-            echo "terminal_output.txt missing. Sending fallback message."
-
             response=$(curl -s -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage" \
               -d chat_id="${{ secrets.TELEGRAM_CHAT_ID }}" \
               -d text="V17 workflow ran but terminal_output.txt was not created. Check GitHub Actions logs.")
 
-            echo "Telegram response:"
             echo "$response"
-
             echo "$response" | grep '"ok":true'
             exit $?
           fi
-
-          echo "Sending terminal_output.txt to Telegram..."
 
           response=$(curl -s -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendDocument" \
             -F chat_id="${{ secrets.TELEGRAM_CHAT_ID }}" \
@@ -179,7 +160,6 @@ jobs:
 
           echo "Telegram response:"
           echo "$response"
-
           echo "$response" | grep '"ok":true'
 
       - name: Fail workflow if model failed
