@@ -2,8 +2,8 @@ name: V17 Scheduled Signal Reports
 
 on:
   schedule:
-    # Saturday 10:00 AM Singapore time
-    - cron: "45 1 * * *"
+    # TEMP TEST: Saturday signal test at 1:53 AM Singapore time
+    - cron: "53 1 * * *"
       timezone: "Asia/Singapore"
 
     # Tuesday 9:32 PM Singapore time
@@ -22,6 +22,9 @@ on:
           - tuesday_active
           - offline_check
 
+permissions:
+  contents: write
+
 concurrency:
   group: v17-signal-reports
   cancel-in-progress: false
@@ -32,9 +35,6 @@ jobs:
     timeout-minutes: 120
 
     env:
-      # If your repo root is spy_v17_modded, keep this as "."
-      # If your repo root contains the outer folder, change to:
-      # spy_v17_production/spy_v17_modded
       WORKING_DIR: "."
 
     steps:
@@ -47,7 +47,7 @@ jobs:
         run: |
           if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
             echo "run_type=${{ github.event.inputs.run_type }}" >> "$GITHUB_OUTPUT"
-          elif [[ "${{ github.event.schedule }}" == "45 1 * * *" ]]; then
+          elif [[ "${{ github.event.schedule }}" == "53 1 * * *" ]]; then
             echo "run_type=saturday_signal" >> "$GITHUB_OUTPUT"
           elif [[ "${{ github.event.schedule }}" == "32 21 * * 2" ]]; then
             echo "run_type=tuesday_active" >> "$GITHUB_OUTPUT"
@@ -75,9 +75,10 @@ jobs:
         run: |
           set +e
 
-          echo "V17 scheduled run" | tee terminal_output.txt
+          echo "V17 signal run" | tee terminal_output.txt
           echo "Run type: ${{ steps.label.outputs.run_type }}" | tee -a terminal_output.txt
           echo "Timestamp UTC: $(date -u)" | tee -a terminal_output.txt
+          echo "Timestamp Singapore: $(TZ=Asia/Singapore date)" | tee -a terminal_output.txt
           echo "--------------------------------------------------" | tee -a terminal_output.txt
 
           if [[ "${{ steps.label.outputs.run_type }}" == "offline_check" ]]; then
@@ -93,13 +94,32 @@ jobs:
           echo "exit_code=$status" >> "$GITHUB_OUTPUT"
           exit 0
 
-      - name: Upload terminal output backup
+      - name: Save terminal output backup
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: v17-terminal-output-${{ steps.label.outputs.run_type }}
           path: ${{ env.WORKING_DIR }}/terminal_output.txt
           retention-days: 30
+
+      - name: Commit live tracker/output changes back to repo
+        if: always()
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          cd "${{ env.WORKING_DIR }}"
+
+          [[ -d "live_tracker" ]] && git add live_tracker || true
+          [[ -d "outputs_v17_conservative" ]] && git add outputs_v17_conservative || true
+
+          if git diff --cached --quiet; then
+            echo "No live tracker/output changes to commit."
+          else
+            git commit -m "Update V17 live tracker/output"
+            git push
+          fi
 
       - name: Send terminal output to Telegram
         if: always()
