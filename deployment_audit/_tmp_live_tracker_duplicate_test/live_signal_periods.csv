@@ -1,0 +1,2 @@
+signal_date,trade_date,period_end,status,regime,v17_signal,target_allocation,model_period_return,spy_period_return,excess_return
+2026-05-01,pending,pending,PENDING_EXECUTION,CALM_BULL_BOOST,1.07,"SPY 96.5%,  SPXL 3.5%",,,

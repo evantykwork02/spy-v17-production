@@ -1,0 +1,9 @@
+{
+  "_comment": "SPY V17-PRO live trading config. Edit the capital field to match what you intend to deploy. The CLI --capital flag overrides this if provided.",
+  "capital": 10000.0,
+  "currency": "SGD",
+  "fractional_shares": false,
+  "_fractional_shares_help": "Set to true if your broker supports fractional shares (e.g. Fidelity, Robinhood, IBKR). When false (default), the position-sizing output rounds DOWN to whole shares and shows leftover cash.",
+  "show_position_sizing": true,
+  "_show_position_sizing_help": "Set to false to suppress the POSITION SIZING block in the console output (e.g. for automated scripts that only consume latest_signal.json)."
+}

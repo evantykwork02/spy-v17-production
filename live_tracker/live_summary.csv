@@ -1,0 +1,2 @@
+initial_capital,start_signal_date,last_data_date,latest_signal_date,latest_tracker_action,rows_in_ledger,model_equity,spy_equity,model_total_return,spy_total_return,excess_return,model_sharpe,spy_sharpe,model_max_drawdown,spy_max_drawdown,latest_target_allocation
+7853.608131408691,2026-05-01,2026-05-01,2026-05-01,updated_existing_signal_no_duplicate,1,7853.608131408691,7853.608131408691,0.0,0.0,0.0,,,0.0,0.0,"SPY 96.5%,  SPXL 3.5%"

@@ -1,0 +1,16 @@
+Run on saturdays after market close friday: 
+  py spy_v17_conservative.py --mode signal --refresh-data --live-track
+
+Run on tuesday to make trades ACTIVE:
+  py spy_v17_conservative.py --mode signal --refresh-data --live-track
+
+Run to check signals whenever: 
+  py spy_v17_conservative.py --mode signal --offline
+
+  Execute trades on Monday 9:32 pm onwards
+
+-- MAX TOTAL DRAWDOWN --
+  -20%
+
+-- MAX SINGLE DAY DRAWDOWN --
+  -7% at market close! IF happens on mon - thurs, then SIT on 100% SHY position till next week signal. If happens on Friday, just wait for next week signal.

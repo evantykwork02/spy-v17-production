@@ -1,0 +1,2 @@
+date,model_equity,spy_equity,model_daily_return,spy_daily_return,excess_daily_return,model_drawdown,spy_drawdown,weight_SPY,weight_SPXL,weight_SPXS,weight_TLT,weight_GLD,weight_SHY
+2026-05-01,10000.0,10000.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
