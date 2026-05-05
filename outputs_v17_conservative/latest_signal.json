@@ -15,30 +15,30 @@
     "SHY": 0.0
   },
   "reason": "Calm-uptrend conditions met (CB only); V17-pro raises exposure to 1.07x.",
-  "data_source": "offline cache (0.0h old)",
+  "data_source": "forced refresh",
   "position_sizing": {
     "SPY": {
       "weight_pct": 96.5,
       "target_dollars": 7578.7318,
-      "price": 720.65,
+      "price": 723.77,
       "shares": 10.0,
-      "actual_dollars": 7206.5002,
-      "leftover": 372.2316
+      "actual_dollars": 7237.7002,
+      "leftover": 341.0317
     },
     "SPXL": {
       "weight_pct": 3.5,
       "target_dollars": 274.8763,
-      "price": 248.48,
+      "price": 251.45,
       "shares": 1.0,
-      "actual_dollars": 248.48,
-      "leftover": 26.3963
+      "actual_dollars": 251.45,
+      "leftover": 23.4263
     },
     "_summary": {
       "capital": 7853.6081,
-      "total_deployed": 7454.9802,
-      "total_leftover_cash": 398.6279,
+      "total_deployed": 7489.1502,
+      "total_leftover_cash": 364.4579,
       "fractional_shares": false,
-      "price_date": "2026-05-01"
+      "price_date": "2026-05-05"
     }
   },
   "currency": "USD"
