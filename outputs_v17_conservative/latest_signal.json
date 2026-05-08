@@ -1,5 +1,5 @@
 {
-  "date": "2026-05-01",
+  "date": "2026-05-08",
   "v12_signal": 1.0,
   "v17_signal": 1.07,
   "regime": "CALM_BULL_BOOST",
@@ -15,30 +15,30 @@
     "SHY": 0.0
   },
   "reason": "Calm-uptrend conditions met (CB only); V17-pro raises exposure to 1.07x.",
-  "data_source": "offline cache (0.0h old)",
+  "data_source": "forced refresh",
   "position_sizing": {
     "SPY": {
       "weight_pct": 96.5,
-      "target_dollars": 9650.0,
-      "price": 720.65,
-      "shares": 13.0,
-      "actual_dollars": 9368.4503,
-      "leftover": 281.5497
+      "target_dollars": 7604.5767,
+      "price": 737.33,
+      "shares": 10.0,
+      "actual_dollars": 7373.3002,
+      "leftover": 231.2766
     },
     "SPXL": {
       "weight_pct": 3.5,
-      "target_dollars": 350.0,
-      "price": 248.48,
+      "target_dollars": 275.8137,
+      "price": 265.385,
       "shares": 1.0,
-      "actual_dollars": 248.48,
-      "leftover": 101.52
+      "actual_dollars": 265.385,
+      "leftover": 10.4287
     },
     "_summary": {
-      "capital": 10000.0,
-      "total_deployed": 9616.9303,
-      "total_leftover_cash": 383.0697,
+      "capital": 7880.3904,
+      "total_deployed": 7638.6852,
+      "total_leftover_cash": 241.7052,
       "fractional_shares": false,
-      "price_date": "2026-05-01"
+      "price_date": "2026-05-08"
     }
   },
   "currency": "USD"
