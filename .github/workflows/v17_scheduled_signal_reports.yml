@@ -51,6 +51,7 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
 
+      # Determine run_type from either workflow_dispatch input or cron schedule
       - name: Set run label
         id: label
         shell: bash
@@ -78,6 +79,13 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
+      # -----------------------------------------------------------------------
+      # Run the model. Each run_type is handled here:
+      #   saturday_signal / tuesday_active — full signal + live-track (Telegram: file)
+      #   offline_check                    — signal --offline            (Telegram: file)
+      #   send_signal                      — tg_send_signal.py          (Telegram: inline text, self-handled)
+      #   capital_inject                   — inject_capital.py          (Telegram: self-handled, own git commit)
+      # -----------------------------------------------------------------------
       - name: Run V17 command and capture terminal output
         id: run_model
         working-directory: ${{ env.WORKING_DIR }}
@@ -98,16 +106,33 @@ jobs:
           echo "Timestamp Singapore: $(TZ=Asia/Singapore date)" | tee -a terminal_output.txt
           echo "----------------------------------------------------" | tee -a terminal_output.txt
 
+          tg_send_error() {
+            local msg="$1"
+            echo "ERROR: $msg" | tee -a terminal_output.txt
+            curl -s -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
+              -d chat_id="${TELEGRAM_CHAT_ID}" \
+              -d text="V17 Actions ERROR: $msg" || true
+          }
+
           if [[ "$run_type" == "offline_check" ]]; then
             python spy_v17_conservative.py --mode signal --offline 2>&1 | tee -a terminal_output.txt
 
           elif [[ "$run_type" == "send_signal" ]]; then
+            if [[ ! -f "tg_send_signal.py" ]]; then
+              tg_send_error "tg_send_signal.py not found in repo. Push the file to GitHub."
+              exit 2
+            fi
             python tg_send_signal.py 2>&1 | tee -a terminal_output.txt
 
           elif [[ "$run_type" == "capital_inject" ]]; then
+            if [[ ! -f "inject_capital.py" ]]; then
+              tg_send_error "inject_capital.py not found in repo. Push the file to GitHub."
+              exit 2
+            fi
             python inject_capital.py 2>&1 | tee -a terminal_output.txt
 
           else
+            # saturday_signal, tuesday_active, and any unknown fallback
             python spy_v17_conservative.py --mode signal --refresh-data --live-track 2>&1 | tee -a terminal_output.txt
           fi
 
@@ -118,6 +143,7 @@ jobs:
           echo "exit_code=$status" >> "$GITHUB_OUTPUT"
           exit 0
 
+      # Always save the raw log as a downloadable artifact for debugging
       - name: Save terminal output backup
         if: always()
         uses: actions/upload-artifact@v4
@@ -126,6 +152,8 @@ jobs:
           path: ${{ env.WORKING_DIR }}/terminal_output.txt
           retention-days: 30
 
+      # Commit live_tracker + outputs back to repo.
+      # Skipped for capital_inject because inject_capital.py handles its own commits.
       - name: Commit live tracker/output changes back to repo
         if: always() && github.event.inputs.run_type != 'capital_inject'
         shell: bash
@@ -145,6 +173,9 @@ jobs:
             git push
           fi
 
+      # Send terminal_output.txt as a Telegram document (the full log file).
+      # Skipped for send_signal  (tg_send_signal.py already sent inline text).
+      # Skipped for capital_inject (inject_capital.py already sent its own messages).
       - name: Send terminal output to Telegram
         if: always() && github.event.inputs.run_type != 'send_signal' && github.event.inputs.run_type != 'capital_inject'
         working-directory: ${{ env.WORKING_DIR }}
@@ -165,6 +196,7 @@ jobs:
 
           caption="V17 $run_type | exit code $exit_code"
 
+          echo "Checking Telegram secrets..."
           if [[ -z "${{ secrets.TELEGRAM_BOT_TOKEN }}" ]]; then
             echo "ERROR: TELEGRAM_BOT_TOKEN is missing in GitHub repo secrets"
             exit 1
