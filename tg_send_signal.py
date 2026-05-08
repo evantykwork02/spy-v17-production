@@ -3,14 +3,16 @@ tg_send_signal.py
 -----------------
 Called by GitHub Actions (send_signal run_type) to:
   1. Run the V17 signal command with fresh data
-  2. Extract the V17 SIGNAL + LIVE TRACKER sections from the output
-  3. Send them to Telegram
+  2. Build a clean Telegram message from the written JSON/CSV files
+  3. Send it to Telegram
 
-Required env vars (set as GitHub Actions secrets):
+Required env vars:
   TELEGRAM_BOT_TOKEN
   TELEGRAM_CHAT_ID
 """
 
+import csv
+import json
 import os
 import subprocess
 import sys
@@ -24,7 +26,6 @@ import requests
 # ---------------------------------------------------------------------------
 
 def tg_send(bot_token: str, chat_id: str, text: str) -> bool:
-    """Send a Telegram message. Returns True on success. Never raises."""
     if not text or not text.strip():
         text = "(no output — check GitHub Actions logs)"
     chunks = [text[i:i + 4000] for i in range(0, len(text), 4000)]
@@ -46,67 +47,183 @@ def tg_send(bot_token: str, chat_id: str, text: str) -> bool:
 
 
 # ---------------------------------------------------------------------------
-# Extract V17 SIGNAL + LIVE TRACKER sections from terminal output
+# Build clean Telegram message from model output files
 # ---------------------------------------------------------------------------
 
-def extract_key_sections(output: str) -> str:
+def _pct(v) -> str:
+    try:
+        n = float(v) * 100
+        return f"{'+' if n >= 0 else ''}{n:.1f}%"
+    except Exception:
+        return "n/a"
+
+
+def _sh(v) -> str:
+    try:
+        return f"{float(v):.2f}"
+    except Exception:
+        return "n/a"
+
+
+def _eq(v) -> str:
+    try:
+        return f"{float(v):,.2f}"
+    except Exception:
+        return "n/a"
+
+
+def build_message() -> str:
     """
-    Pulls the V17 SIGNAL block (regime/allocation/note) and the
-    LIVE TRACKER block (P&L table, current period, next signal).
-    Skips POSITION SIZING and RECENT WEEKS (too long for Telegram).
-    Always returns something non-empty.
+    Reads live_tracker/live_summary.json, live_signal_ledger.csv,
+    and live_signal_periods.csv to produce a clean, mobile-friendly
+    Telegram message. Never raises.
     """
+    SEP = "-" * 32
+
+    # --- live_summary.json ---
+    try:
+        with open("live_tracker/live_summary.json", "r", encoding="utf-8") as f:
+            summary = json.load(f)
+    except Exception as e:
+        return f"Could not read live_summary.json: {e}"
+
+    # --- live_signal_ledger.csv (latest signal details) ---
+    latest_ledger = {}
+    try:
+        with open("live_tracker/live_signal_ledger.csv", "r", encoding="utf-8") as f:
+            rows = list(csv.DictReader(f))
+            if rows:
+                latest_ledger = rows[-1]
+    except Exception:
+        pass
+
+    # --- live_signal_periods.csv (current period P&L) ---
+    open_period = {}
+    pending_period = {}
+    try:
+        with open("live_tracker/live_signal_periods.csv", "r", encoding="utf-8") as f:
+            for row in csv.DictReader(f):
+                if row.get("status") == "OPEN":
+                    open_period = row
+                elif row.get("status") == "PENDING_EXECUTION":
+                    pending_period = row
+    except Exception:
+        pass
+
+    lines = []
+
+    # ── Signal block ──────────────────────────────────────
+    last_data  = summary.get("last_data_date", "?")
+    alloc      = summary.get("latest_target_allocation", "n/a")
+    regime     = latest_ledger.get("regime", "?")
+    sig_val    = latest_ledger.get("v17_signal", "?")
+    status     = latest_ledger.get("status", "")
+    trade_date = latest_ledger.get("actual_trade_date") or \
+                 latest_ledger.get("estimated_trade_date") or "pending"
+    reason_raw = latest_ledger.get("reason", "")
+    # Truncate reason at first semicolon for brevity
+    reason = reason_raw.split(";")[0].strip() if reason_raw else ""
+
+    lines.append(f"V17 SIGNAL — {last_data}")
+    lines.append(SEP)
+    lines.append(f"Hold:    {alloc}")
+    lines.append(f"Regime:  {regime}  ({sig_val}x)")
+    if reason:
+        lines.append(f"Note:    {reason}")
+    lines.append(f"Trade:   {trade_date}  [{status}]")
+
+    # ── Live tracker block ────────────────────────────────
+    start_dt  = summary.get("start_signal_date", "?")
+    m_ret     = _pct(summary.get("model_total_return"))
+    s_ret     = _pct(summary.get("spy_total_return"))
+    excess    = _pct(summary.get("excess_return"))
+    m_sharpe  = _sh(summary.get("model_sharpe"))
+    s_sharpe  = _sh(summary.get("spy_sharpe"))
+    m_dd      = _pct(summary.get("model_max_drawdown"))
+    s_dd      = _pct(summary.get("spy_max_drawdown"))
+    equity    = _eq(summary.get("model_equity"))
+
+    lines.append("")
+    lines.append(f"LIVE TRACKER  ({start_dt} to {last_data})")
+    lines.append(SEP)
+    lines.append(f"{'':8s}  {'Return':>7}  {'Sharpe':>6}  {'MaxDD':>7}")
+    lines.append(f"{'Model':8s}  {m_ret:>7}  {m_sharpe:>6}  {m_dd:>7}")
+    lines.append(f"{'SPY':8s}  {s_ret:>7}  {s_sharpe:>6}  {s_dd:>7}")
+    lines.append(f"{'Excess':8s}  {excess:>7}")
+    lines.append(f"Equity:   {equity} USD")
+
+    # ── Current / open period ─────────────────────────────
+    if open_period:
+        pd_start  = open_period.get("trade_date", "?")
+        pd_regime = open_period.get("regime", "?")
+        pd_sig    = open_period.get("v17_signal", "?")
+        pd_model  = _pct(open_period.get("model_period_return"))
+        pd_spy    = _pct(open_period.get("spy_period_return"))
+        pd_exc    = _pct(open_period.get("excess_return"))
+
+        lines.append("")
+        lines.append(f"CURRENT PERIOD  ({pd_start} -> open)")
+        lines.append(SEP)
+        lines.append(f"{pd_regime}  |  {pd_sig}x")
+        lines.append(f"Model: {pd_model}   SPY: {pd_spy}   Excess: {pd_exc}")
+
+    # ── Next / pending signal ─────────────────────────────
+    if pending_period:
+        next_trade  = pending_period.get("trade_date", "pending")
+        next_regime = pending_period.get("regime", "?")
+        next_sig    = pending_period.get("v17_signal", "?")
+        next_alloc  = pending_period.get("target_allocation", alloc)
+
+        lines.append("")
+        lines.append(f"NEXT SIGNAL  (trade: {next_trade})")
+        lines.append(SEP)
+        lines.append(f"{next_regime}  |  {next_sig}x")
+        lines.append(f"Allocation: {next_alloc}")
+
+    return "\n".join(lines)
+
+
+# ---------------------------------------------------------------------------
+# Fallback: extract raw sections from terminal output
+# ---------------------------------------------------------------------------
+
+def extract_fallback(output: str) -> str:
+    """Used only if build_message() fails — strips === headers and noise."""
     lines = output.split("\n")
-    signal_lines = []
-    tracker_lines = []
-    in_signal = False
-    in_tracker = False
+    out = []
+    capturing = False
 
     for line in lines:
         stripped = line.strip()
 
-        # Enter signal section
         if "V17 SIGNAL" in line and "===" in line:
-            in_signal = True
-            in_tracker = False
-            signal_lines.append(line)
+            capturing = True
+            import re
+            m = re.search(r"\((\d{4}-\d{2}-\d{2})\)", line)
+            out.append(f"V17 SIGNAL — {m.group(1) if m else ''}")
             continue
 
-        # Exit signal section at next === header (not the signal header itself)
-        if in_signal and stripped.startswith("=") and stripped.endswith("=") \
-                and len(stripped) > 10 and "V17 SIGNAL" not in line:
-            in_signal = False
-
-        # Enter live tracker section
         if "LIVE TRACKER" in line and "===" in line:
-            in_signal = False
-            in_tracker = True
-            tracker_lines.append("")
-            tracker_lines.append(line)
+            capturing = True
+            out.append("")
+            out.append("LIVE TRACKER")
             continue
 
-        # Exit tracker at the final closing === divider
-        if in_tracker and stripped == "=" * len(stripped) and len(stripped) >= 20:
-            in_tracker = False
-            tracker_lines.append(line)
-            continue
+        if capturing:
+            # Skip noise lines
+            if any(x in line for x in ["Action:", "Report:", "/home/runner", "/runner/"]):
+                continue
+            # Skip long === dividers
+            if stripped.startswith("=") and stripped.endswith("=") and len(stripped) >= 20:
+                continue
+            # Shorten long --- separators
+            if stripped.startswith("-") and stripped == "-" * len(stripped) and len(stripped) > 20:
+                out.append("-" * 28)
+                continue
+            out.append(line.rstrip())
 
-        if in_signal:
-            signal_lines.append(line)
-        elif in_tracker:
-            tracker_lines.append(line)
-
-    result = "\n".join(signal_lines + tracker_lines).strip()
-
-    # Fallback 1: return last 3000 chars if extraction found nothing
-    if not result and output.strip():
-        result = output.strip()[-3000:]
-
-    # Fallback 2: nothing at all
-    if not result:
-        result = "Signal ran but produced no output. Check GitHub Actions logs."
-
-    return result
+    result = "\n".join(out).strip()
+    return result if result else output.strip()[-3000:]
 
 
 # ---------------------------------------------------------------------------
@@ -130,10 +247,8 @@ def main() -> None:
     ]
 
     print(f"Running: {' '.join(cmd)}", flush=True)
-
     proc = subprocess.run(cmd, capture_output=True, text=True, timeout=600)
 
-    # Always print output to the Actions log for debugging
     if proc.stdout:
         print(proc.stdout, flush=True)
     if proc.stderr:
@@ -146,18 +261,26 @@ def main() -> None:
         )
         sys.exit(proc.returncode)
 
-    sections = extract_key_sections(proc.stdout)
-    ok = tg_send(bot_token, chat_id, sections)
+    # Try clean JSON-based message first, fall back to terminal extraction
+    try:
+        msg = build_message()
+    except Exception as e:
+        print(f"build_message failed: {e} — falling back to extraction", file=sys.stderr)
+        msg = extract_fallback(proc.stdout)
 
+    if not msg or not msg.strip():
+        msg = "Signal ran but produced no readable output. Check GitHub Actions logs."
+
+    ok = tg_send(bot_token, chat_id, msg)
     if ok:
         print("Telegram message sent successfully.", flush=True)
     else:
-        print("WARNING: Telegram send may have failed. Check logs.", file=sys.stderr, flush=True)
+        print("WARNING: Telegram send may have failed.", file=sys.stderr)
         sys.exit(1)
 
 
 # ---------------------------------------------------------------------------
-# Top-level guard — any unhandled crash sends an error to Telegram
+# Top-level guard — any crash sends error to Telegram
 # ---------------------------------------------------------------------------
 
 if __name__ == "__main__":
