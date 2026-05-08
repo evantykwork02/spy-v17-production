@@ -1,6 +1,13 @@
 name: V17 Signal Reports
 
 on:
+  # Backup cron schedule (runs even if Cloudflare Worker is down)
+  schedule:
+    # Saturday 9:00 AM Singapore time = 01:00 UTC Saturday
+    - cron: "0 1 * * 6"
+    # Tuesday 9:32 PM Singapore time = 13:32 UTC Tuesday
+    - cron: "32 13 * * 2"
+
   workflow_dispatch:
     inputs:
       run_type:
@@ -12,6 +19,18 @@ on:
           - saturday_signal
           - tuesday_active
           - offline_check
+          - send_signal
+          - capital_inject
+      inject_amount:
+        description: "Capital injection amount (capital_inject only)"
+        required: false
+        default: ""
+        type: string
+      inject_date:
+        description: "Capital injection date YYYY-MM-DD (capital_inject only)"
+        required: false
+        default: ""
+        type: string
 
 permissions:
   contents: write
@@ -36,7 +55,15 @@ jobs:
         id: label
         shell: bash
         run: |
-          echo "run_type=${{ github.event.inputs.run_type }}" >> "$GITHUB_OUTPUT"
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            echo "run_type=${{ github.event.inputs.run_type }}" >> "$GITHUB_OUTPUT"
+          elif [[ "${{ github.event.schedule }}" == "0 1 * * 6" ]]; then
+            echo "run_type=saturday_signal" >> "$GITHUB_OUTPUT"
+          elif [[ "${{ github.event.schedule }}" == "32 13 * * 2" ]]; then
+            echo "run_type=tuesday_active" >> "$GITHUB_OUTPUT"
+          else
+            echo "run_type=unknown" >> "$GITHUB_OUTPUT"
+          fi
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -55,23 +82,37 @@ jobs:
         id: run_model
         working-directory: ${{ env.WORKING_DIR }}
         shell: bash
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          INJECT_AMOUNT: ${{ github.event.inputs.inject_amount }}
+          INJECT_DATE: ${{ github.event.inputs.inject_date }}
         run: |
           set +e
 
+          run_type="${{ steps.label.outputs.run_type }}"
+
           echo "V17 signal run" | tee terminal_output.txt
-          echo "Run type: ${{ steps.label.outputs.run_type }}" | tee -a terminal_output.txt
+          echo "Run type: $run_type" | tee -a terminal_output.txt
           echo "Timestamp UTC: $(date -u)" | tee -a terminal_output.txt
           echo "Timestamp Singapore: $(TZ=Asia/Singapore date)" | tee -a terminal_output.txt
-          echo "--------------------------------------------------" | tee -a terminal_output.txt
+          echo "----------------------------------------------------" | tee -a terminal_output.txt
 
-          if [[ "${{ steps.label.outputs.run_type }}" == "offline_check" ]]; then
+          if [[ "$run_type" == "offline_check" ]]; then
             python spy_v17_conservative.py --mode signal --offline 2>&1 | tee -a terminal_output.txt
+
+          elif [[ "$run_type" == "send_signal" ]]; then
+            python tg_send_signal.py 2>&1 | tee -a terminal_output.txt
+
+          elif [[ "$run_type" == "capital_inject" ]]; then
+            python inject_capital.py 2>&1 | tee -a terminal_output.txt
+
           else
             python spy_v17_conservative.py --mode signal --refresh-data --live-track 2>&1 | tee -a terminal_output.txt
           fi
 
           status=${PIPESTATUS[0]}
-          echo "--------------------------------------------------" | tee -a terminal_output.txt
+          echo "----------------------------------------------------" | tee -a terminal_output.txt
           echo "Exit code: $status" | tee -a terminal_output.txt
 
           echo "exit_code=$status" >> "$GITHUB_OUTPUT"
@@ -86,7 +127,7 @@ jobs:
           retention-days: 30
 
       - name: Commit live tracker/output changes back to repo
-        if: always()
+        if: always() && github.event.inputs.run_type != 'capital_inject'
         shell: bash
         run: |
           git config user.name "github-actions[bot]"
@@ -105,7 +146,7 @@ jobs:
           fi
 
       - name: Send terminal output to Telegram
-        if: always()
+        if: always() && github.event.inputs.run_type != 'send_signal' && github.event.inputs.run_type != 'capital_inject'
         working-directory: ${{ env.WORKING_DIR }}
         shell: bash
         run: |
@@ -124,7 +165,6 @@ jobs:
 
           caption="V17 $run_type | exit code $exit_code"
 
-          echo "Checking Telegram secrets..."
           if [[ -z "${{ secrets.TELEGRAM_BOT_TOKEN }}" ]]; then
             echo "ERROR: TELEGRAM_BOT_TOKEN is missing in GitHub repo secrets"
             exit 1
@@ -147,7 +187,6 @@ jobs:
             response=$(curl -s -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage" \
               -d chat_id="${{ secrets.TELEGRAM_CHAT_ID }}" \
               -d text="V17 workflow ran but terminal_output.txt was not created. Check GitHub Actions logs.")
-
             echo "$response"
             echo "$response" | grep '"ok":true'
             exit $?
