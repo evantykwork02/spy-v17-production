@@ -11,14 +11,14 @@ This tracker is duplicate-safe. Rerunning during the same signal week updates re
 | Last data date | 2026-05-08 |
 | Tracker action | updated_existing_signal_no_duplicate |
 | Ledger rows | 2 |
-| Initial capital (USD) | 7,891.91 |
-| Model equity | 8,089.19 |
-| SPY equity | 8,076.77 |
+| Initial capital (USD) | 7,895.15 |
+| Model equity | 8,093.48 |
+| SPY equity | 8,081.07 |
 | Model total return | 2.5% |
-| SPY total return | 2.3% |
+| SPY total return | 2.4% |
 | Excess return | +0.2% |
-| Model Sharpe | 8.604 |
-| SPY Sharpe | 8.627 |
+| Model Sharpe | 8.629 |
+| SPY Sharpe | 8.655 |
 | Model MaxDD | -0.4% |
 | SPY MaxDD | -0.4% |
 | Latest target allocation | SPY 96.5%,  SPXL 3.5% |
@@ -34,7 +34,7 @@ This tracker is duplicate-safe. Rerunning during the same signal week updates re
 
 | Signal | Trade | Status | Regime | Model | SPY | Excess |
 | --- | --- | --- | --- | --- | --- | --- |
-| 2026-05-01 | 2026-05-04 | OPEN | CALM_BULL_BOOST | +2.5% | +2.3% | +0.2% |
+| 2026-05-01 | 2026-05-04 | OPEN | CALM_BULL_BOOST | +2.5% | +2.4% | +0.2% |
 | 2026-05-08 | pending | PENDING_EXECUTION | CALM_BULL_BOOST | n/a | n/a | n/a |
 
 ## Files written

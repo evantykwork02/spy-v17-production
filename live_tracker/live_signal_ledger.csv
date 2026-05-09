@@ -1,3 +1,3 @@
 signal_date,created_at,updated_at,data_last_date_at_creation,estimated_trade_date,actual_trade_date,status,v12_signal,v17_signal,regime,net_equity_exposure,target_allocation,reason,weight_SPY,weight_SPXL,weight_SPXS,weight_TLT,weight_GLD,weight_SHY
 2026-05-01,2026-05-03,2026-05-05,2026-05-05,2026-05-04,2026-05-04,ACTIVE,1.0,1.07,CALM_BULL_BOOST,1.07,"SPY 96.5%,  SPXL 3.5%",Calm-uptrend conditions met (CB only); V17-pro raises exposure to 1.07x.,0.965,0.035,0.0,0.0,0.0,0.0
-2026-05-08,2026-05-08,2026-05-08,2026-05-08,2026-05-11,,PENDING_EXECUTION,1.0,1.07,CALM_BULL_BOOST,1.07,"SPY 96.5%,  SPXL 3.5%",Calm-uptrend conditions met (CB only); V17-pro raises exposure to 1.07x.,0.965,0.03500000000000003,0.0,0.0,0.0,0.0
+2026-05-08,2026-05-08,2026-05-09,2026-05-08,2026-05-11,,PENDING_EXECUTION,1.0,1.07,CALM_BULL_BOOST,1.07,"SPY 96.5%,  SPXL 3.5%",Calm-uptrend conditions met (CB only); V17-pro raises exposure to 1.07x.,0.965,0.03500000000000003,0.0,0.0,0.0,0.0
