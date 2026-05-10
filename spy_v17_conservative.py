@@ -2609,6 +2609,20 @@ def run(cfg: Config) -> None:
         json.dumps(latest_dict, indent=2), encoding="utf-8")
     pd.DataFrame([latest_dict]).to_csv(cfg.out_dir / "latest_signal.csv", index=False)
     signal_table.to_csv(cfg.out_dir / "weekly_signal_history.csv")
+
+    # Weekly model + SPY returns (last 104 weeks) for bot summary command
+    _spy_wret  = (1 + bt["SPY_BH"]["ret"]).resample("W-FRI").prod() - 1
+    _v17_wret  = (1 + bt["v17_conservative"]["ret"]).resample("W-FRI").prod() - 1
+    _wret_mask = _spy_wret.index.isin(signal_table.index)
+    _weekly_returns = pd.DataFrame({
+        "spy_return":   _spy_wret[_wret_mask],
+        "model_return": _v17_wret[_wret_mask],
+        "regime":       signal_table["regime"],
+        "v17_signal":   signal_table["v17_signal"],
+    })
+    _weekly_returns.index.name = "date"
+    _weekly_returns.tail(104).to_csv(cfg.out_dir / "weekly_returns.csv")
+
     headline.to_csv(cfg.out_dir / "headline_comparison.csv", index=False)
     stress.to_csv(cfg.out_dir / "stress_windows.csv", index=False)
     yearly.to_csv(cfg.out_dir / "yearly_comparison.csv", index=False)
