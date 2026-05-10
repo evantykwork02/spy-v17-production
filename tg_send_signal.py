@@ -22,10 +22,11 @@ import requests
 
 
 # ---------------------------------------------------------------------------
-# Telegram — never raises, never sends empty messages
+# Telegram helpers
 # ---------------------------------------------------------------------------
 
 def tg_send(bot_token: str, chat_id: str, text: str) -> bool:
+    """Send plain-text message (used for errors/fallback)."""
     if not text or not text.strip():
         text = "(no output — check GitHub Actions logs)"
     chunks = [text[i:i + 4000] for i in range(0, len(text), 4000)]
@@ -46,14 +47,49 @@ def tg_send(bot_token: str, chat_id: str, text: str) -> bool:
     return success
 
 
+def tg_send_code(bot_token: str, chat_id: str, text: str) -> bool:
+    """Send monospace HTML <pre> message (used for signal/tracker output)."""
+    if not text or not text.strip():
+        text = "(no output — check GitHub Actions logs)"
+    escaped = text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+    if len(escaped) > 3900:
+        escaped = escaped[:3900] + "\n...(truncated)"
+    payload = f"<pre>{escaped}</pre>"
+    try:
+        resp = requests.post(
+            f"https://api.telegram.org/bot{bot_token}/sendMessage",
+            json={"chat_id": chat_id, "text": payload, "parse_mode": "HTML"},
+            timeout=15,
+        )
+        if not resp.ok:
+            print(f"Telegram API error {resp.status_code}: {resp.text[:200]}", file=sys.stderr)
+            return False
+        return True
+    except Exception as e:
+        print(f"Telegram send exception: {e}", file=sys.stderr)
+        return False
+
+
 # ---------------------------------------------------------------------------
-# Build clean Telegram message from model output files
+# Formatting helpers — all percentages at 2 decimal places
 # ---------------------------------------------------------------------------
 
 def _pct(v) -> str:
     try:
         n = float(v) * 100
-        return f"{'+' if n >= 0 else ''}{n:.1f}%"
+        return f"{'+' if n >= 0 else ''}{n:.2f}%"
+    except Exception:
+        return "n/a"
+
+
+def _excess(model_v, spy_v) -> str:
+    """Derives excess from the already-rounded display values so it always
+    matches what you'd compute by subtracting the two displayed figures."""
+    try:
+        m = round(float(model_v) * 100, 2)
+        s = round(float(spy_v)   * 100, 2)
+        e = round(m - s, 2)
+        return f"{'+' if e >= 0 else ''}{e:.2f}%"
     except Exception:
         return "n/a"
 
@@ -72,13 +108,12 @@ def _eq(v) -> str:
         return "n/a"
 
 
+# ---------------------------------------------------------------------------
+# Build clean Telegram message from model output files
+# ---------------------------------------------------------------------------
+
 def build_message() -> str:
-    """
-    Reads live_tracker/live_summary.json, live_signal_ledger.csv,
-    and live_signal_periods.csv to produce a clean, mobile-friendly
-    Telegram message. Never raises.
-    """
-    SEP = "-" * 32
+    SEP = "-" * 36
 
     # --- live_summary.json ---
     try:
@@ -98,7 +133,7 @@ def build_message() -> str:
         pass
 
     # --- live_signal_periods.csv (current period P&L) ---
-    open_period = {}
+    open_period    = {}
     pending_period = {}
     try:
         with open("live_tracker/live_signal_periods.csv", "r", encoding="utf-8") as f:
@@ -110,62 +145,57 @@ def build_message() -> str:
     except Exception:
         pass
 
-    lines = []
-
-    # ── Signal block ──────────────────────────────────────
     last_data  = summary.get("last_data_date", "?")
     alloc      = summary.get("latest_target_allocation", "n/a")
     regime     = latest_ledger.get("regime", "?")
     sig_val    = latest_ledger.get("v17_signal", "?")
-    status     = latest_ledger.get("status", "")
-    trade_date = latest_ledger.get("actual_trade_date") or \
-                 latest_ledger.get("estimated_trade_date") or "pending"
-    reason_raw = latest_ledger.get("reason", "")
-    # Truncate reason at first semicolon for brevity
-    reason = reason_raw.split(";")[0].strip() if reason_raw else ""
+    trade_date = (latest_ledger.get("actual_trade_date") or
+                  latest_ledger.get("estimated_trade_date") or "pending")
 
+    lines = []
+
+    # ── Signal block ──────────────────────────────────────
     lines.append(f"V17 SIGNAL — {last_data}")
-    lines.append(SEP)
-    lines.append(f"Hold:    {alloc}")
+    lines.append("=" * 36)
+    lines.append(f"Alloc:   {alloc}")
     lines.append(f"Regime:  {regime}  ({sig_val}x)")
-    if reason:
-        lines.append(f"Note:    {reason}")
-    lines.append(f"Trade:   {trade_date}  [{status}]")
+    lines.append(f"Trade:   {trade_date}")
 
-    # ── Live tracker block ────────────────────────────────
-    start_dt  = summary.get("start_signal_date", "?")
-    m_ret     = _pct(summary.get("model_total_return"))
-    s_ret     = _pct(summary.get("spy_total_return"))
-    excess    = _pct(summary.get("excess_return"))
-    m_sharpe  = _sh(summary.get("model_sharpe"))
-    s_sharpe  = _sh(summary.get("spy_sharpe"))
-    m_dd      = _pct(summary.get("model_max_drawdown"))
-    s_dd      = _pct(summary.get("spy_max_drawdown"))
-    equity    = _eq(summary.get("model_equity"))
+    # ── Tracker summary ───────────────────────────────────
+    start_dt    = summary.get("start_signal_date", "?")
+    m_ret_raw   = summary.get("model_total_return")
+    s_ret_raw   = summary.get("spy_total_return")
+    m_ret       = _pct(m_ret_raw)
+    s_ret       = _pct(s_ret_raw)
+    exc         = _excess(m_ret_raw, s_ret_raw)
+    m_sh        = _sh(summary.get("model_sharpe"))
+    s_sh        = _sh(summary.get("spy_sharpe"))
+    m_dd        = _pct(summary.get("model_max_drawdown"))
+    s_dd        = _pct(summary.get("spy_max_drawdown"))
+    equity      = _eq(summary.get("model_equity"))
 
     lines.append("")
-    lines.append(f"LIVE TRACKER  ({start_dt} to {last_data})")
+    lines.append(f"TRACKER  ({start_dt} to {last_data})")
     lines.append(SEP)
     lines.append(f"{'':8s}  {'Return':>7}  {'Sharpe':>6}  {'MaxDD':>7}")
-    lines.append(f"{'Model':8s}  {m_ret:>7}  {m_sharpe:>6}  {m_dd:>7}")
-    lines.append(f"{'SPY':8s}  {s_ret:>7}  {s_sharpe:>6}  {s_dd:>7}")
-    lines.append(f"{'Excess':8s}  {excess:>7}")
+    lines.append(f"{'Model':8s}  {m_ret:>7}  {m_sh:>6}  {m_dd:>7}")
+    lines.append(f"{'SPY':8s}  {s_ret:>7}  {s_sh:>6}  {s_dd:>7}")
+    lines.append(f"{'Excess':8s}  {exc:>7}")
     lines.append(f"Equity:   {equity} USD")
 
     # ── Current / open period ─────────────────────────────
     if open_period:
-        pd_start  = open_period.get("trade_date", "?")
-        pd_regime = open_period.get("regime", "?")
-        pd_sig    = open_period.get("v17_signal", "?")
-        pd_model  = _pct(open_period.get("model_period_return"))
-        pd_spy    = _pct(open_period.get("spy_period_return"))
-        pd_exc    = _pct(open_period.get("excess_return"))
+        pd_start     = open_period.get("trade_date", "?")
+        pd_model_raw = open_period.get("model_period_return")
+        pd_spy_raw   = open_period.get("spy_period_return")
+        pd_model     = _pct(pd_model_raw)
+        pd_spy       = _pct(pd_spy_raw)
+        pd_exc       = _excess(pd_model_raw, pd_spy_raw)
 
         lines.append("")
-        lines.append(f"CURRENT PERIOD  ({pd_start} -> open)")
+        lines.append(f"THIS PERIOD  ({pd_start} -> open)")
         lines.append(SEP)
-        lines.append(f"{pd_regime}  |  {pd_sig}x")
-        lines.append(f"Model: {pd_model}   SPY: {pd_spy}   Excess: {pd_exc}")
+        lines.append(f"Model: {pd_model}   SPY: {pd_spy}   Exc: {pd_exc}")
 
     # ── Next / pending signal ─────────────────────────────
     if pending_period:
@@ -175,10 +205,10 @@ def build_message() -> str:
         next_alloc  = pending_period.get("target_allocation", alloc)
 
         lines.append("")
-        lines.append(f"NEXT SIGNAL  (trade: {next_trade})")
+        lines.append(f"NEXT WEEK  (trade: {next_trade})")
         lines.append(SEP)
+        lines.append(f"{next_alloc}")
         lines.append(f"{next_regime}  |  {next_sig}x")
-        lines.append(f"Allocation: {next_alloc}")
 
     return "\n".join(lines)
 
@@ -210,13 +240,10 @@ def extract_fallback(output: str) -> str:
             continue
 
         if capturing:
-            # Skip noise lines
             if any(x in line for x in ["Action:", "Report:", "/home/runner", "/runner/"]):
                 continue
-            # Skip long === dividers
             if stripped.startswith("=") and stripped.endswith("=") and len(stripped) >= 20:
                 continue
-            # Shorten long --- separators
             if stripped.startswith("-") and stripped == "-" * len(stripped) and len(stripped) > 20:
                 out.append("-" * 28)
                 continue
@@ -261,7 +288,6 @@ def main() -> None:
         )
         sys.exit(proc.returncode)
 
-    # Try clean JSON-based message first, fall back to terminal extraction
     try:
         msg = build_message()
     except Exception as e:
@@ -271,7 +297,7 @@ def main() -> None:
     if not msg or not msg.strip():
         msg = "Signal ran but produced no readable output. Check GitHub Actions logs."
 
-    ok = tg_send(bot_token, chat_id, msg)
+    ok = tg_send_code(bot_token, chat_id, msg)
     if ok:
         print("Telegram message sent successfully.", flush=True)
     else:
