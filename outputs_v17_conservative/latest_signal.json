@@ -20,25 +20,25 @@
     "SPY": {
       "weight_pct": 96.5,
       "target_dollars": 7810.2039,
-      "price": 737.62,
+      "price": 736.41,
       "shares": 10.0,
-      "actual_dollars": 7376.2,
-      "leftover": 434.0039
+      "actual_dollars": 7364.0997,
+      "leftover": 446.1041
     },
     "SPXL": {
       "weight_pct": 3.5,
       "target_dollars": 283.2716,
-      "price": 265.56,
+      "price": 264.4499,
       "shares": 1.0,
-      "actual_dollars": 265.56,
-      "leftover": 17.7116
+      "actual_dollars": 264.4499,
+      "leftover": 18.8218
     },
     "_summary": {
       "capital": 8093.4755,
-      "total_deployed": 7641.7599,
-      "total_leftover_cash": 451.7156,
+      "total_deployed": 7628.5496,
+      "total_leftover_cash": 464.9259,
       "fractional_shares": false,
-      "price_date": "2026-05-08"
+      "price_date": "2026-05-12"
     }
   },
   "currency": "USD"
