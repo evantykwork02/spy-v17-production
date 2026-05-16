@@ -1,44 +1,36 @@
 {
   "date": "2026-05-15",
   "v12_signal": 1.0,
-  "v17_signal": 1.07,
-  "regime": "CALM_BULL_BOOST",
-  "net_equity_exposure": 1.07,
-  "calm_bull_trigger": 1,
-  "target_allocation": "SPY 96.5%,  SPXL 3.5%",
+  "v17_signal": 1.0,
+  "regime": "NORMAL",
+  "net_equity_exposure": 1.0,
+  "calm_bull_trigger": 0,
+  "target_allocation": "SPY 100.0%",
   "weights": {
-    "SPY": 0.965,
-    "SPXL": 0.03500000000000003,
+    "SPY": 1.0,
+    "SPXL": 0.0,
     "SPXS": 0.0,
     "TLT": 0.0,
     "GLD": 0.0,
     "SHY": 0.0
   },
-  "reason": "Calm-uptrend conditions met (CB only); V17-pro raises exposure to 1.07x.",
+  "reason": "No high-conviction trigger; baseline 100% SPY.",
   "data_source": "forced refresh",
   "position_sizing": {
     "SPY": {
-      "weight_pct": 96.5,
-      "target_dollars": 7780.216,
-      "price": 748.17,
-      "shares": 10.0,
-      "actual_dollars": 7481.6998,
-      "leftover": 298.5162
-    },
-    "SPXL": {
-      "weight_pct": 3.5,
-      "target_dollars": 282.184,
-      "price": 276.9,
-      "shares": 1.0,
-      "actual_dollars": 276.9,
-      "leftover": 5.284
+      "weight_pct": 100.0,
+      "target_dollars": 8138.7665,
+      "price": 739.17,
+      "shares": 11.0,
+      "actual_dollars": 8130.8698,
+      "leftover": 7.8967
     },
     "_summary": {
-      "capital": 8062.4,
-      "total_deployed": 7758.5998,
-      "total_leftover_cash": 303.8002,
+      "capital": 8138.7665,
+      "total_deployed": 8130.8698,
+      "total_leftover_cash": 7.8967,
       "fractional_shares": false,
-      "price_date": "2026-05-14"
+      "price_date": "2026-05-15"
     }
   },
   "currency": "USD"
