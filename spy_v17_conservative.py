@@ -210,6 +210,15 @@ def download_yfinance_prices(start: str, end: Optional[str] = None) -> pd.DataFr
             "yfinance not installed. Run: pip install yfinance"
         )
 
+    # Clear stale SQLite locks from previous runs (GitHub Actions / Cloudflare)
+    try:
+        import shutil, os
+        yf_cache = Path(os.path.expanduser("~/.cache/py-yfinance"))
+        if yf_cache.exists():
+            shutil.rmtree(yf_cache, ignore_errors=True)
+    except Exception:
+        pass
+
     raw = yf.download(
         tickers=list(YF_TICKERS.values()),
         start=start, end=end,
