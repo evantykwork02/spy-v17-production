@@ -10,7 +10,10 @@ This tracker is duplicate-safe. Rerunning during the same signal week updates re
 | Latest signal date | 2026-05-15 |
 | Last data date | 2026-05-15 |
 | Tracker action | updated_existing_signal_no_duplicate |
-| Ledger rows | 3 |
+| Tracked weeks | 2 |
+| Closed weeks | 1 |
+| Pending next-week signals | 1 |
+| Signal rows in ledger | 3 |
 | Model equity | 10,273.57 |
 | SPY equity | 10,256.99 |
 | Model total return | 2.7% |
@@ -36,7 +39,12 @@ This tracker is duplicate-safe. Rerunning during the same signal week updates re
 | --- | --- | --- | --- | --- | --- | --- |
 | 2026-05-01 | 2026-05-04 | CLOSED | CALM_BULL_BOOST | +2.5% | +2.4% | +0.2% |
 | 2026-05-08 | 2026-05-11 | OPEN | CALM_BULL_BOOST | +0.2% | +0.2% | +0.0% |
-| 2026-05-15 | pending | PENDING_EXECUTION | NORMAL | n/a | n/a | n/a |
+
+## Pending next signal
+
+| Signal | Trade | Regime | Signal | Allocation |
+| --- | --- | --- | --- | --- |
+| 2026-05-15 | pending | NORMAL | 1.0 | SPY 100.0% |
 
 ## Files written
 

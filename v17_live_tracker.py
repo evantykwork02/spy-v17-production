@@ -302,6 +302,15 @@ def update_live_tracker(
     periods = _live_signal_periods(ledger, live_ret, spy_ret)
     periods.to_csv(live_dir / "live_signal_periods.csv", index=False)
 
+    tracked_weeks = 0
+    closed_weeks = 0
+    pending_signal_weeks = 0
+    if not periods.empty and "status" in periods.columns:
+        statuses = periods["status"].fillna("")
+        tracked_weeks = int(statuses.isin(["CLOSED", "OPEN"]).sum())
+        closed_weeks = int((statuses == "CLOSED").sum())
+        pending_signal_weeks = int((statuses == "PENDING_EXECUTION").sum())
+
     current_weights = weights.tail(1).reset_index(names="date")
     current_weights.to_csv(live_dir / "current_effective_weights.csv", index=False)
 
@@ -321,6 +330,9 @@ def update_live_tracker(
         "latest_signal_date": pd.Timestamp(signal_table.index[-1]).date().isoformat(),
         "latest_tracker_action": action,
         "rows_in_ledger": int(len(ledger)),
+        "tracked_weeks": tracked_weeks,
+        "closed_weeks": closed_weeks,
+        "pending_signal_weeks": pending_signal_weeks,
         "model_equity": float(live_equity.iloc[-1]) if len(live_equity) else float(initial_capital),
         "spy_equity": float(spy_equity.iloc[-1]) if len(spy_equity) else float(initial_capital),
         "model_total_return": float(model_metrics["total_return"]),
@@ -361,7 +373,10 @@ def write_live_report(live_dir: Path, ledger: pd.DataFrame, summary: Dict[str, o
         ["Latest signal date", summary.get("latest_signal_date", "n/a")],
         ["Last data date", summary.get("last_data_date", "n/a")],
         ["Tracker action", summary.get("latest_tracker_action", "n/a")],
-        ["Ledger rows", summary.get("rows_in_ledger", "n/a")],
+        ["Tracked weeks", summary.get("tracked_weeks", "n/a")],
+        ["Closed weeks", summary.get("closed_weeks", "n/a")],
+        ["Pending next-week signals", summary.get("pending_signal_weeks", "n/a")],
+        ["Signal rows in ledger", summary.get("rows_in_ledger", "n/a")],
         ["Model equity", f"{summary.get('model_equity', np.nan):,.2f}" if not pd.isna(summary.get("model_equity", np.nan)) else "n/a"],
         ["SPY equity", f"{summary.get('spy_equity', np.nan):,.2f}" if not pd.isna(summary.get("spy_equity", np.nan)) else "n/a"],
         ["Model total return", fmt_pct(summary.get("model_total_return", np.nan))],
@@ -401,7 +416,8 @@ def write_live_report(live_dir: Path, ledger: pd.DataFrame, summary: Dict[str, o
     lines.append("## Recent signal-period results")
     lines.append("")
     if periods is not None and not periods.empty:
-        show = periods.tail(8)
+        tracked_periods = periods[periods["status"].isin(["CLOSED", "OPEN"])].copy()
+        show = tracked_periods.tail(8)
         out_rows = []
         for _, r in show.iterrows():
             out_rows.append([
@@ -413,10 +429,32 @@ def write_live_report(live_dir: Path, ledger: pd.DataFrame, summary: Dict[str, o
                 fmt_pct_signed(r.get("spy_period_return", np.nan)),
                 fmt_pct_signed(r.get("excess_return", np.nan)),
             ])
-        lines.append(_markdown_table(["Signal", "Trade", "Status", "Regime", "Model", "SPY", "Excess"], out_rows))
+        if out_rows:
+            lines.append(_markdown_table(["Signal", "Trade", "Status", "Regime", "Model", "SPY", "Excess"], out_rows))
+        else:
+            lines.append("No started signal periods yet.")
     else:
         lines.append("No completed/live signal periods yet.")
     lines.append("")
+
+    pending_periods = pd.DataFrame()
+    if periods is not None and not periods.empty:
+        pending_periods = periods[periods["status"] == "PENDING_EXECUTION"].copy()
+    if not pending_periods.empty:
+        lines.append("## Pending next signal")
+        lines.append("")
+        show = pending_periods.tail(1)
+        out_rows = []
+        for _, r in show.iterrows():
+            out_rows.append([
+                r.get("signal_date", ""),
+                r.get("trade_date", ""),
+                r.get("regime", ""),
+                r.get("v17_signal", ""),
+                r.get("target_allocation", ""),
+            ])
+        lines.append(_markdown_table(["Signal", "Trade", "Regime", "Signal", "Allocation"], out_rows))
+        lines.append("")
 
     lines.append("## Files written")
     lines.append("")
