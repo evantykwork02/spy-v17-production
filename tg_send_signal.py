@@ -148,15 +148,20 @@ def build_message() -> str:
         pass
 
     # --- live_signal_periods.csv (current period P&L) ---
-    open_period    = {}
+    open_period = {}
     pending_period = {}
+    tracked_weeks = None
+    pending_signal_weeks = None
     try:
         with open("live_tracker/live_signal_periods.csv", "r", encoding="utf-8") as f:
-            for row in csv.DictReader(f):
+            period_rows = list(csv.DictReader(f))
+            for row in period_rows:
                 if row.get("status") == "OPEN":
                     open_period = row
                 elif row.get("status") == "PENDING_EXECUTION":
                     pending_period = row
+            tracked_weeks = sum(1 for row in period_rows if row.get("status") in {"CLOSED", "OPEN"})
+            pending_signal_weeks = sum(1 for row in period_rows if row.get("status") == "PENDING_EXECUTION")
     except Exception:
         pass
 
@@ -192,6 +197,16 @@ def build_message() -> str:
     m_dd        = _pct(summary.get("model_max_drawdown"))
     s_dd        = _pct(summary.get("spy_max_drawdown"))
     equity      = _eq(summary.get("model_equity"))
+    if tracked_weeks is None:
+        try:
+            tracked_weeks = int(summary.get("tracked_weeks"))
+        except Exception:
+            tracked_weeks = None
+    if pending_signal_weeks is None:
+        try:
+            pending_signal_weeks = int(summary.get("pending_signal_weeks"))
+        except Exception:
+            pending_signal_weeks = None
 
     lines.append("")
     lines.append(f"TRACKER  ({start_dt} to {last_data})")
@@ -201,6 +216,11 @@ def build_message() -> str:
     lines.append(f"{'SPY':8s}  {s_ret:>7}  {s_sh:>6}  {s_dd:>7}")
     lines.append(f"{'Excess':8s}  {exc:>7}")
     lines.append(f"Equity:   {equity} USD")
+    if tracked_weeks is not None:
+        weeks_line = f"Weeks:    {tracked_weeks} tracked"
+        if pending_signal_weeks:
+            weeks_line += f", {pending_signal_weeks} pending"
+        lines.append(weeks_line)
 
     # ── Current / open period ─────────────────────────────
     if open_period:
