@@ -11,14 +11,13 @@ This tracker is duplicate-safe. Rerunning during the same signal week updates re
 | Last data date | 2026-05-15 |
 | Tracker action | updated_existing_signal_no_duplicate |
 | Ledger rows | 3 |
-| Initial capital (USD) | 7,811.28 |
-| Model equity | 8,024.97 |
-| SPY equity | 8,012.02 |
+| Model equity | 10,273.57 |
+| SPY equity | 10,256.99 |
 | Model total return | 2.7% |
 | SPY total return | 2.6% |
 | Excess return | +0.2% |
-| Model Sharpe | 5.040 |
-| SPY Sharpe | 5.068 |
+| Model Sharpe | 4.743 |
+| SPY Sharpe | 4.749 |
 | Model MaxDD | -1.3% |
 | SPY MaxDD | -1.2% |
 | Latest target allocation | SPY 100.0% |

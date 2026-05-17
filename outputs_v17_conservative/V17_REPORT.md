@@ -13,10 +13,10 @@ _Data source: forced refresh_
 | Model | Total return | CAGR | Sharpe | Max drawdown | Calmar |
 | --- | --- | --- | --- | --- | --- |
 | SPY buy-and-hold | 1150.3% | 15.57% | 0.884 | -33.7% | 0.462 |
-| V12 (defensive engine) | 3213.0% | 22.21% | 1.198 | -24.2% | 0.919 |
-| **V17 Conservative** | **3846.4%** | **23.44%** | **1.216** | **-24.2%** | **0.967** |
+| V12 (defensive engine) | 3213.0% | 22.21% | 1.121 | -24.2% | 0.919 |
+| **V17 Conservative** | **3846.4%** | **23.44%** | **1.141** | **-24.2%** | **0.967** |
 
-**V17 outperformed SPY by +2696.1% in total return, with Sharpe +0.332 higher and max drawdown +9.5% (less negative is better).**
+**V17 outperformed SPY by +2696.1% in total return, with Sharpe +0.258 higher and max drawdown +9.5% (less negative is better).**
 
 ## This week's signal
 
@@ -36,8 +36,8 @@ _Data source: forced refresh_
 | Model | Total return | CAGR | Sharpe | Max drawdown | Calmar |
 | --- | --- | --- | --- | --- | --- |
 | SPY buy-and-hold | 112.4% | 15.12% | 0.917 | -24.5% | 0.617 |
-| V12 | 222.1% | 24.44% | 1.430 | -16.9% | 1.442 |
-| V17 Conservative | 238.9% | 25.63% | 1.438 | -17.1% | 1.498 |
+| V12 | 222.1% | 24.44% | 1.222 | -16.9% | 1.442 |
+| V17 Conservative | 238.9% | 25.63% | 1.237 | -17.1% | 1.498 |
 
 ## Behaviour during historical stress events
 
@@ -81,7 +81,7 @@ _Data source: forced refresh_
 | vs V12 | full | total_return | +633.3% | 0.0000 | highly significant (p<0.01) |
 | vs V12 | full | sharpe | +0.018 | 0.1150 | not significant |
 | vs V12 | full | calmar | +0.048 | 0.2250 | not significant |
-| vs V12 | full | max_drawdown | -0.1% | 0.8600 | not significant |
+| vs V12 | full | max_drawdown | -0.1% | 0.8550 | not significant |
 | vs V12 | holdout_2021_plus | total_return | +16.9% | 0.0300 | significant (p<0.05) |
 | vs V12 | holdout_2021_plus | sharpe | +0.008 | 0.4100 | not significant |
 | vs V12 | holdout_2021_plus | calmar | +0.056 | 0.3700 | not significant |

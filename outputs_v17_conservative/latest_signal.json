@@ -15,23 +15,5 @@
     "SHY": 0.0
   },
   "reason": "No high-conviction trigger; baseline 100% SPY.",
-  "data_source": "forced refresh",
-  "position_sizing": {
-    "SPY": {
-      "weight_pct": 100.0,
-      "target_dollars": 8024.9701,
-      "price": 739.17,
-      "shares": 10.0,
-      "actual_dollars": 7391.6998,
-      "leftover": 633.2703
-    },
-    "_summary": {
-      "capital": 8024.9701,
-      "total_deployed": 7391.6998,
-      "total_leftover_cash": 633.2703,
-      "fractional_shares": false,
-      "price_date": "2026-05-15"
-    }
-  },
-  "currency": "USD"
+  "data_source": "forced refresh"
 }
