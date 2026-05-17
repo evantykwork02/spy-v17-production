@@ -1,7 +1,7 @@
 # SPY V17 Conservative — Performance & Validation Report
 
 _Report generated for signal date **2026-05-15**_
-_Data source: offline cache (0.1h old)_
+_Data source: offline cache (0.3h old)_
 
 ## At a Glance
 
@@ -93,21 +93,21 @@ _Data source: offline cache (0.1h old)_
 | Comparison | Period | Metric | Observed delta | p_fail | Verdict |
 | --- | --- | --- | --- | --- | --- |
 | vs V12 | full | total_return | +804.9% | 0.0000 | highly significant (p<0.01) |
-| vs V12 | full | sharpe | +0.024 | 0.0800 | borderline |
-| vs V12 | full | calmar | +0.060 | 0.1800 | not significant |
-| vs V12 | full | max_drawdown | -0.1% | 0.9000 | not significant |
+| vs V12 | full | sharpe | +0.024 | 0.2000 | not significant |
+| vs V12 | full | calmar | +0.060 | 0.2000 | not significant |
+| vs V12 | full | max_drawdown | -0.1% | 0.8000 | not significant |
 | vs V12 | holdout_2021_plus | total_return | +23.2% | 0.0000 | highly significant (p<0.01) |
-| vs V12 | holdout_2021_plus | sharpe | +0.009 | 0.3800 | not significant |
-| vs V12 | holdout_2021_plus | calmar | +0.069 | 0.4900 | not significant |
-| vs V12 | holdout_2021_plus | max_drawdown | -0.3% | 0.9800 | not significant |
+| vs V12 | holdout_2021_plus | sharpe | +0.009 | 0.3000 | not significant |
+| vs V12 | holdout_2021_plus | calmar | +0.069 | 0.4000 | not significant |
+| vs V12 | holdout_2021_plus | max_drawdown | -0.3% | 1.0000 | not significant |
 | vs SPY | full | total_return | +2867.6% | 0.0000 | highly significant (p<0.01) |
 | vs SPY | full | sharpe | +0.337 | 0.0000 | highly significant (p<0.01) |
 | vs SPY | full | calmar | +0.517 | 0.0000 | highly significant (p<0.01) |
-| vs SPY | full | max_drawdown | +9.5% | 0.1850 | not significant |
-| vs SPY | holdout_2021_plus | total_return | +132.9% | 0.0300 | significant (p<0.05) |
-| vs SPY | holdout_2021_plus | sharpe | +0.514 | 0.0400 | significant (p<0.05) |
-| vs SPY | holdout_2021_plus | calmar | +0.894 | 0.0550 | borderline |
-| vs SPY | holdout_2021_plus | max_drawdown | +7.2% | 0.2250 | not significant |
+| vs SPY | full | max_drawdown | +9.5% | 0.2000 | not significant |
+| vs SPY | holdout_2021_plus | total_return | +132.9% | 0.1000 | not significant |
+| vs SPY | holdout_2021_plus | sharpe | +0.514 | 0.1000 | not significant |
+| vs SPY | holdout_2021_plus | calmar | +0.894 | 0.1000 | not significant |
+| vs SPY | holdout_2021_plus | max_drawdown | +7.2% | 0.3000 | not significant |
 
 ## Interpretation
 

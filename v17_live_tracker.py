@@ -29,6 +29,7 @@ from spy_v17_conservative import (
     fmt_pct_signed,
     get_rf_daily,
     metrics_daily,
+    validate_rf_series,
     _markdown_table,
 )
 
@@ -304,7 +305,11 @@ def update_live_tracker(
     current_weights = weights.tail(1).reset_index(names="date")
     current_weights.to_csv(live_dir / "current_effective_weights.csv", index=False)
 
-    rf_daily = get_rf_daily(daily_live, live_ret.index)
+    rf_daily = validate_rf_series(
+        get_rf_daily(daily_live, live_ret.index),
+        live_ret.index,
+        "live_tracker",
+    )
 
     model_metrics = metrics_daily(live_ret, rf_daily=rf_daily)
     spy_metrics = metrics_daily(spy_ret, rf_daily=rf_daily)

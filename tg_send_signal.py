@@ -108,12 +108,27 @@ def _eq(v) -> str:
         return "n/a"
 
 
+def _rate(v) -> str:
+    try:
+        return f"{float(v):.2f}%"
+    except Exception:
+        return "n/a"
+
+
 # ---------------------------------------------------------------------------
 # Build clean Telegram message from model output files
 # ---------------------------------------------------------------------------
 
 def build_message() -> str:
     SEP = "-" * 36
+
+    # --- latest_signal.json (latest signal metadata) ---
+    latest_signal = {}
+    try:
+        with open("outputs_v17_conservative/latest_signal.json", "r", encoding="utf-8") as f:
+            latest_signal = json.load(f)
+    except Exception:
+        pass
 
     # --- live_summary.json ---
     try:
@@ -151,6 +166,9 @@ def build_message() -> str:
     sig_val    = latest_ledger.get("v17_signal", "?")
     trade_date = (latest_ledger.get("actual_trade_date") or
                   latest_ledger.get("estimated_trade_date") or "pending")
+    rf_annual  = _rate(latest_signal.get("risk_free_rate_annual_pct"))
+    rf_date    = latest_signal.get("risk_free_rate_date", last_data)
+    rf_source  = latest_signal.get("risk_free_rate_source", "n/a")
 
     lines = []
 
@@ -160,6 +178,7 @@ def build_message() -> str:
     lines.append(f"Alloc:   {alloc}")
     lines.append(f"Regime:  {regime}  ({sig_val}x)")
     lines.append(f"Trade:   {trade_date}")
+    lines.append(f"RF 3M:   {rf_annual} annual  ({rf_date}, {rf_source})")
 
     # ── Tracker summary ───────────────────────────────────
     start_dt    = summary.get("start_signal_date", "?")

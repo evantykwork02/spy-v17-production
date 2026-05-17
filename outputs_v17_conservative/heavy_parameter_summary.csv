@@ -1,0 +1,5 @@
+test,pct_variants_true,n_variants
+beats_v12_holdout_return,1.0,216
+beats_v12_holdout_sharpe,0.6666666666666666,216
+beats_v12_holdout_calmar,1.0,216
+beats_v12_holdout_maxdd,0.0,216

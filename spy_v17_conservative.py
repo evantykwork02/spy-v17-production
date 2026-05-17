@@ -130,10 +130,57 @@ def get_rf_daily(daily: Optional[pd.DataFrame] = None, returns_index: Optional[p
 
     if daily is not None and "DGS3MO" in daily.columns:
         # DGS3MO is in annualized percentage points (e.g. 4.3 means 4.3%)
-        rf_annual = daily["DGS3MO"].reindex(idx).ffill().fillna(0.0) / 100.0
+        rf_annual = daily["DGS3MO"].reindex(idx).ffill() / 100.0
+        rf_annual = rf_annual.fillna(RISK_FREE_FALLBACK_ANNUAL)
         return rf_annual / ANNUALIZATION_DAYS
     else:
         return pd.Series(RISK_FREE_FALLBACK_ANNUAL / ANNUALIZATION_DAYS, index=idx)
+
+
+def align_rf_daily(rf_daily: Optional[pd.Series], index: pd.Index) -> Optional[pd.Series]:
+    """Align RF series to a target index and fill any remaining gaps with fallback RF."""
+    if rf_daily is None:
+        return None
+    rf = pd.Series(rf_daily).reindex(index).ffill()
+    return rf.fillna(RISK_FREE_FALLBACK_ANNUAL / ANNUALIZATION_DAYS)
+
+
+def validate_rf_series(rf_daily: Optional[pd.Series], index: pd.Index, context: str) -> pd.Series:
+    """Fail loudly if RF series is missing, misaligned, or non-finite."""
+    rf = align_rf_daily(rf_daily, index)
+    if rf is None:
+        raise ValueError(f"{context}: risk-free series is missing.")
+    if len(rf) != len(index):
+        raise ValueError(f"{context}: risk-free series length mismatch ({len(rf)} vs {len(index)}).")
+    if not rf.index.equals(index):
+        raise ValueError(f"{context}: risk-free series index mismatch.")
+    if not np.isfinite(rf.to_numpy()).all():
+        raise ValueError(f"{context}: risk-free series contains non-finite values.")
+    return rf
+
+
+def validate_backtest_rf(bt: Dict[str, Dict], context: str) -> None:
+    """Ensure every backtest object carries a valid RF series aligned to returns."""
+    for model, obj in bt.items():
+        ret = pd.Series(obj.get("ret", pd.Series(dtype=float)))
+        validate_rf_series(obj.get("rf_daily"), ret.index, f"{context}::{model}")
+
+
+def build_spy_benchmark(daily: pd.DataFrame) -> Dict[str, pd.Series]:
+    """Build a consistent SPY buy-and-hold benchmark object.
+
+    This keeps benchmark Sharpe calculations on the same footing as active
+    strategies by attaching the same daily risk-free series used elsewhere.
+    """
+    ret = daily["SPY"].ffill().pct_change().fillna(0.0)
+    rf_daily = validate_rf_series(get_rf_daily(daily, ret.index), ret.index, "build_spy_benchmark")
+    return {
+        "ret": ret,
+        "exposure": pd.Series(1.0, index=daily.index),
+        "equity": (1.0 + ret).cumprod(),
+        "turnover": pd.Series(0.0, index=daily.index),
+        "rf_daily": rf_daily,
+    }
 
 
 # ---------------------------------------------------------------------------
@@ -897,7 +944,7 @@ def run_backtest(
     exposure = daily_w["SPY"] + 3.0 * daily_w["SPXL"] - 3.0 * daily_w["SPXS"]
     equity = (1.0 + strat_ret).cumprod()
 
-    rf_daily = get_rf_daily(daily, strat_ret.index)
+    rf_daily = validate_rf_series(get_rf_daily(daily, strat_ret.index), strat_ret.index, "run_backtest")
 
     return {
         "ret": strat_ret, "weights": daily_w,
@@ -921,11 +968,12 @@ def metrics_daily(returns: pd.Series, rf_daily: Optional[pd.Series] = None) -> D
 
     # Sharpe: subtract daily risk-free rate before annualizing
     if rf_daily is not None:
-        rf_aligned = rf_daily.reindex(r.index).ffill().fillna(0.0)
+        rf_aligned = align_rf_daily(rf_daily, r.index)
         excess = r - rf_aligned
     else:
         excess = r
-    sharpe = float(excess.mean() * ANNUALIZATION_DAYS / annual_vol) if annual_vol > 1e-12 else np.nan
+    excess_annual_vol = float(excess.std() * np.sqrt(ANNUALIZATION_DAYS))
+    sharpe = float(excess.mean() * ANNUALIZATION_DAYS / excess_annual_vol) if excess_annual_vol > 1e-12 else np.nan
 
     drawdown = eq / eq.cummax() - 1.0
     max_drawdown = float(drawdown.min())
@@ -1003,12 +1051,18 @@ def yearly_report(bt: Dict[str, Dict]) -> pd.DataFrame:
 def block_bootstrap_delta(
     ret_new: pd.Series, ret_base: pd.Series, metric_name: str,
     n_bootstrap: int, block_len: int, seed: int,
+    rf_new: Optional[pd.Series] = None, rf_base: Optional[pd.Series] = None,
     progress_label: str = "", show_progress: bool = False,
 ) -> Dict[str, float]:
     df = pd.concat([ret_new.rename("new"), ret_base.rename("base")], axis=1).dropna()
     n = len(df)
+    rf_new_aligned = align_rf_daily(rf_new, df.index) if rf_new is not None else None
+    rf_base_aligned = align_rf_daily(rf_base, df.index) if rf_base is not None else None
 
-    obs = metrics_daily(df["new"])[metric_name] - metrics_daily(df["base"])[metric_name]
+    obs = (
+        metrics_daily(df["new"], rf_daily=rf_new_aligned)[metric_name]
+        - metrics_daily(df["base"], rf_daily=rf_base_aligned)[metric_name]
+    )
     if n < block_len * 4:
         return {"metric": metric_name, "observed_delta": float(obs),
                 "p_fail": np.nan, "n_bootstrap": 0, "block_len": block_len}
@@ -1016,6 +1070,8 @@ def block_bootstrap_delta(
     rng = np.random.default_rng(seed)
     new_arr = df["new"].values
     base_arr = df["base"].values
+    rf_new_arr = rf_new_aligned.values if rf_new_aligned is not None else None
+    rf_base_arr = rf_base_aligned.values if rf_base_aligned is not None else None
     n_blocks = (n + block_len - 1) // block_len
     starts = np.arange(0, n - block_len + 1)
 
@@ -1027,8 +1083,10 @@ def block_bootstrap_delta(
         idx = np.concatenate([np.arange(s, s + block_len) for s in block_starts])[:n]
         s_new = new_arr[idx]
         s_base = base_arr[idx]
-        m_new = metrics_daily(pd.Series(s_new))[metric_name]
-        m_base = metrics_daily(pd.Series(s_base))[metric_name]
+        s_rf_new = pd.Series(rf_new_arr[idx]) if rf_new_arr is not None else None
+        s_rf_base = pd.Series(rf_base_arr[idx]) if rf_base_arr is not None else None
+        m_new = metrics_daily(pd.Series(s_new), rf_daily=s_rf_new)[metric_name]
+        m_base = metrics_daily(pd.Series(s_base), rf_daily=s_rf_base)[metric_name]
         deltas[i] = m_new - m_base
 
         if report_every and ((i + 1) % report_every == 0 or i + 1 == n_bootstrap):
@@ -1059,13 +1117,18 @@ def bootstrap_suite(
         for period, (s, e) in periods.items():
             r_new = bt[new]["ret"].loc[s:e]
             r_base = bt[base]["ret"].loc[s:e]
+            rf_new = bt[new].get("rf_daily")
+            rf_base = bt[base].get("rf_daily")
             for metric in metric_names:
                 job_idx += 1
                 target = "vs SPY" if base == "SPY_BH" else "vs V12"
                 label = f"{target} / {period} / {metric:<14s} ({job_idx}/{total_jobs})"
                 res = block_bootstrap_delta(
                     r_new, r_base, metric, n_bootstrap, block_len,
-                    seed + len(rows), progress_label=label, show_progress=show_progress,
+                    seed + len(rows),
+                    rf_new=rf_new.loc[s:e] if rf_new is not None else None,
+                    rf_base=rf_base.loc[s:e] if rf_base is not None else None,
+                    progress_label=label, show_progress=show_progress,
                 )
                 rows.append({"new_model": new, "base_model": base, "period": period, **res})
 
@@ -1140,13 +1203,16 @@ def deflated_sharpe_table(bt: Dict[str, Dict], n_trials: int = DEFAULT_N_VARIANT
             continue
         rf = obj.get("rf_daily", None)
         if rf is not None:
-            rf_aligned = rf.reindex(r.index).ffill().fillna(0.0)
+            rf_aligned = align_rf_daily(rf, r.index)
             excess = r - rf_aligned
         else:
             excess = r
-        daily_sr = float(excess.mean() / r.std())
+        excess_std = float(excess.std(ddof=1))
+        if excess_std <= 0:
+            continue
+        daily_sr = float(excess.mean() / excess_std)
         annual_sr = daily_sr * np.sqrt(ANNUALIZATION_DAYS)
-        skew, kurt = _skew_kurt(r)
+        skew, kurt = _skew_kurt(excess)
         denom = 1.0 - skew * daily_sr + ((kurt - 1.0) / 4.0) * daily_sr ** 2
         sr_std = np.sqrt(max(denom, 1e-12) / max(n - 1, 1))
         sr_star = sr_std * z_trials
@@ -1179,7 +1245,7 @@ def bayesian_sharpe_table(bt: Dict[str, Dict], n_draws: int, seed: int) -> pd.Da
         r = pd.Series(obj["ret"]).replace([np.inf, -np.inf], np.nan).dropna()
         rf = obj.get("rf_daily", None)
         if rf is not None:
-            rf_aligned = rf.reindex(r.index).ffill().fillna(0.0)
+            rf_aligned = align_rf_daily(rf, r.index)
             r = r - rf_aligned
         r = r.values
         n = len(r)
@@ -1282,6 +1348,8 @@ def synthetic_null_markets(
     n = len(spy_ret)
     rf_v17 = bt["v17_conservative"].get("rf_daily", None)
     rf_spy = bt["SPY_BH"].get("rf_daily", None)
+    rf_null = validate_rf_series(rf_spy if rf_spy is not None else get_rf_daily(daily, daily.index),
+                                 daily.index, "synthetic_null_markets")
     actual_v17 = metrics_daily(bt["v17_conservative"]["ret"], rf_daily=rf_v17)
     actual_spy = metrics_daily(bt["SPY_BH"]["ret"], rf_daily=rf_spy)
     obs_delta = {m: actual_v17[m] - actual_spy[m] for m in ["total_return", "sharpe", "calmar", "max_drawdown"]}
@@ -1296,8 +1364,8 @@ def synthetic_null_markets(
         spy_null = pd.Series(r, index=daily.index)
         # approximate strategy using actual time-varying net equity exposure; clip to avoid impossible ruin.
         strat_null = pd.Series(exp * r, index=daily.index).clip(lower=-0.95)
-        m_s = metrics_daily(strat_null)
-        m_b = metrics_daily(spy_null)
+        m_s = metrics_daily(strat_null, rf_daily=rf_null)
+        m_b = metrics_daily(spy_null, rf_daily=rf_null)
         for m in obs_delta:
             null_deltas[m][i] = m_s[m] - m_b[m]
     rows = []
@@ -1314,18 +1382,32 @@ def synthetic_null_markets(
 
 
 def regime_daily_labels(signal_table: pd.DataFrame, daily_index: pd.DatetimeIndex) -> pd.Series:
-    lab = pd.Series("normal", index=signal_table.index)
-    lab[signal_table["calm_bull_trigger"].astype(int) == 1] = "calm_bull"
-    lab[signal_table["v12_signal"] > 1.0] = "v12_levered_recovery"
-    lab[(signal_table["v12_signal"] >= 0) & (signal_table["v12_signal"] < 1.0)] = "defensive"
-    lab[signal_table["v12_signal"] < 0] = "crash_short"
-    return lab.reindex(daily_index, method="ffill").fillna("normal")
+    if "regime" in signal_table.columns:
+        lab = signal_table["regime"].fillna("NORMAL").astype(str)
+        return lab.reindex(daily_index, method="ffill").fillna("NORMAL")
+
+    lab = pd.Series("NORMAL", index=signal_table.index)
+    lab[signal_table["calm_bull_trigger"].astype(int) == 1] = "CALM_BULL_BOOST"
+    lab[signal_table["v12_signal"] > 1.0] = "LEVERAGED_LONG"
+    lab[(signal_table["v12_signal"] >= 0) & (signal_table["v12_signal"] < 1.0)] = "DEFENSIVE"
+    lab[signal_table["v12_signal"] < 0] = "CRASH_SHORT"
+    return lab.reindex(daily_index, method="ffill").fillna("NORMAL")
 
 
 def stratified_regime_test(bt: Dict[str, Dict], signal_table: pd.DataFrame, daily: pd.DataFrame, block_len: int, seed: int) -> pd.DataFrame:
     labels = regime_daily_labels(signal_table, daily.index)
     rows = []
-    for regime in ["calm_bull", "normal", "v12_levered_recovery", "defensive", "crash_short"]:
+    regime_order = [
+        "DUAL_BOOST",
+        "YC_BOOST",
+        "CALM_BULL_BOOST",
+        "NERVOUS_MARKET",
+        "NORMAL",
+        "LEVERAGED_LONG",
+        "DEFENSIVE",
+        "CRASH_SHORT",
+    ]
+    for regime in regime_order:
         mask = labels == regime
         if mask.sum() < max(40, block_len * 3):
             continue
@@ -1437,7 +1519,7 @@ def cost_stress_test(weekly: pd.DataFrame, daily: pd.DataFrame, v12_signal: pd.S
     rows = []
     for tc in [0.0, 5.0, 10.0, 20.0, 30.0]:
         bts = {
-            "SPY_BH": {"ret": daily["SPY"].ffill().pct_change().fillna(0.0), "exposure": pd.Series(1.0, index=daily.index)},
+            "SPY_BH": build_spy_benchmark(daily),
             "v12": run_backtest(v12_signal, daily, tc),
             "v17_conservative": run_backtest(v17_signal, daily, tc),
         }
@@ -1689,8 +1771,43 @@ def _markdown_table(headers: List[str], rows: List[List[str]]) -> str:
     return "\n".join(out)
 
 
+def regime_activation_summary(signal_table: pd.DataFrame) -> pd.DataFrame:
+    if signal_table.empty or "regime" not in signal_table.columns:
+        return pd.DataFrame()
+
+    order = [
+        "DUAL_BOOST",
+        "YC_BOOST",
+        "CALM_BULL_BOOST",
+        "NERVOUS_MARKET",
+        "NORMAL",
+        "LEVERAGED_LONG",
+        "DEFENSIVE",
+        "CRASH_SHORT",
+    ]
+    total = len(signal_table)
+    rows = []
+    for regime in order:
+        mask = signal_table["regime"] == regime
+        if not mask.any():
+            continue
+        subset = signal_table.loc[mask]
+        rows.append({
+            "regime": regime,
+            "weeks": int(mask.sum()),
+            "pct_weeks": float(mask.mean()),
+            "avg_exposure": float(subset["net_equity_exposure"].mean()),
+            "first_seen": subset.index.min().date().isoformat(),
+            "last_seen": subset.index.max().date().isoformat(),
+        })
+    out = pd.DataFrame(rows)
+    if not out.empty:
+        out["total_weeks"] = total
+    return out
+
+
 def write_report(
-    out: Path, latest: pd.Series, headline: pd.DataFrame,
+    out: Path, latest: pd.Series, signal_table: pd.DataFrame, headline: pd.DataFrame,
     stress: pd.DataFrame, yearly: pd.DataFrame, bootstrap: pd.DataFrame,
     full_mode: bool, data_source: str,
 ) -> None:
@@ -1708,7 +1825,7 @@ def write_report(
     lines.append(f"_Data source: {data_source}_")
     lines.append("")
 
-    lines.append("## Executive summary")
+    lines.append("## At a Glance")
     lines.append("")
     lines.append(
         f"- This week's regime: **{latest['regime']}** with target net SPY exposure "
@@ -1741,7 +1858,31 @@ def write_report(
     )
     lines.append("")
 
-    lines.append("## This week's signal")
+    activation = regime_activation_summary(signal_table)
+    nervous_weeks = int((signal_table.get("regime") == "NERVOUS_MARKET").sum()) if "regime" in signal_table else 0
+    lines.append("## Regime Activation")
+    lines.append("")
+    lines.append(
+        f"- Nervous-market sleeve fired on **{nervous_weeks}** completed weeks in this backtest."
+    )
+    if not activation.empty:
+        rows = []
+        for _, row in activation.iterrows():
+            rows.append([
+                row["regime"],
+                int(row["weeks"]),
+                fmt_pct(row["pct_weeks"], 1),
+                f"{row['avg_exposure']:.2f}x",
+                row["first_seen"],
+                row["last_seen"],
+            ])
+        lines.append(_markdown_table(
+            ["Regime", "Weeks", "% of weeks", "Avg exposure", "First seen", "Last seen"],
+            rows,
+        ))
+    lines.append("")
+
+    lines.append("## Latest Signal")
     lines.append("")
     lines.append(_markdown_table(
         ["Field", "Value"],
@@ -1767,13 +1908,13 @@ def write_report(
         ["Model", "Total return", "CAGR", "Sharpe", "Max drawdown", "Calmar"], rows))
     lines.append("")
 
-    lines.append("## Behaviour during historical stress events")
+    lines.append("## Stress Windows")
     lines.append("")
     if not stress.empty:
         wide = stress.pivot_table(index="window", columns="model", values="total_return", aggfunc="first")
         rows = []
         for w in wide.index:
-            rows.append([w,
+            rows.append([str(w).replace("_", " "),
                          fmt_pct_signed(wide.loc[w].get("SPY_BH", np.nan)),
                          fmt_pct_signed(wide.loc[w].get("v12", np.nan)),
                          fmt_pct_signed(wide.loc[w].get("v17_conservative", np.nan))])
@@ -1794,7 +1935,7 @@ def write_report(
     lines.append("")
 
     if not bootstrap.empty and bootstrap["n_bootstrap"].max() > 0:
-        lines.append("## Statistical significance (paired block bootstrap)")
+        lines.append("## Statistical Checks")
         lines.append("")
         rows = []
         for _, b in bootstrap.iterrows():
@@ -1815,7 +1956,7 @@ def write_report(
             ["Comparison", "Period", "Metric", "Observed delta", "p_fail", "Verdict"], rows))
         lines.append("")
 
-    lines.append("## Honest interpretation")
+    lines.append("## Interpretation")
     lines.append("")
     lines.append("**Strengths**")
     lines.append("")
@@ -2097,13 +2238,11 @@ def run(cfg: Config) -> None:
     # 5: Run backtests
     steps.start("Running daily backtests for SPY / V12 / V17")
     bt = {
-        "SPY_BH": {
-            "ret": daily["SPY"].ffill().pct_change().fillna(0.0),
-            "exposure": pd.Series(1.0, index=daily.index),
-        },
+        "SPY_BH": build_spy_benchmark(daily),
         "v12": run_backtest(v12_signal, daily, cfg.tc_bps),
         "v17_conservative": run_backtest(v17_signal, daily, cfg.tc_bps),
     }
+    validate_backtest_rf(bt, "main_run")
     steps.done()
 
     # 6: Performance metrics
@@ -2139,6 +2278,16 @@ def run(cfg: Config) -> None:
     steps.start("Writing report and CSVs")
 
     latest_row = signal_table.iloc[-1]
+    if "DGS3MO" in daily.columns and daily["DGS3MO"].ffill().notna().any():
+        rf_series = daily["DGS3MO"].ffill()
+        rf_latest_annual_pct = float(rf_series.iloc[-1])
+        rf_nonnull = daily["DGS3MO"].dropna()
+        rf_latest_date = rf_nonnull.index.max().date().isoformat() if len(rf_nonnull) else daily.index.max().date().isoformat()
+        rf_source = "DGS3MO"
+    else:
+        rf_latest_annual_pct = float(RISK_FREE_FALLBACK_ANNUAL * 100.0)
+        rf_latest_date = daily.index.max().date().isoformat()
+        rf_source = "fallback"
     latest_dict = {
         "date": signal_table.index[-1].date().isoformat(),
         "v12_signal": float(latest_row["v12_signal"]),
@@ -2150,6 +2299,9 @@ def run(cfg: Config) -> None:
         "weights": {asset: float(latest_row[f"weight_{asset}"]) for asset in ASSETS},
         "reason": str(latest_row["reason"]),
         "data_source": data_source,
+        "risk_free_rate_annual_pct": rf_latest_annual_pct,
+        "risk_free_rate_date": rf_latest_date,
+        "risk_free_rate_source": rf_source,
     }
 
     (cfg.out_dir / "latest_signal.json").write_text(
@@ -2163,7 +2315,7 @@ def run(cfg: Config) -> None:
     if not bootstrap.empty:
         bootstrap.to_csv(cfg.out_dir / "bootstrap_results.csv", index=False)
 
-    write_report(cfg.out_dir, latest_row, headline, stress, yearly, bootstrap, full_mode, data_source)
+    write_report(cfg.out_dir, latest_row, signal_table, headline, stress, yearly, bootstrap, full_mode, data_source)
 
     live_result = None
     if cfg.live_track:
