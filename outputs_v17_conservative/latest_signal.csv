@@ -1,2 +1,2 @@
 date,v12_signal,v17_signal,regime,net_equity_exposure,calm_bull_trigger,target_allocation,weights,reason,data_source,risk_free_rate_annual_pct,risk_free_rate_date,risk_free_rate_source
-2026-05-15,1.0,1.0,NORMAL,1.0,0,SPY 100.0%,"{'SPY': 1.0, 'SPXL': 0.0, 'SPXS': 0.0, 'TLT': 0.0, 'GLD': 0.0, 'SHY': 0.0}",No high-conviction trigger; baseline 100% SPY.,offline cache (0.3h old),3.69,2026-05-15,DGS3MO
+2026-05-15,1.0,1.0,NORMAL,1.0,0,SPY 100.0%,"{'SPY': 1.0, 'SPXL': 0.0, 'SPXS': 0.0, 'TLT': 0.0, 'GLD': 0.0, 'SHY': 0.0}",No high-conviction trigger; baseline 100% SPY.,forced refresh,3.69,2026-05-15,DGS3MO
