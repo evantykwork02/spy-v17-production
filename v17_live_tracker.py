@@ -16,7 +16,7 @@ from __future__ import annotations
 import json
 from datetime import datetime
 from pathlib import Path
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, Optional, Tuple
 
 import numpy as np
 import pandas as pd
@@ -27,6 +27,7 @@ from spy_v17_conservative import (
     fmt_num,
     fmt_pct,
     fmt_pct_signed,
+    get_rf_daily,
     metrics_daily,
     _markdown_table,
 )
@@ -164,21 +165,6 @@ def _refresh_trade_dates_and_status(ledger: pd.DataFrame, daily: pd.DataFrame) -
     return ledger
 
 
-def _build_equity_with_injections(
-    initial_capital: float,
-    returns: pd.Series,
-    injection_map: Dict[pd.Timestamp, float],
-) -> pd.Series:
-    """Build equity curve, adding capital on specified dates before that day's return."""
-    equity = initial_capital
-    result = []
-    for date, ret in returns.items():
-        inject = injection_map.get(pd.Timestamp(date).normalize(), 0.0)
-        equity = (equity + inject) * (1.0 + ret)
-        result.append(equity)
-    return pd.Series(result, index=returns.index)
-
-
 def _build_live_weights(ledger: pd.DataFrame, daily_index: pd.DatetimeIndex) -> pd.DataFrame:
     weights = pd.DataFrame(0.0, index=daily_index, columns=ASSETS)
     if ledger.empty:
@@ -268,7 +254,6 @@ def update_live_tracker(
     daily: pd.DataFrame,
     initial_capital: float,
     reset: bool = False,
-    capital_injections: Optional[List[Dict]] = None,
 ) -> Dict[str, object]:
     """Update live paper-tracking files. Safe to rerun multiple times per week."""
     live_dir = Path(live_dir)
@@ -296,21 +281,8 @@ def update_live_tracker(
     live_ret = (weights * asset_ret).sum(axis=1)
     spy_ret = daily_live["SPY"].ffill().pct_change().fillna(0.0)
 
-    # Build injection map: {normalized_date: amount_usd}
-    injection_map: Dict[pd.Timestamp, float] = {}
-    for inj in (capital_injections or []):
-        try:
-            d = pd.Timestamp(inj["date"]).normalize()
-            injection_map[d] = injection_map.get(d, 0.0) + float(inj["amount"])
-        except (KeyError, ValueError, TypeError):
-            pass
-
-    if injection_map:
-        live_equity = _build_equity_with_injections(initial_capital, live_ret, injection_map)
-        spy_equity = _build_equity_with_injections(initial_capital, spy_ret, injection_map)
-    else:
-        live_equity = initial_capital * (1.0 + live_ret).cumprod()
-        spy_equity = initial_capital * (1.0 + spy_ret).cumprod()
+    live_equity = initial_capital * (1.0 + live_ret).cumprod()
+    spy_equity = initial_capital * (1.0 + spy_ret).cumprod()
 
     equity_curve = pd.DataFrame({
         "date": daily_live.index,
@@ -329,47 +301,16 @@ def update_live_tracker(
     periods = _live_signal_periods(ledger, live_ret, spy_ret)
     periods.to_csv(live_dir / "live_signal_periods.csv", index=False)
 
-    # Currently-effective weights: show the latest ledger row's target allocation
-    # along with its status, so a reader can see both PENDING_EXECUTION
-    # (Friday signal not yet traded) and ACTIVE (post-trade) states clearly.
-    # The previous version pulled from the shifted equity-curve weights, which
-    # produced all zeros whenever no trade date had yet passed.
-    latest_ledger = ledger.dropna(subset=["signal_date"]).copy()
-    if not latest_ledger.empty:
-        latest_ledger["signal_date"] = pd.to_datetime(latest_ledger["signal_date"])
-        latest_ledger = latest_ledger.sort_values("signal_date").iloc[-1]
-        effective_date = (
-            pd.Timestamp(latest_ledger["actual_trade_date"]).date().isoformat()
-            if pd.notna(latest_ledger.get("actual_trade_date"))
-            else pd.Timestamp(latest_ledger["signal_date"]).date().isoformat()
-        )
-        current_weights = pd.DataFrame([{
-            "date": effective_date,
-            "signal_date": pd.Timestamp(latest_ledger["signal_date"]).date().isoformat(),
-            "status": str(latest_ledger.get("status", "")),
-            "regime": str(latest_ledger.get("regime", "")),
-            "SPY":  float(latest_ledger.get("weight_SPY", 0.0)),
-            "SPXL": float(latest_ledger.get("weight_SPXL", 0.0)),
-            "SPXS": float(latest_ledger.get("weight_SPXS", 0.0)),
-            "TLT":  float(latest_ledger.get("weight_TLT", 0.0)),
-            "GLD":  float(latest_ledger.get("weight_GLD", 0.0)),
-            "SHY":  float(latest_ledger.get("weight_SHY", 0.0)),
-        }])
-    else:
-        current_weights = pd.DataFrame([{
-            "date": "", "signal_date": "", "status": "NO_SIGNAL", "regime": "",
-            "SPY": 0.0, "SPXL": 0.0, "SPXS": 0.0, "TLT": 0.0, "GLD": 0.0, "SHY": 0.0,
-        }])
+    current_weights = weights.tail(1).reset_index(names="date")
     current_weights.to_csv(live_dir / "current_effective_weights.csv", index=False)
 
-    model_metrics = metrics_daily(live_ret)
-    spy_metrics = metrics_daily(spy_ret)
+    rf_daily = get_rf_daily(daily_live, live_ret.index)
 
-    total_injected = sum(injection_map.values())
+    model_metrics = metrics_daily(live_ret, rf_daily=rf_daily)
+    spy_metrics = metrics_daily(spy_ret, rf_daily=rf_daily)
+
     summary = {
         "initial_capital": float(initial_capital),
-        "total_injected": float(total_injected),
-        "total_contributed": float(initial_capital + total_injected),
         "start_signal_date": pd.Timestamp(first_signal_date).date().isoformat(),
         "last_data_date": pd.Timestamp(daily_live.index.max()).date().isoformat(),
         "latest_signal_date": pd.Timestamp(signal_table.index[-1]).date().isoformat(),
@@ -393,12 +334,12 @@ def update_live_tracker(
     )
     pd.DataFrame([summary]).to_csv(live_dir / "live_summary.csv", index=False)
 
-    write_live_report(live_dir, ledger, summary, periods, capital_injections or [])
+    write_live_report(live_dir, ledger, summary, periods)
 
-    return {"action": action, "ledger_path": str(ledger_path), "summary": summary, "periods": periods}
+    return {"action": action, "ledger_path": str(ledger_path), "summary": summary}
 
 
-def write_live_report(live_dir: Path, ledger: pd.DataFrame, summary: Dict[str, object], periods: pd.DataFrame, capital_injections: Optional[List[Dict]] = None) -> None:
+def write_live_report(live_dir: Path, ledger: pd.DataFrame, summary: Dict[str, object], periods: pd.DataFrame) -> None:
     lines = []
     lines.append("# V17 Live Paper Tracker")
     lines.append("")
@@ -410,25 +351,14 @@ def write_live_report(live_dir: Path, ledger: pd.DataFrame, summary: Dict[str, o
     lines.append("## Current summary")
     lines.append("")
 
-    _fmt_eq = lambda v: f"{v:,.2f}" if not pd.isna(v) else "n/a"
-    total_injected = float(summary.get("total_injected", 0.0) or 0.0)
-    total_contributed = float(summary.get("total_contributed", summary.get("initial_capital", 0.0)) or 0.0)
     rows = [
         ["Start signal date", summary.get("start_signal_date", "n/a")],
         ["Latest signal date", summary.get("latest_signal_date", "n/a")],
         ["Last data date", summary.get("last_data_date", "n/a")],
         ["Tracker action", summary.get("latest_tracker_action", "n/a")],
         ["Ledger rows", summary.get("rows_in_ledger", "n/a")],
-        ["Initial capital (USD)", _fmt_eq(float(summary.get("initial_capital", np.nan)))],
-    ]
-    if capital_injections:
-        rows.append(["Total injected (USD)", _fmt_eq(total_injected)])
-        rows.append(["Total contributed (USD)", _fmt_eq(total_contributed)])
-        for inj in capital_injections:
-            rows.append([f"  Injection {inj.get('date','?')}", f"USD {float(inj.get('amount', 0)):,.2f}"])
-    rows += [
-        ["Model equity", _fmt_eq(float(summary.get("model_equity", np.nan)))],
-        ["SPY equity", _fmt_eq(float(summary.get("spy_equity", np.nan)))],
+        ["Model equity", f"{summary.get('model_equity', np.nan):,.2f}" if not pd.isna(summary.get("model_equity", np.nan)) else "n/a"],
+        ["SPY equity", f"{summary.get('spy_equity', np.nan):,.2f}" if not pd.isna(summary.get("spy_equity", np.nan)) else "n/a"],
         ["Model total return", fmt_pct(summary.get("model_total_return", np.nan))],
         ["SPY total return", fmt_pct(summary.get("spy_total_return", np.nan))],
         ["Excess return", fmt_pct_signed(summary.get("excess_return", np.nan))],
