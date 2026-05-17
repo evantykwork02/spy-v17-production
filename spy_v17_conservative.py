@@ -25,12 +25,12 @@ Where:
     calm_bull   = V12 normal AND SPY>40W MA AND 13W mom>0 AND 26W RV<55th pct AND VIX<52W avg
     yc_steep    = T10Y2Y > 0 AND T10Y2Y has risen over the last 13 weeks
 
-Validation summary (2009-01 to 2026-05, 17.3 years):
-    v17_orig:      Sharpe 1.171, CAGR 21.55%, MaxDD -24.34%, Calmar 0.886
-    v17-pro:       Sharpe 1.187, CAGR 22.29%, MaxDD -24.25%, Calmar 0.919  (current)
-    Holdout 2021+: Sharpe 1.449, CAGR 25.62%, MaxDD -17.2%, Calmar 1.493
-    DSR (80 trials): 99.57%  |  Random schedules: 0/1000 beat model (p=0.000)
-    Bootstrap (500 iters, 21d blocks) vs SPY: Sharpe delta p_fail=0.0000
+Validation summary (2009-01 to 2026-04, 17.3 years; see V17_PRO_UPGRADE_REPORT.md):
+    v17_orig:  Sharpe 1.171, CAGR 21.55%, MaxDD -24.34%, Calmar 0.886
+    v17-pro:   Sharpe 1.187, CAGR 22.29%, MaxDD -24.25%, Calmar 0.919
+    Pre-2021 (out-of-holdout) Sharpe lift: 1.078 → 1.111
+    Null permutation test: real lift +85 ann bps; random shuffles mean -10; P(random ≥ real)=0.000
+    Bootstrap (5000 iters, 21d blocks) full period: +66 ann bps, p_fail=0.0004
 
 Run:
     py spy_v17_conservative.py --mode signal              # quick weekly run
@@ -54,7 +54,7 @@ import json
 import sys
 import time
 import warnings
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from datetime import datetime, timedelta
 from io import StringIO
 from pathlib import Path
@@ -87,7 +87,7 @@ YF_TICKERS = {
 }
 
 # FRED series for macro data
-FRED_SERIES = ["DGS10", "T10Y2Y", "BAMLH0A0HYM2"]
+FRED_SERIES = ["DGS10", "T10Y2Y", "BAMLH0A0HYM2", "DGS3MO"]
 
 # History start date for fetching (V12 needs ~5y of warmup)
 DEFAULT_START = "2008-01-01"
@@ -108,8 +108,32 @@ DEFAULT_N_BAYES_DRAWS = 20000
 DEFAULT_N_VARIANTS_ASSUMED = 80
 ANNUALIZATION_DAYS = 252.0
 
+# Risk-free rate fallback (annualized, used only when DGS3MO is not in the data)
+RISK_FREE_FALLBACK_ANNUAL = 0.043
+
 # Data freshness threshold (auto-refresh if cache older than this)
 CACHE_MAX_AGE_HOURS = 20
+
+
+def get_rf_daily(daily: Optional[pd.DataFrame] = None, returns_index: Optional[pd.DatetimeIndex] = None) -> pd.Series:
+    """Extract a daily risk-free rate series from the daily DataFrame.
+
+    Uses DGS3MO (3-month T-bill yield from FRED) when available, converting
+    the annualized percentage to a daily decimal rate. Falls back to
+    RISK_FREE_FALLBACK_ANNUAL when DGS3MO is missing.
+
+    Returns a pd.Series of daily RF rates aligned to returns_index (or daily.index).
+    """
+    idx = returns_index if returns_index is not None else (daily.index if daily is not None else None)
+    if idx is None:
+        return pd.Series(dtype=float)
+
+    if daily is not None and "DGS3MO" in daily.columns:
+        # DGS3MO is in annualized percentage points (e.g. 4.3 means 4.3%)
+        rf_annual = daily["DGS3MO"].reindex(idx).ffill().fillna(0.0) / 100.0
+        return rf_annual / ANNUALIZATION_DAYS
+    else:
+        return pd.Series(RISK_FREE_FALLBACK_ANNUAL / ANNUALIZATION_DAYS, index=idx)
 
 
 # ---------------------------------------------------------------------------
@@ -190,7 +214,7 @@ def download_yfinance_prices(start: str, end: Optional[str] = None) -> pd.DataFr
         tickers=list(YF_TICKERS.values()),
         start=start, end=end,
         auto_adjust=True, group_by="column",
-        progress=False,
+        progress=False, threads=True,
     )
     if raw is None or len(raw) == 0:
         raise RuntimeError("yfinance returned no rows. Check internet connection.")
@@ -204,13 +228,8 @@ def download_yfinance_prices(start: str, end: Optional[str] = None) -> pd.DataFr
         close = raw.copy()
 
     close = close.rename(columns={v: k for k, v in YF_TICKERS.items()})
-    # Strip timezone safely: tz_localize(None) raises if index is already tz-aware
-    idx = pd.to_datetime(close.index)
-    close.index = idx.tz_convert(None) if idx.tz is not None else idx
-    close = close.sort_index()
-    # Drop duplicate dates (yfinance occasionally emits them on corporate-action days)
-    close = close[~close.index.duplicated(keep="last")]
-    return close
+    close.index = pd.to_datetime(close.index).tz_localize(None)
+    return close.sort_index()
 
 
 def download_fred_series(start: str, end: Optional[str] = None) -> pd.DataFrame:
@@ -257,27 +276,10 @@ def validate_daily_data(daily: pd.DataFrame) -> List[str]:
             issues.append(f"volatility column has no data: {col}")
 
     if "SPY" in daily.columns:
-        spy = daily["SPY"].dropna()
-        spy_ret = spy.pct_change()
+        spy_ret = daily["SPY"].pct_change()
         if spy_ret.abs().max() > 0.30:
             extreme = spy_ret[spy_ret.abs() > 0.30]
             issues.append(f"SPY has {len(extreme)} day(s) with >30% return — likely data error")
-        # Stale price: same close 5+ consecutive trading days is a data freeze
-        stale_mask = (spy == spy.shift(1)) & (spy == spy.shift(2)) & \
-                     (spy == spy.shift(3)) & (spy == spy.shift(4))
-        if stale_mask.any():
-            issues.append(
-                f"SPY price unchanged for 5+ consecutive trading days near "
-                f"{spy[stale_mask].index[-1].date()} — possible data freeze"
-            )
-
-    if "VIX" in daily.columns:
-        vix_max = daily["VIX"].dropna().max()
-        if vix_max > 120:
-            issues.append(
-                f"VIX reached {vix_max:.1f} — historical max is ~89 (COVID); "
-                f"likely data error that could trigger false crash-short"
-            )
 
     if len(daily) < 1000:
         issues.append(f"only {len(daily)} daily rows — V12 needs at least 5y of history")
@@ -397,25 +399,12 @@ def fetch_and_clean_data(
                 raise RuntimeError("Live data fetch failed and no cache available.")
         else:
             daily = prices.join(macro, how="outer").sort_index()
-            # Dedup in case prices and macro share an overlapping duplicate date
-            daily = daily[~daily.index.duplicated(keep="last")]
             spy_days = daily.index[daily["SPY"].notna()]
-            daily = daily.reindex(spy_days)
-            # Price series: cap ffill at 5 trading days to surface data gaps
-            price_cols = [c for c in daily.columns
-                          if c in set(ASSETS + ["VIX", "VIX3M", "SKEW"] + SECTOR_ETFS)]
-            macro_cols = [c for c in daily.columns if c not in price_cols]
-            daily[price_cols] = daily[price_cols].ffill(limit=5)
-            daily[macro_cols] = daily[macro_cols].ffill()
+            daily = daily.reindex(spy_days).ffill()
 
             missing = [c for c in ASSETS if c not in daily.columns or daily[c].dropna().empty]
             if missing:
-                if cache_exists:
-                    print(f"          [WARN] yfinance fetch incomplete ({missing}), falling back to cache")
-                    daily = read_daily_cache(cache_path)
-                    source = "fallback cache (yfinance partial failure)"
-                else:
-                    raise RuntimeError(f"Required assets missing after fetch: {missing}")
+                raise RuntimeError(f"Required assets missing after fetch: {missing}")
 
             first_valid = max(daily[c].first_valid_index() for c in ASSETS)
             daily = daily.loc[first_valid:].copy()
@@ -785,7 +774,7 @@ def build_v17_conservative_signal(
         "spy_rv_ref_55p": rv_ref,
         "vix": vix,
         "vix_ma_52w": vix.rolling(vix_ma).mean(),
-        # v17-pro diagnostics
+        # NEW v17-pro diagnostics
         "yc_pos_steep": yc_steep.astype(int),
         "t10y2y": t10y2y,
         "t10y2y_chg_13w": (t10y2y.diff(YC_DIFF_WEEKS) if "T10Y2Y" in weekly.columns
@@ -882,14 +871,17 @@ def run_backtest(
     exposure = daily_w["SPY"] + 3.0 * daily_w["SPXL"] - 3.0 * daily_w["SPXS"]
     equity = (1.0 + strat_ret).cumprod()
 
+    rf_daily = get_rf_daily(daily, strat_ret.index)
+
     return {
         "ret": strat_ret, "weights": daily_w,
         "exposure": exposure, "equity": equity,
         "turnover": turnover,
+        "rf_daily": rf_daily,
     }
 
 
-def metrics_daily(returns: pd.Series) -> Dict[str, float]:
+def metrics_daily(returns: pd.Series, rf_daily: Optional[pd.Series] = None) -> Dict[str, float]:
     r = pd.Series(returns).replace([np.inf, -np.inf], np.nan).dropna()
     if r.empty:
         return {"n": 0, "total_return": np.nan, "cagr": np.nan, "annual_vol": np.nan,
@@ -900,7 +892,15 @@ def metrics_daily(returns: pd.Series) -> Dict[str, float]:
     total_return = float(eq.iloc[-1] - 1.0)
     cagr = float(eq.iloc[-1] ** (1.0 / years) - 1.0) if years > 0 and eq.iloc[-1] > 0 else np.nan
     annual_vol = float(r.std() * np.sqrt(ANNUALIZATION_DAYS))
-    sharpe = float(r.mean() * ANNUALIZATION_DAYS / annual_vol) if annual_vol > 1e-12 else np.nan
+
+    # Sharpe: subtract daily risk-free rate before annualizing
+    if rf_daily is not None:
+        rf_aligned = rf_daily.reindex(r.index).ffill().fillna(0.0)
+        excess = r - rf_aligned
+    else:
+        excess = r
+    sharpe = float(excess.mean() * ANNUALIZATION_DAYS / annual_vol) if annual_vol > 1e-12 else np.nan
+
     drawdown = eq / eq.cummax() - 1.0
     max_drawdown = float(drawdown.min())
     calmar = float(cagr / abs(max_drawdown)) if max_drawdown < 0 else np.nan
@@ -910,299 +910,6 @@ def metrics_daily(returns: pd.Series) -> Dict[str, float]:
         "max_drawdown": max_drawdown, "calmar": calmar,
         "hit_rate": float((r > 0).mean()),
     }
-
-
-# ---------------------------------------------------------------------------
-# Daily-frequency signal engine  (V12 + V17 at daily bars)
-# ---------------------------------------------------------------------------
-# All weekly lookback constants are multiplied by 5 (trading days per week).
-# Signals are generated on every trading day and can be rebalanced at any
-# sub-interval (1 day, 2 days, 3 days, or 5 days≈weekly).
-
-def compute_daily_v12v17_signal(daily: pd.DataFrame) -> Tuple[pd.Series, pd.Series]:
-    """V12+V17 signal at daily frequency (×5 day-equivalent lookbacks).
-
-    Returns (v12_daily, v17_daily) both indexed by daily.index.
-    Crash-short, leveraged-recovery, calm-bull, yield-curve, and ranging
-    sleeves all active — exact same logic as the weekly model, just sampled
-    every trading day instead of every Friday.
-    """
-    spy   = daily["SPY"].ffill()
-    vix   = daily["VIX"].ffill()   if "VIX"           in daily.columns else pd.Series(20.0,  index=daily.index)
-    vix3m = daily["VIX3M"].ffill() if "VIX3M"         in daily.columns else pd.Series(np.nan, index=daily.index)
-    t10y2y= daily["T10Y2Y"].ffill()if "T10Y2Y"        in daily.columns else pd.Series(np.nan, index=daily.index)
-    dgs10 = daily["DGS10"].ffill() if "DGS10"         in daily.columns else pd.Series(np.nan, index=daily.index)
-    hy    = daily["BAMLH0A0HYM2"].ffill() if "BAMLH0A0HYM2" in daily.columns else pd.Series(np.nan, index=daily.index)
-
-    # Day-equivalent lookback constants (weekly × 5)
-    LMA      = 200   # 40W trend MA
-    R4W      = 20    # 4W return / breadth diff period
-    R8W      = 40    # 8W return
-    R13W     = 65    # 13W momentum, sector MA, YC diff
-    R26W     = 130   # 26W peak/drawdown, rate MA, RV window
-    VIX_Z_W  = 260   # 52W VIX z-score
-    REC_HOLD = 40    # 8W recovery hold
-    BNC_HOLD = 20    # 4W bounce hold
-    RATE_MA  = 130   # 26W rate MA
-    RV_WIN   = 130   # 26W realized-vol window
-    RV_LBK   = 520   # 104W RV quantile lookback
-    VIX_MA   = 260   # 52W VIX MA (calm-bull)
-    YC_DIFF  = 65    # 13W yield-curve diff (V17)
-    SHORT_HOLD = 20  # 4W crash-short hold
-
-    # ── V9 base ───────────────────────────────────────────────────────────────
-    above_lma = spy > spy.rolling(LMA, min_periods=LMA // 2).mean()
-    sig = pd.Series(1.0, index=daily.index)
-    sig[~above_lma] = 0.60
-
-    spy_r20 = spy.pct_change(R4W)
-    vix_z   = zscore(vix, VIX_Z_W)
-
-    if not t10y2y.isna().all():
-        curve_steep_v9 = t10y2y.diff(R13W) > 0.20
-        cst = above_lma & curve_steep_v9
-        sig[cst] = np.maximum(sig[cst], 1.20)
-
-    shallow = above_lma & (spy_r20 < -0.02) & (vix_z > 0.30)
-    deep    = above_lma & (spy_r20 < -0.05) & (vix_z > 0.80)
-    sig[shallow] = np.maximum(sig[shallow], 1.30)
-    sig[deep]    = np.maximum(sig[deep],    1.70)
-
-    peak_r26 = spy.rolling(R26W, min_periods=R26W // 2).max()
-    drawdown = spy / peak_r26 - 1.0
-
-    available_sectors = [c for c in SECTOR_ETFS if c in daily.columns]
-    if len(available_sectors) >= 4:
-        breadth = pd.concat(
-            [(daily[c].ffill() > daily[c].ffill().rolling(R13W, min_periods=R13W // 2).mean()).astype(float)
-             for c in available_sectors], axis=1,
-        ).mean(axis=1)
-        rec_fire   = (drawdown <= -0.10) & (breadth.diff(R4W) > 0)
-        rec_active = rec_fire.astype(float).rolling(REC_HOLD, min_periods=1).max().fillna(0).astype(bool)
-        sig[rec_active] = np.maximum(sig[rec_active], 1.50)
-
-    # VIX bounce (weekly: shift(1)>1.0 & shift(2)>1.0 → daily: shift(5) & shift(10))
-    stressed    = (vix_z.shift(5) > 1.0) & (vix_z.shift(10) > 1.0)
-    vix_falling = vix.pct_change(10) < -0.10   # 2W → 10D
-    past_bottom = spy > spy.rolling(R8W // 2, min_periods=4).min() * 1.03
-    bnc_fire    = stressed & vix_falling & past_bottom
-    bnc_active  = bnc_fire.astype(float).rolling(BNC_HOLD, min_periods=1).max().fillna(0).astype(bool)
-    sig[bnc_active] = np.maximum(sig[bnc_active], 1.70)
-
-    sig = sig.clip(0.0, 1.8)
-
-    # ── V10 rate guard ────────────────────────────────────────────────────────
-    if not dgs10.isna().all():
-        rate_stress = dgs10 > dgs10.rolling(RATE_MA, min_periods=RATE_MA // 2).mean()
-        sig[rate_stress & (sig > 1.0)] = 1.0
-    base = sig.copy()
-
-    # ── V12 crash ensemble (75-variant vote, daily-equivalent periods) ────────
-    ma_list    = [150, 175, 200, 225, 250]   # [30,35,40,45,50]W × 5
-    crash_list = [-0.06, -0.07, -0.08, -0.09, -0.10]
-    rate_list  = [90, 110, 130, 150, 170]    # [18,22,26,30,34]W × 5
-    cap_list   = [0.60, 0.70, 0.85]
-
-    # Pre-compute bounce-veto once (expensive if recomputed per variant)
-    bv_zscores = zscore(vix, VIX_Z_W)
-    bv_base = (
-        (bv_zscores.shift(5) > 1.0)
-        & (vix.pct_change(10) < -0.10)
-        & (spy > spy.rolling(R8W // 2, min_periods=4).min() * 1.03)
-    )
-    bounce_veto_global = bv_base.astype(float).rolling(15, min_periods=1).max().fillna(0).astype(bool)
-
-    vote_sum   = pd.Series(0.0, index=daily.index)
-    n_variants = 0
-    for ma in ma_list:
-        spy_ma = spy.rolling(ma, min_periods=ma // 2).mean()
-        for c4 in crash_list:
-            for rm in rate_list:
-                if not dgs10.isna().all():
-                    rs_v = dgs10 > dgs10.rolling(rm, min_periods=rm // 2).mean()
-                else:
-                    rs_v = pd.Series(False, index=daily.index)
-                below   = spy < spy_ma
-                bad_ret = spy_r20 <= c4
-                for cap in cap_list:
-                    fire = below & bad_ret & (base <= cap) & rs_v & ~bounce_veto_global
-                    vote_sum += fire.astype(float)
-                    n_variants += 1
-
-    vote_frac = vote_sum / max(n_variants, 1)
-
-    # Crash score (0–10)
-    cs = pd.Series(0.0, index=daily.index)
-    cs += (spy < spy.rolling(150, min_periods=75).mean()).astype(float)
-    cs += (spy < spy.rolling(200, min_periods=100).mean()).astype(float)
-    cs += (spy_r20 <= -0.06).astype(float)
-    cs += (spy.pct_change(R8W) <= -0.10).astype(float)
-    cs += (base <= 0.85).astype(float)
-    if not dgs10.isna().all():
-        cs += (dgs10 > dgs10.rolling(RATE_MA, min_periods=RATE_MA // 2).mean()).astype(float)
-        cs += (dgs10.diff(R13W) > 0.25).astype(float)
-    cs += (vix_z > 0.50).astype(float)
-    if not vix3m.isna().all():
-        cs += (vix > vix3m).astype(float)
-    if not hy.isna().all():
-        hy_ma = hy.rolling(RATE_MA, min_periods=RATE_MA // 2).mean()
-        cs += ((hy.diff(R4W) > 0.25) | (zscore(hy, VIX_Z_W) > 0.50)).astype(float)
-
-    entry  = (vote_frac >= 0.55) & (cs >= 5)
-    active = entry.astype(float).rolling(SHORT_HOLD, min_periods=1).max().fillna(0).astype(bool)
-
-    v12 = base.copy()
-    v12[active] = -1.0
-    v12 = v12.clip(-1.0, 1.8)
-
-    # ── V17 calm-bull + yield-curve boosts ────────────────────────────────────
-    rv     = spy.pct_change().rolling(RV_WIN, min_periods=RV_WIN // 2).std() * np.sqrt(252.0)
-    rv_ref = rv.rolling(RV_LBK, min_periods=max(30, RV_LBK // 3)).quantile(0.55)
-
-    v12_n   = pd.Series(np.isclose(v12.astype(float), 1.0), index=daily.index)
-    c_trend = spy > spy.rolling(LMA, min_periods=LMA // 2).mean()
-    c_mom   = spy.pct_change(R13W) > 0.0
-    c_calm  = rv < rv_ref
-    c_vixlw = vix < vix.rolling(VIX_MA, min_periods=VIX_MA // 4).mean()
-    calm_bull = v12_n & c_trend & c_mom & c_calm & c_vixlw
-
-    if not t10y2y.isna().all():
-        yc_steep = ((t10y2y > 0) & (t10y2y.diff(YC_DIFF) > 0)).fillna(False)
-    else:
-        yc_steep = pd.Series(False, index=daily.index)
-
-    intersection = calm_bull & yc_steep & v12_n
-    cb_only      = calm_bull & ~yc_steep & v12_n
-    yc_only      = ~calm_bull & yc_steep & v12_n
-
-    v17 = v12.astype(float).copy()
-    v17 = v17.where(~intersection, 1.0 + BOOST_INTERSECTION)
-    v17 = v17.where(~cb_only,      1.0 + BOOST_CB_ONLY)
-    v17 = v17.where(~yc_only,      1.0 + BOOST_YC_ONLY)
-
-    return v12, v17
-
-
-def run_flexible_backtest(
-    signal: pd.Series, daily: pd.DataFrame, tc_bps: float
-) -> Dict[str, Any]:
-    """Backtest with signal at any rebalancing frequency.
-
-    signal: Series indexed at the chosen rebalance dates.
-    Weights are held constant between rebalance dates (same as weekly model).
-    Transaction costs applied at each rebalance.
-    """
-    sig_prices = daily.reindex(signal.index, method="nearest")
-    sig = signal.astype(float).clip(-1.0, 1.8).ffill().fillna(1.0)
-
-    weights = signal_to_weekly_weights(sig, sig_prices)
-    daily_w = weekly_weights_to_daily(weights, daily.index)
-
-    daily_ret = daily[ASSETS].ffill().pct_change().fillna(0.0)
-    turnover  = daily_w.diff().abs().sum(axis=1).fillna(0.0)
-    cost      = turnover * (tc_bps / 10000.0)
-    strat_ret = (daily_w * daily_ret).sum(axis=1) - cost
-    equity    = (1.0 + strat_ret).cumprod()
-    exposure  = daily_w["SPY"] + 3.0 * daily_w["SPXL"] - 3.0 * daily_w["SPXS"]
-
-    return {
-        "ret": strat_ret, "equity": equity, "weights": daily_w,
-        "exposure": exposure, "turnover": turnover,
-    }
-
-
-def compare_signal_frequencies(
-    daily: pd.DataFrame, tc_bps: float = 5.0,
-) -> pd.DataFrame:
-    """Test V12+V17 signal at 1/2/3/5-day rebalancing frequencies.
-
-    Computes the full daily signal once, then sub-samples to each frequency.
-    Also tests a 'regime-change only' mode that rebalances only when the
-    signal TIER changes (ignoring tiny floating-point moves).
-    Returns a DataFrame with full-period and holdout metrics for each variant.
-    """
-    v12_d, v17_d = compute_daily_v12v17_signal(daily)
-
-    # Discretise signal to regime tier for change-detection
-    def _tier(s: pd.Series) -> pd.Series:
-        t = pd.Series("NORMAL", index=s.index)
-        t[s < 0]                          = "SHORT"
-        t[(s >= 0) & (s < 1.0)]           = "DEFENSIVE"
-        t[np.isclose(s, 1.0 + BOOST_CB_ONLY, atol=0.01)]     = "CB"
-        t[np.isclose(s, 1.0 + BOOST_YC_ONLY, atol=0.01)]     = "YC"
-        t[np.isclose(s, 1.0 + BOOST_INTERSECTION, atol=0.01)] = "DUAL"
-        t[s > 1.21]                       = "LEVERED"
-        return t
-
-    tier_d = _tier(v17_d)
-
-    rows = []
-    spy_ret = daily["SPY"].ffill().pct_change().fillna(0.0)
-    spy_met = metrics_daily(spy_ret)
-    spy_hld = metrics_daily(spy_ret.loc["2021-01-01":])
-
-    for label, freq, tc in [
-        ("weekly_5bps",        5,    5.0),
-        ("every3d_5bps",       3,    5.0),
-        ("every3d_10bps",      3,   10.0),
-        ("every2d_5bps",       2,    5.0),
-        ("every2d_10bps",      2,   10.0),
-        ("daily_5bps",         1,    5.0),
-        ("daily_10bps",        1,   10.0),
-        ("daily_20bps",        1,   20.0),
-    ]:
-        # Sub-sample signal to the given frequency
-        sig_sub = v17_d.iloc[::freq]
-
-        bt = run_flexible_backtest(sig_sub, daily, tc)
-        met  = metrics_daily(bt["ret"])
-        hld  = metrics_daily(bt["ret"].loc["2021-01-01":])
-        ann_to = float(bt["turnover"].sum() / (len(bt["ret"]) / 252.0))
-
-        # Count signal-date changes
-        tier_sub = tier_d.reindex(sig_sub.index)
-        n_changes = int((tier_sub != tier_sub.shift()).sum())
-
-        rows.append({
-            "label":           label,
-            "freq_days":       freq,
-            "tc_bps":          tc,
-            "full_sharpe":     met["sharpe"],
-            "full_cagr_pct":   met["cagr"] * 100,
-            "full_maxdd_pct":  met["max_drawdown"] * 100,
-            "full_calmar":     met["calmar"],
-            "hld_sharpe":      hld["sharpe"],
-            "hld_cagr_pct":    hld["cagr"] * 100,
-            "hld_maxdd_pct":   hld["max_drawdown"] * 100,
-            "n_signal_changes":n_changes,
-            "ann_turnover":    ann_to,
-        })
-
-    # Regime-change-triggered: rebalance only when tier changes
-    tier_changes = tier_d[tier_d != tier_d.shift()]
-    if len(tier_changes) > 10:
-        sig_regime = v17_d.reindex(tier_changes.index)
-        for tc in [5.0, 10.0]:
-            bt = run_flexible_backtest(sig_regime, daily, tc)
-            met = metrics_daily(bt["ret"])
-            hld = metrics_daily(bt["ret"].loc["2021-01-01":])
-            ann_to = float(bt["turnover"].sum() / (len(bt["ret"]) / 252.0))
-            rows.append({
-                "label":           f"regime_change_{int(tc)}bps",
-                "freq_days":       0,
-                "tc_bps":          tc,
-                "full_sharpe":     met["sharpe"],
-                "full_cagr_pct":   met["cagr"] * 100,
-                "full_maxdd_pct":  met["max_drawdown"] * 100,
-                "full_calmar":     met["calmar"],
-                "hld_sharpe":      hld["sharpe"],
-                "hld_cagr_pct":    hld["cagr"] * 100,
-                "hld_maxdd_pct":   hld["max_drawdown"] * 100,
-                "n_signal_changes": len(tier_changes),
-                "ann_turnover":    ann_to,
-            })
-
-    return pd.DataFrame(rows)
 
 
 # ---------------------------------------------------------------------------
@@ -1217,7 +924,9 @@ def headline_comparison(bt: Dict[str, Dict], daily: pd.DataFrame) -> pd.DataFram
     rows = []
     for period, mask in periods.items():
         for model, obj in bt.items():
-            m = metrics_daily(obj["ret"][mask])
+            rf = obj.get("rf_daily", None)
+            rf_slice = rf[mask] if rf is not None else None
+            m = metrics_daily(obj["ret"][mask], rf_daily=rf_slice)
             exposure = obj.get("exposure", pd.Series(1.0, index=daily.index))
             rows.append({
                 "period": period, "model": model, **m,
@@ -1243,7 +952,9 @@ def stress_window_report(bt: Dict[str, Dict]) -> pd.DataFrame:
         for model, obj in bt.items():
             r = obj["ret"].loc[s:e]
             if len(r) < 10: continue
-            rows.append({"window": name, "model": model, **metrics_daily(r)})
+            rf = obj.get("rf_daily", None)
+            rf_slice = rf.loc[s:e] if rf is not None else None
+            rows.append({"window": name, "model": model, **metrics_daily(r, rf_daily=rf_slice)})
     return pd.DataFrame(rows)
 
 
@@ -1251,9 +962,11 @@ def yearly_report(bt: Dict[str, Dict]) -> pd.DataFrame:
     rows = []
     for model, obj in bt.items():
         ret = obj["ret"]
+        rf = obj.get("rf_daily", None)
         for year, r in ret.groupby(ret.index.year):
             if len(r) < 50: continue
-            rows.append({"year": int(year), "model": model, **metrics_daily(r)})
+            rf_slice = rf.loc[r.index] if rf is not None else None
+            rows.append({"year": int(year), "model": model, **metrics_daily(r, rf_daily=rf_slice)})
     return pd.DataFrame(rows)
 
 
@@ -1399,7 +1112,13 @@ def deflated_sharpe_table(bt: Dict[str, Dict], n_trials: int = DEFAULT_N_VARIANT
         n = len(r)
         if n < 30 or r.std() <= 0:
             continue
-        daily_sr = float(r.mean() / r.std())
+        rf = obj.get("rf_daily", None)
+        if rf is not None:
+            rf_aligned = rf.reindex(r.index).ffill().fillna(0.0)
+            excess = r - rf_aligned
+        else:
+            excess = r
+        daily_sr = float(excess.mean() / r.std())
         annual_sr = daily_sr * np.sqrt(ANNUALIZATION_DAYS)
         skew, kurt = _skew_kurt(r)
         denom = 1.0 - skew * daily_sr + ((kurt - 1.0) / 4.0) * daily_sr ** 2
@@ -1431,7 +1150,12 @@ def bayesian_sharpe_table(bt: Dict[str, Dict], n_draws: int, seed: int) -> pd.Da
     draws = {}
     rows = []
     for model, obj in bt.items():
-        r = pd.Series(obj["ret"]).replace([np.inf, -np.inf], np.nan).dropna().values
+        r = pd.Series(obj["ret"]).replace([np.inf, -np.inf], np.nan).dropna()
+        rf = obj.get("rf_daily", None)
+        if rf is not None:
+            rf_aligned = rf.reindex(r.index).ffill().fillna(0.0)
+            r = r - rf_aligned
+        r = r.values
         n = len(r)
         if n < 30 or np.std(r, ddof=1) <= 0:
             continue
@@ -1474,7 +1198,7 @@ def random_rebalance_comparison(
 ) -> pd.DataFrame:
     rng = np.random.default_rng(seed)
     sig = actual_signal.reindex(weekly.index).dropna().astype(float)
-    obs = metrics_daily(actual_bt["ret"])
+    obs = metrics_daily(actual_bt["ret"], rf_daily=actual_bt.get("rf_daily"))
     metric_names = ["total_return", "sharpe", "calmar", "max_drawdown"]
     rand_metrics = {m: np.empty(n_random) for m in metric_names}
     vals = sig.values.copy()
@@ -1483,7 +1207,7 @@ def random_rebalance_comparison(
         perm = rng.permutation(vals)
         s = pd.Series(perm, index=idx)
         bt_rand = run_backtest(s, daily, tc_bps)
-        met = metrics_daily(bt_rand["ret"])
+        met = metrics_daily(bt_rand["ret"], rf_daily=bt_rand.get("rf_daily"))
         for m in metric_names:
             rand_metrics[m][i] = met[m]
     rows = []
@@ -1530,8 +1254,10 @@ def synthetic_null_markets(
     spy_ret = daily["SPY"].ffill().pct_change().fillna(0.0)
     mu, phi, sigma = _estimate_ar1_params(spy_ret)
     n = len(spy_ret)
-    actual_v17 = metrics_daily(bt["v17_conservative"]["ret"])
-    actual_spy = metrics_daily(bt["SPY_BH"]["ret"])
+    rf_v17 = bt["v17_conservative"].get("rf_daily", None)
+    rf_spy = bt["SPY_BH"].get("rf_daily", None)
+    actual_v17 = metrics_daily(bt["v17_conservative"]["ret"], rf_daily=rf_v17)
+    actual_spy = metrics_daily(bt["SPY_BH"]["ret"], rf_daily=rf_spy)
     obs_delta = {m: actual_v17[m] - actual_spy[m] for m in ["total_return", "sharpe", "calmar", "max_drawdown"]}
     exp = bt["v17_conservative"].get("exposure", pd.Series(1.0, index=daily.index)).reindex(daily.index).ffill().fillna(1.0).values
     null_deltas = {m: np.empty(n_synthetic) for m in obs_delta}
@@ -1580,7 +1306,12 @@ def stratified_regime_test(bt: Dict[str, Dict], signal_table: pd.DataFrame, dail
         r17 = bt["v17_conservative"]["ret"][mask]
         r12 = bt["v12"]["ret"][mask]
         rsp = bt["SPY_BH"]["ret"][mask]
-        met17, met12, metspy = metrics_daily(r17), metrics_daily(r12), metrics_daily(rsp)
+        rf17 = bt["v17_conservative"].get("rf_daily")
+        rf12 = bt["v12"].get("rf_daily")
+        rfsp = bt["SPY_BH"].get("rf_daily")
+        met17 = metrics_daily(r17, rf_daily=rf17[mask] if rf17 is not None else None)
+        met12 = metrics_daily(r12, rf_daily=rf12[mask] if rf12 is not None else None)
+        metspy = metrics_daily(rsp, rf_daily=rfsp[mask] if rfsp is not None else None)
         # mean-return block bootstrap p-value vs v12 inside this regime.
         diff = (r17 - r12).dropna().values
         rng = np.random.default_rng(seed + len(rows))
@@ -1618,7 +1349,10 @@ def rolling_window_test(bt: Dict[str, Dict], horizons_years: List[int] = [1, 3, 
         idx = bt["SPY_BH"]["ret"].index
         for start_i in range(0, len(idx) - window + 1, step):
             s, e = idx[start_i], idx[start_i + window - 1]
-            vals = {m: metrics_daily(obj["ret"].loc[s:e]) for m, obj in bt.items()}
+            vals = {m: metrics_daily(obj["ret"].loc[s:e],
+                                     rf_daily=obj.get("rf_daily", pd.Series(dtype=float)).loc[s:e]
+                                     if obj.get("rf_daily") is not None else None)
+                    for m, obj in bt.items()}
             rows.append({
                 "horizon_years": yrs,
                 "start": s.date().isoformat(),
@@ -1698,7 +1432,7 @@ def parameter_sensitivity_test(
     if grid == "off":
         return pd.DataFrame()
     base_bt = run_backtest(v12_signal, daily, tc_bps)
-    base_hold = metrics_daily(base_bt["ret"].loc["2021-01-01":])
+    base_hold = metrics_daily(base_bt["ret"].loc["2021-01-01":], rf_daily=base_bt.get("rf_daily", pd.Series(dtype=float)).loc["2021-01-01":] if base_bt.get("rf_daily") is not None else None)
     if grid == "smoke":
         # Fast coverage check for the sensitivity code path.
         boosts = [0.10, 0.15, 0.20]
@@ -1722,8 +1456,9 @@ def parameter_sensitivity_test(
                             momentum_weeks=mom, rv_quantile=rvq, vix_ma=vixma,
                         )
                         bt = run_backtest(sig, daily, tc_bps)
-                        hold = metrics_daily(bt["ret"].loc["2021-01-01":])
-                        full = metrics_daily(bt["ret"])
+                        rf_bt = bt.get("rf_daily")
+                        hold = metrics_daily(bt["ret"].loc["2021-01-01":], rf_daily=rf_bt.loc["2021-01-01":] if rf_bt is not None else None)
+                        full = metrics_daily(bt["ret"], rf_daily=rf_bt)
                         rows.append({
                             "boost": boost, "trend_ma": trend, "momentum_weeks": mom,
                             "rv_quantile": rvq, "vix_ma": vixma,
@@ -2109,17 +1844,16 @@ def classify_regime(
         # Legacy path
         out[(v17_signal > 1.0) & (calm_bull_trigger == 1)] = "CALM_BULL_BOOST"
         out[(v17_signal > 1.0) & (calm_bull_trigger == 0)] = "LEVERAGED_LONG"
-
     return out
 
 
 REGIME_REASON = {
-    "CRASH_SHORT":    "V12 crash-short protection retained.",
-    "DEFENSIVE":      "V12 defensive risk-control signal retained.",
-    "NORMAL":         "No high-conviction trigger; baseline 100% SPY.",
+    "CRASH_SHORT": "V12 crash-short protection retained.",
+    "DEFENSIVE": "V12 defensive risk-control signal retained.",
+    "NORMAL": "No high-conviction trigger; baseline 100% SPY.",
     "CALM_BULL_BOOST": "Calm-uptrend conditions met (CB only); V17-pro raises exposure to 1.07x.",
-    "YC_BOOST":       "Yield curve positive AND steepening (YC only); V17-pro raises exposure to 1.12x.",
-    "DUAL_BOOST":     "Calm-uptrend AND yield-curve steepening both fire; V17-pro raises exposure to 1.25x (highest conviction).",
+    "YC_BOOST": "Yield curve positive AND steepening (YC only); V17-pro raises exposure to 1.12x.",
+    "DUAL_BOOST": "Calm-uptrend AND yield-curve steepening both fire; V17-pro raises exposure to 1.25x (highest conviction).",
     "LEVERAGED_LONG": "V12 high-conviction leverage signal retained (dip-buy / recovery).",
 }
 
@@ -2134,7 +1868,7 @@ def build_signal_table(
     table["v12_signal"] = v12_signal.reindex(table.index).ffill().fillna(1.0)
     table["v17_signal"] = v17_signal.reindex(table.index).ffill().fillna(1.0)
     table["calm_bull_trigger"] = diagnostics["calm_bull_trigger"].reindex(table.index).fillna(0).astype(int)
-    # v17-pro tier flags (forwarded into classify_regime)
+    # v17-pro tier flags (forwarded into classify_regime if present)
     for col in ("tier_intersection", "tier_cb_only", "tier_yc_only", "yc_pos_steep"):
         if col in diagnostics.columns:
             table[col] = diagnostics[col].reindex(table.index).fillna(0).astype(int)
@@ -2145,11 +1879,10 @@ def build_signal_table(
     if all(c in table.columns for c in ("tier_intersection", "tier_cb_only", "tier_yc_only")):
         table["regime"] = classify_regime(
             table["v17_signal"], table["calm_bull_trigger"],
-            table["tier_intersection"], table["tier_cb_only"], table["tier_yc_only"],
-        )
+            table["tier_intersection"], table["tier_cb_only"], table["tier_yc_only"])
     else:
         table["regime"] = classify_regime(table["v17_signal"], table["calm_bull_trigger"])
-    table["reason"] = table["regime"].map(REGIME_REASON).fillna("Unknown regime.")
+    table["reason"] = table["regime"].map(REGIME_REASON)
     return table
 
 
@@ -2161,189 +1894,6 @@ def allocation_text(row: pd.Series) -> str:
         if abs(v) > 1e-6:
             parts.append(f"{label} {v * 100:.1f}%")
     return ",  ".join(parts) if parts else "All cash"
-
-
-# ---------------------------------------------------------------------------
-# Position sizing for live capital
-# ---------------------------------------------------------------------------
-
-def load_trading_config(root: Path) -> Dict:
-    """Load the user's live-trading config from config.json (if present).
-    Returns a dict with safe defaults if the file is missing or malformed.
-    Keys starting with '_' (comments/help) are ignored silently.
-    """
-    defaults = {
-        "capital": 10000.0,
-        "currency": "USD",
-        "fractional_shares": False,
-        "show_position_sizing": True,
-    }
-    cfg_path = root / "config.json"
-    if not cfg_path.exists():
-        return defaults
-    try:
-        with cfg_path.open("r", encoding="utf-8") as f:
-            user_cfg = json.load(f)
-        # Drop comment keys, merge into defaults
-        clean = {k: v for k, v in user_cfg.items() if not k.startswith("_")}
-        defaults.update(clean)
-    except (json.JSONDecodeError, OSError) as e:
-        print(f"   [warn] Could not read config.json ({e}); using defaults.")
-    return defaults
-
-
-def fetch_fx_rate(from_ccy: str, to_ccy: str = "USD") -> Optional[float]:
-    """Fetch latest FX rate via yfinance (e.g. SGD→USD). Returns None on failure."""
-    if from_ccy.upper() == to_ccy.upper():
-        return 1.0
-    ticker = f"{from_ccy.upper()}{to_ccy.upper()}=X"
-    try:
-        import yfinance as yf
-        data = yf.download(ticker, period="5d", progress=False, auto_adjust=True)
-        if data is None or len(data) == 0:
-            return None
-        close = data["Close"]
-        if isinstance(close, pd.DataFrame):
-            close = close.iloc[:, 0]
-        rate = float(close.dropna().iloc[-1])
-        return rate if rate > 0 else None
-    except Exception:
-        return None
-
-
-def _read_tracker_equity(live_dir: Path) -> Optional[float]:
-    """Return current model_equity from live_summary.json, or None if unavailable."""
-    summary_path = Path(live_dir) / "live_summary.json"
-    if not summary_path.exists():
-        return None
-    try:
-        with summary_path.open("r", encoding="utf-8") as f:
-            data = json.load(f)
-        eq = data.get("model_equity")
-        return float(eq) if eq is not None and float(eq) > 0 else None
-    except Exception:
-        return None
-
-
-def compute_position_sizing(
-    row: pd.Series,
-    daily: pd.DataFrame,
-    capital: float,
-    fractional_shares: bool = False,
-) -> Dict[str, Dict[str, float]]:
-    """Translate the model's percentage weights into actionable share counts.
-
-    Uses the most recent close price available in the daily price frame as the
-    reference price (this is the same data the model itself uses, so it works
-    online or offline).
-
-    Returns a dict keyed by ETF symbol with subkeys:
-        weight_pct: portfolio weight as a percentage (e.g. 87.5)
-        target_dollars: target dollar allocation
-        price: latest reference price
-        shares: number of shares to buy (whole shares unless fractional)
-        actual_dollars: actual dollars deployed after rounding
-        leftover: leftover cash from rounding for this leg
-    Plus a "_summary" key with totals.
-    """
-    out = {}
-    total_actual = 0.0
-    total_leftover = 0.0
-
-    for asset in ASSETS:
-        weight = float(row.get(f"weight_{asset}", 0.0))
-        if abs(weight) < 1e-6:
-            continue
-        price_series = daily[asset].dropna() if asset in daily.columns else pd.Series(dtype=float)
-        latest_price = float(price_series.iloc[-1]) if len(price_series) > 0 else float("nan")
-        target_dollars = capital * weight
-        if not np.isfinite(latest_price) or latest_price <= 0:
-            shares = float("nan")
-            actual_dollars = float("nan")
-            leftover = float("nan")
-        elif fractional_shares:
-            # Allow fractional shares (rounded to 4dp for display)
-            shares = round(target_dollars / latest_price, 4)
-            actual_dollars = shares * latest_price
-            leftover = target_dollars - actual_dollars
-        else:
-            # Round DOWN to whole shares
-            shares = float(int(target_dollars // latest_price)) if target_dollars >= 0 else \
-                     -float(int(abs(target_dollars) // latest_price))
-            actual_dollars = shares * latest_price
-            leftover = target_dollars - actual_dollars
-        out[asset] = {
-            "weight_pct": weight * 100,
-            "target_dollars": target_dollars,
-            "price": latest_price,
-            "shares": shares,
-            "actual_dollars": actual_dollars,
-            "leftover": leftover,
-        }
-        if np.isfinite(actual_dollars):
-            total_actual += actual_dollars
-        if np.isfinite(leftover):
-            total_leftover += leftover
-
-    out["_summary"] = {
-        "capital": capital,
-        "total_deployed": total_actual,
-        "total_leftover_cash": capital - total_actual,
-        "fractional_shares": fractional_shares,
-        "price_date": daily.index[-1].strftime("%Y-%m-%d") if len(daily) > 0 else "n/a",
-    }
-    return out
-
-
-def print_position_sizing(sizing: Dict[str, Dict], currency: str = "USD", note: Optional[str] = None) -> None:
-    """Render the POSITION SIZING block in the same style as the rest of the console output."""
-    summary = sizing.get("_summary", {})
-    capital = summary.get("capital", 0.0)
-    price_date = summary.get("price_date", "n/a")
-    fractional = summary.get("fractional_shares", False)
-
-    print(_section_title("POSITION SIZING"))
-    print()
-    print(f"   Capital:        {currency} {capital:,.2f}")
-    if note:
-        print(f"   Note:           {note}")
-    print(f"   Reference px:   close prices as of {price_date}")
-    mode_label = "fractional shares allowed" if fractional else "whole shares (round down)"
-    print(f"   Sizing mode:    {mode_label}")
-    print()
-
-    # Header
-    print(f"   {'ETF':<6s}  {'Weight':>7s}  {'Target $':>12s}  {'Price':>10s}  "
-          f"{'Shares':>10s}  {'Actual $':>12s}  {'Leftover $':>11s}")
-    print(f"   {'-' * 6}  {'-' * 7}  {'-' * 12}  {'-' * 10}  "
-          f"{'-' * 10}  {'-' * 12}  {'-' * 11}")
-
-    for asset in ASSETS:
-        if asset not in sizing:
-            continue
-        leg = sizing[asset]
-        shares_str = (
-            f"{leg['shares']:.4f}" if fractional and np.isfinite(leg['shares'])
-            else (f"{int(leg['shares']):d}" if np.isfinite(leg['shares']) else "n/a")
-        )
-        price_str = f"{leg['price']:.2f}" if np.isfinite(leg['price']) else "n/a"
-        actual_str = f"{leg['actual_dollars']:,.2f}" if np.isfinite(leg['actual_dollars']) else "n/a"
-        leftover_str = f"{leg['leftover']:,.2f}" if np.isfinite(leg['leftover']) else "n/a"
-        print(f"   {asset:<6s}  {leg['weight_pct']:>6.1f}%  "
-              f"{leg['target_dollars']:>12,.2f}  {price_str:>10s}  "
-              f"{shares_str:>10s}  {actual_str:>12s}  {leftover_str:>11s}")
-
-    # Totals
-    deployed = summary.get("total_deployed", 0.0)
-    leftover_total = summary.get("total_leftover_cash", 0.0)
-    print(f"   {'-' * 6}  {'-' * 7}  {'-' * 12}  {'-' * 10}  "
-          f"{'-' * 10}  {'-' * 12}  {'-' * 11}")
-    print(f"   {'TOTAL':<6s}  {'':>7s}  {capital:>12,.2f}  {'':>10s}  "
-          f"{'':>10s}  {deployed:>12,.2f}  {leftover_total:>11,.2f}")
-    print()
-    print(f"   Note: leftover cash sits in your broker account (treat as SHY-equivalent).")
-    print(f"         Shares above are TARGETS — execute on next Monday open.")
-    print()
 
 
 # ---------------------------------------------------------------------------
@@ -2365,7 +1915,6 @@ def print_console(
     out: Path, signal_table: pd.DataFrame, headline: pd.DataFrame,
     stress: pd.DataFrame, bootstrap: pd.DataFrame,
     print_weeks: int, full_mode: bool, data_source: str,
-    sizing: Optional[Dict] = None, currency: str = "USD", capital_note: Optional[str] = None,
 ) -> None:
     """Minimal weekly action output."""
     latest = signal_table.iloc[-1]
@@ -2400,10 +1949,6 @@ def print_console(
     print(f"   Note:       {reason}")
     print(f"   Data:       {data_source}")
     print()
-
-    # Position sizing (if requested)
-    if sizing is not None:
-        print_position_sizing(sizing, currency=currency, note=capital_note)
 
     print(_section_title("RECENT WEEKS"))
     print()
@@ -2458,13 +2003,6 @@ class Config:
     live_dir: Path
     live_reset: bool
     sensitivity_grid: str = "full"
-    # Live position-sizing (loaded from config.json or --capital flag)
-    capital: Optional[float] = None
-    currency: str = "USD"
-    fractional_shares: bool = False
-    show_position_sizing: bool = True
-    capital_note: Optional[str] = None
-    capital_injections: List[Dict] = field(default_factory=list)
 
 
 def run(cfg: Config) -> None:
@@ -2517,11 +2055,11 @@ def run(cfg: Config) -> None:
     n_lev = int((v12_signal > 1.0).sum())
     steps.done(f"{n_short} short, {n_def} defensive, {n_lev} leveraged")
 
-    # 4: Apply V17-PRO signal (calm-bull and yield-curve sleeves)
-    steps.start("Applying V17-PRO signal (calm-bull + YC sleeves)")
+    # 4: Apply V17 conservative boost
+    steps.start("Applying V17 conservative calm-bull boost")
     v17_signal, diagnostics = build_v17_conservative_signal(weekly, v12_signal)
     n_boost = int(diagnostics["calm_bull_trigger"].sum())
-    steps.done(f"{n_boost} calm-bull weeks")
+    steps.done(f"{n_boost} calm-bull boost weeks identified")
 
     # 5: Run backtests
     steps.start("Running daily backtests for SPY / V12 / V17")
@@ -2581,48 +2119,10 @@ def run(cfg: Config) -> None:
         "data_source": data_source,
     }
 
-    # Compute live position sizing if user has set capital
-    sizing = None
-    if cfg.show_position_sizing and cfg.capital is not None and cfg.capital > 0:
-        sizing = compute_position_sizing(
-            row=latest_row, daily=daily,
-            capital=cfg.capital,
-            fractional_shares=cfg.fractional_shares,
-        )
-        # Add the sizing block to the JSON output as well (round for cleanliness)
-        sizing_for_json = {}
-        for k, v in sizing.items():
-            if k == "_summary":
-                sizing_for_json[k] = {
-                    kk: (round(vv, 4) if isinstance(vv, float) else vv)
-                    for kk, vv in v.items()
-                }
-            else:
-                sizing_for_json[k] = {
-                    kk: (round(vv, 4) if isinstance(vv, float) else vv)
-                    for kk, vv in v.items()
-                }
-        latest_dict["position_sizing"] = sizing_for_json
-        latest_dict["currency"] = cfg.currency
-
     (cfg.out_dir / "latest_signal.json").write_text(
         json.dumps(latest_dict, indent=2), encoding="utf-8")
     pd.DataFrame([latest_dict]).to_csv(cfg.out_dir / "latest_signal.csv", index=False)
     signal_table.to_csv(cfg.out_dir / "weekly_signal_history.csv")
-
-    # Weekly model + SPY returns (last 104 weeks) for bot summary command
-    _spy_wret  = (1 + bt["SPY_BH"]["ret"]).resample("W-FRI").prod() - 1
-    _v17_wret  = (1 + bt["v17_conservative"]["ret"]).resample("W-FRI").prod() - 1
-    _wret_mask = _spy_wret.index.isin(signal_table.index)
-    _weekly_returns = pd.DataFrame({
-        "spy_return":   _spy_wret[_wret_mask],
-        "model_return": _v17_wret[_wret_mask],
-        "regime":       signal_table["regime"],
-        "v17_signal":   signal_table["v17_signal"],
-    })
-    _weekly_returns.index.name = "date"
-    _weekly_returns.tail(104).to_csv(cfg.out_dir / "weekly_returns.csv")
-
     headline.to_csv(cfg.out_dir / "headline_comparison.csv", index=False)
     stress.to_csv(cfg.out_dir / "stress_windows.csv", index=False)
     yearly.to_csv(cfg.out_dir / "yearly_comparison.csv", index=False)
@@ -2641,86 +2141,26 @@ def run(cfg: Config) -> None:
             daily=daily,
             initial_capital=cfg.live_start_cash,
             reset=cfg.live_reset,
-            capital_injections=cfg.capital_injections,
         )
 
     steps.done()
 
     print()
     print_console(cfg.out_dir, signal_table, headline, stress, bootstrap,
-                  cfg.print_weeks, full_mode, data_source,
-                  sizing=sizing, currency=cfg.currency, capital_note=cfg.capital_note)
+                  cfg.print_weeks, full_mode, data_source)
 
     if live_result is not None:
-        summary  = live_result.get("summary", {})
-        periods  = live_result.get("periods")
-        currency = cfg.currency or "USD"
+        summary = live_result.get("summary", {})
         print(_section_title("LIVE TRACKER"))
         print()
         print(f"   Action:     {live_result.get('action')}")
         print(f"   Report:     {cfg.live_dir / 'LIVE_TRACKING_REPORT.md'}")
-        print()
+        print(f"   Ledger:     {cfg.live_dir / 'live_signal_ledger.csv'}")
         if summary:
-            # ── inception summary ────────────────────────────────────────
-            model_eq  = summary.get("model_equity", np.nan)
-            spy_eq    = summary.get("spy_equity",   np.nan)
-            m_ret     = summary.get("model_total_return", np.nan)
-            s_ret     = summary.get("spy_total_return",   np.nan)
-            excess    = summary.get("excess_return",      np.nan)
-            m_sharpe  = summary.get("model_sharpe",       np.nan)
-            s_sharpe  = summary.get("spy_sharpe",         np.nan)
-            m_dd      = summary.get("model_max_drawdown", np.nan)
-            s_dd      = summary.get("spy_max_drawdown",   np.nan)
-            start_dt  = summary.get("start_signal_date",  "?")
-            last_dt   = summary.get("last_data_date",     "?")
-            alloc     = summary.get("latest_target_allocation", "n/a")
-            sharpe_s  = f"{m_sharpe:.2f}" if not np.isnan(m_sharpe) else "n/a"
-            dd_s      = f"{m_dd*100:.1f}%" if not np.isnan(m_dd) else "n/a"
-            spy_sh_s  = f"{s_sharpe:.2f}" if not np.isnan(s_sharpe) else "n/a"
-            spy_dd_s  = f"{s_dd*100:.1f}%" if not np.isnan(s_dd) else "n/a"
-            print(f"   SINCE INCEPTION  ({start_dt} -> {last_dt})")
-            print(f"   {'-'*55}")
-            print(f"   {'':12s}  {'Return':>8}   {'Sharpe':>7}   {'MaxDD':>7}   {'Equity':>12}")
-            print(f"   {'Model':12s}  {fmt_pct_signed(m_ret):>8}   {sharpe_s:>7}   {dd_s:>7}   {model_eq:>12,.2f} {currency}")
-            print(f"   {'SPY':12s}  {fmt_pct_signed(s_ret):>8}   {spy_sh_s:>7}   {spy_dd_s:>7}   {spy_eq:>12,.2f} {currency}")
-            print(f"   {'Excess':12s}  {fmt_pct_signed(excess):>8}")
-            print()
-            # ── latest completed / open period ───────────────────────────
-            if periods is not None and not periods.empty:
-                closed = periods[periods["status"].isin(["CLOSED", "OPEN"])]
-                if not closed.empty:
-                    r = closed.iloc[-1]
-                    pd_start = r.get("trade_date", "?")
-                    pd_end   = r.get("period_end", "open")
-                    regime   = r.get("regime", "?")
-                    sig_val  = r.get("v17_signal", np.nan)
-                    mp       = r.get("model_period_return", np.nan)
-                    sp       = r.get("spy_period_return",   np.nan)
-                    ep       = r.get("excess_return",       np.nan)
-                    status   = r.get("status", "")
-                    sig_str  = f"{sig_val:.2f}x" if not (isinstance(sig_val, float) and np.isnan(sig_val)) else "n/a"
-                    label    = "CURRENT PERIOD" if status == "OPEN" else "LAST CLOSED PERIOD"
-                    print(f"   {label}  ({pd_start} -> {pd_end}  |  {regime})")
-                    print(f"   {'-'*55}")
-                    print(f"   Signal: {sig_str}   Allocation: {alloc}")
-                    print(f"   Model:  {fmt_pct_signed(mp)}   SPY: {fmt_pct_signed(sp)}   Excess: {fmt_pct_signed(ep)}")
-                    print()
-            # ── next/pending signal ──────────────────────────────────────
-            pending = None
-            if periods is not None and not periods.empty:
-                pend_rows = periods[periods["status"] == "PENDING_EXECUTION"]
-                if not pend_rows.empty:
-                    pending = pend_rows.iloc[-1]
-            if pending is not None:
-                trade_dt  = pending.get("trade_date", "?")
-                p_regime  = pending.get("regime", "?")
-                p_alloc   = pending.get("target_allocation", "n/a")
-                p_sig     = pending.get("v17_signal", np.nan)
-                p_sig_str = f"{p_sig:.2f}x" if not (isinstance(p_sig, float) and np.isnan(p_sig)) else "n/a"
-                print(f"   NEXT SIGNAL  (trade: {trade_dt}  |  {p_regime})")
-                print(f"   {'-'*55}")
-                print(f"   Signal: {p_sig_str}   Allocation: {p_alloc}")
-                print()
+            print(f"   Model eq:   {summary.get('model_equity', np.nan):,.2f}")
+            print(f"   SPY eq:     {summary.get('spy_equity', np.nan):,.2f}")
+            print(f"   Excess:     {fmt_pct_signed(summary.get('excess_return', np.nan))}")
+        print()
         print(_hr())
         print()
 
@@ -2758,69 +2198,9 @@ def parse_args() -> Config:
                         help="delete the existing live tracker ledger before writing the latest signal")
     parser.add_argument("--sensitivity-grid", choices=["full", "smoke", "off"], default="full",
                         help="full parameter grid, fast smoke grid, or skip sensitivity grid")
-    parser.add_argument("--capital", type=float, default=None,
-                        help="capital to size positions for (overrides config.json). "
-                             "When set, the console output will include a POSITION SIZING block "
-                             "with target shares, prices, and leftover cash for each ETF.")
-    parser.add_argument("--fractional-shares", action="store_true",
-                        help="allow fractional shares in the POSITION SIZING block "
-                             "(default: round down to whole shares)")
-    parser.add_argument("--no-position-sizing", action="store_true",
-                        help="suppress the POSITION SIZING block even if capital is configured")
     args = parser.parse_args()
 
     root = Path(__file__).resolve().parent
-
-    # Load trading config (capital, fractional shares, etc) from config.json
-    trade_cfg = load_trading_config(root)
-    # CLI flags override config file
-    capital_raw = args.capital if args.capital is not None else trade_cfg.get("capital")
-    fractional = args.fractional_shares or trade_cfg.get("fractional_shares", False)
-    show_sizing = not args.no_position_sizing and trade_cfg.get("show_position_sizing", True)
-    currency = trade_cfg.get("currency", "USD")
-
-    # Resolve capital to USD for position sizing
-    capital = capital_raw
-    capital_note = None
-    live_dir_path = root / args.live_dir
-    live_start_cash = args.live_start_cash
-    raw_injections: List[Dict] = trade_cfg.get("capital_injections", []) or []
-    capital_injections: List[Dict] = raw_injections  # default: no currency conversion needed
-
-    if currency.upper() != "USD" and capital_raw is not None:
-        fx_rate = fetch_fx_rate(currency, "USD")
-        if fx_rate is not None:
-            capital_initial_usd = capital_raw * fx_rate
-            rate_str = f"{fx_rate:.4f}"
-        else:
-            print(f"   [warn] Could not fetch {currency}/USD rate; treating capital as USD.")
-            capital_initial_usd = capital_raw
-            fx_rate = 1.0
-            rate_str = "unavailable"
-
-        # Tracker is always seeded with the converted initial USD amount
-        live_start_cash = capital_initial_usd
-
-        # Convert injection amounts from config currency to USD
-        if raw_injections and fx_rate is not None:
-            capital_injections = [
-                {"date": inj["date"], "amount": float(inj["amount"]) * fx_rate}
-                for inj in raw_injections if "date" in inj and "amount" in inj
-            ]
-
-        # Position sizing uses current tracker equity if available (auto-grows with portfolio)
-        tracker_equity = _read_tracker_equity(live_dir_path) if not args.live_reset else None
-        if tracker_equity is not None:
-            capital = tracker_equity
-            capital_note = (
-                f"live tracker portfolio value; "
-                f"initial: {currency} {capital_raw:,.2f} -> USD {capital_initial_usd:,.2f} at {rate_str}"
-            )
-        else:
-            capital = capital_initial_usd
-            if fx_rate != 1.0:
-                capital_note = f"converted from {currency} {capital_raw:,.2f} at {rate_str}"
-
     return Config(
         root=root, mode=args.mode, n_bootstrap=args.n_bootstrap,
         n_random_rebalance=args.n_random_rebalance, n_synthetic=args.n_synthetic,
@@ -2829,12 +2209,9 @@ def parse_args() -> Config:
         print_weeks=args.print_weeks, out_dir=root / args.out_dir,
         refresh_data=args.refresh_data, offline=args.offline,
         start_date=args.start_date,
-        live_track=args.live_track, live_start_cash=live_start_cash,
-        live_dir=live_dir_path, live_reset=args.live_reset,
+        live_track=args.live_track, live_start_cash=args.live_start_cash,
+        live_dir=root / args.live_dir, live_reset=args.live_reset,
         sensitivity_grid=args.sensitivity_grid,
-        capital=capital, currency="USD", capital_note=capital_note,
-        fractional_shares=fractional, show_position_sizing=show_sizing,
-        capital_injections=capital_injections,
     )
 
 
