@@ -136,6 +136,28 @@ def get_rf_daily(daily: Optional[pd.DataFrame] = None, returns_index: Optional[p
         return pd.Series(RISK_FREE_FALLBACK_ANNUAL / ANNUALIZATION_DAYS, index=idx)
 
 
+def align_rf_daily(rf_daily: Optional[pd.Series], index: pd.Index) -> Optional[pd.Series]:
+    """Align RF series to a target index and fill any remaining gaps with fallback RF."""
+    if rf_daily is None:
+        return None
+    rf = pd.Series(rf_daily).reindex(index).ffill()
+    return rf.fillna(RISK_FREE_FALLBACK_ANNUAL / ANNUALIZATION_DAYS)
+
+
+def validate_rf_series(rf_daily: Optional[pd.Series], index: pd.Index, context: str) -> pd.Series:
+    """Fail loudly if RF series is missing, misaligned, or non-finite."""
+    rf = align_rf_daily(rf_daily, index)
+    if rf is None:
+        raise ValueError(f"{context}: risk-free series is missing.")
+    if len(rf) != len(index):
+        raise ValueError(f"{context}: risk-free series length mismatch ({len(rf)} vs {len(index)}).")
+    if not rf.index.equals(index):
+        raise ValueError(f"{context}: risk-free series index mismatch.")
+    if not np.isfinite(rf.to_numpy()).all():
+        raise ValueError(f"{context}: risk-free series contains non-finite values.")
+    return rf
+
+
 # ---------------------------------------------------------------------------
 # Formatters
 # ---------------------------------------------------------------------------
