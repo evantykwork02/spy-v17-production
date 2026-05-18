@@ -13,8 +13,8 @@
   "model_total_return": 0.02735670134706436,
   "spy_total_return": 0.025698963253559137,
   "excess_return": 0.0016577380935052233,
-  "model_sharpe": 4.743031555575668,
-  "spy_sharpe": 4.749377846604947,
+  "model_sharpe": 4.743056370420378,
+  "spy_sharpe": 4.749404537831226,
   "model_max_drawdown": -0.01291023711060757,
   "spy_max_drawdown": -0.012029351892724693,
   "latest_target_allocation": "SPY 100.0%"
