@@ -135,6 +135,12 @@ def get_rf_daily(daily: Optional[pd.DataFrame] = None, returns_index: Optional[p
     else:
         return pd.Series(RISK_FREE_FALLBACK_ANNUAL / ANNUALIZATION_DAYS, index=idx)
 
+def validate_rf_series(rf_daily: pd.Series, returns: pd.Series) -> pd.Series:
+    """Ensure rf_daily is aligned and valid for the given returns series."""
+    if rf_daily is None or rf_daily.empty:
+        return get_rf_daily(returns_index=returns.index)
+    return rf_daily.reindex(returns.index).ffill().fillna(0.0)
+
 
 # ---------------------------------------------------------------------------
 # Formatters
