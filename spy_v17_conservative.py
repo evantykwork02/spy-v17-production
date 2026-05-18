@@ -4,33 +4,35 @@ SPY V17-PRO Conservative — Self-Contained Weekly Signal Engine
 What this is:
     A single-file weekly signal generator that combines:
       - V12: defensive base engine (crash short / defensive / leveraged tiers)
-      - V17-PRO: 3-tier upside sleeve (calm-bull + yield-curve-steepening) on top of V12
+      - V17-PRO / V18 overlay: yield-curve, nervous-market, and tiered calm-bull sleeves on top of V12
 
 What this run does:
     1. Fetches latest daily prices from Yahoo Finance + FRED (free, no API key)
     2. Validates the data (NaN checks, price sanity, freshness)
     3. Computes V12 signal internally from the data
-    4. Applies V17-PRO 3-tier boost on V12's normal weeks
+    4. Applies V17-PRO / V18 overlay only on V12-normal weeks
     5. Writes a clean weekly signal report
     6. In --mode full, runs heavy validation: bootstrap, null markets, random schedules,
        deflated Sharpe, Bayesian Sharpe, rolling windows, cost stress, and sensitivity
 
-V17-PRO rule (only fires when V12 == 1.0; V12 defensive/crash-short/levered logic preserved):
-      INTERSECTION: calm_bull AND yield-curve-steepening   → v17_signal = 1.25
-      CALM_BULL only:                                      → v17_signal = 1.07
-      YC_STEEP only:                                       → v17_signal = 1.12
-      Otherwise:                                           → v17_signal = v12_signal
+V17-PRO / V18 rule (only fires when V12 == 1.0; V12 defensive/crash-short/levered logic preserved):
+      INTERSECTION: calm_bull AND yield-curve-steepening       -> v17_signal = 1.40
+      STRONG CALM_BULL only: strict CB confirmation             -> v17_signal = 1.20
+      WEAK CALM_BULL only: CB without strict confirmation       -> v17_signal = 1.00
+      YC_STEEP only:                                           -> v17_signal = 1.22
+      NERVOUS_MARKET: VIX >= 20, no other overlay tier          -> v17_signal = 1.30
+      Otherwise:                                               -> v17_signal = v12_signal
 
 Where:
     calm_bull   = V12 normal AND SPY>40W MA AND 13W mom>0 AND 26W RV<55th pct AND VIX<52W avg
+    strong_cb   = CB-only AND SPY>20W MA AND 13W mom>3% AND VIX<VIX3M AND HY OAS not worsening AND 52W DD>-7%
     yc_steep    = T10Y2Y > 0 AND T10Y2Y has risen over the last 13 weeks
 
-Validation summary (2009-01 to 2026-04, 17.3 years; see V17_PRO_UPGRADE_REPORT.md):
-    v17_orig:  Sharpe 1.171, CAGR 21.55%, MaxDD -24.34%, Calmar 0.886
-    v17-pro:   Sharpe 1.187, CAGR 22.29%, MaxDD -24.25%, Calmar 0.919
-    Pre-2021 (out-of-holdout) Sharpe lift: 1.078 → 1.111
-    Null permutation test: real lift +85 ann bps; random shuffles mean -10; P(random ≥ real)=0.000
-    Bootstrap (5000 iters, 21d blocks) full period: +66 ann bps, p_fail=0.0004
+Latest local smoke validation used repo offline cache through 2026-05-15:
+    SPY_BH:     Sharpe 0.884, CAGR 15.57%, MaxDD -33.72%, Calmar 0.462
+    V12:        Sharpe 1.121, CAGR 22.21%, MaxDD -24.17%, Calmar 0.919
+    V17 tiered: Sharpe 1.165, CAGR 25.00%, MaxDD -24.17%, Calmar 1.034
+    2021+ V17 tiered: Sharpe 1.241, CAGR 27.51%, MaxDD -17.23%, Calmar 1.596
 
 Run:
     py spy_v17_conservative.py --mode signal              # quick weekly run
@@ -726,14 +728,23 @@ def v12_reason_for_row(signal: float, vote: float, score: float, spy_4w: float, 
 # V17 conservative boost on top of V12
 # ---------------------------------------------------------------------------
 
-# V17-PRO three-tier boost magnitudes (calibrated; see V17_PRO_UPGRADE_REPORT.md).
+# V17-PRO / V18 boost magnitudes.
 # The legacy `boost` argument below is accepted for API compatibility but ignored.
-BOOST_INTERSECTION = 0.40  # both calm_bull AND yc_steep fire (highest conviction)
-BOOST_CB_ONLY      = 0.05  # only calm_bull fires (weakest signal, conservative)
-BOOST_YC_ONLY      = 0.22  # only yc_steep fires (strong signal)
-BOOST_NERVOUS      = 0.30  # VIX >= 20 nervous-market sleeve (robust premium)
-NERVOUS_VIX_THRESHOLD = 20 # VIX level for nervous-market sleeve
+BOOST_INTERSECTION = 0.40  # both calm_bull AND yc_steep fire -> 1.40x
+BOOST_CB_ONLY      = 0.00  # weak CB-only is now neutral -> 1.00x
+BOOST_CB_STRONG    = 0.20  # strong CB-only tier -> 1.20x
+BOOST_YC_ONLY      = 0.22  # only yc_steep fires -> 1.22x
+BOOST_NERVOUS      = 0.30  # VIX >= 20 nervous-market sleeve -> 1.30x
+NERVOUS_VIX_THRESHOLD = 20  # VIX level for nervous-market sleeve
 YC_DIFF_WEEKS = 13
+
+# Strong calm-bull filter. This only applies inside CB-only weeks.
+# Tested candidate: weak CB-only = 1.00x, strong CB-only = 1.20x.
+CB_STRONG_MOM_13W = 0.03
+CB_STRONG_MAX_DD_52W = -0.07
+CB_STRONG_MA_WEEKS = 20
+CB_STRONG_HY_MA_WEEKS = 26
+CB_STRONG_HY_DIFF_WEEKS = 4
 
 
 def build_v17_conservative_signal(
@@ -747,24 +758,30 @@ def build_v17_conservative_signal(
     rv_quantile: float = DEFAULT_RV_QUANTILE,
     vix_ma: int = DEFAULT_VIX_MA,
 ) -> Tuple[pd.Series, pd.DataFrame]:
-    """V18: V12 base + 4-tier boost during V12-normal weeks.
+    """V18: V12 base + tiered boosts during V12-normal weeks.
 
-    Tier 1 INTERSECTION (calm_bull AND yc_steep):  exposure 1.25x
-    Tier 2 CALM_BULL only:                          exposure 1.07x
-    Tier 3 YC_STEEP  only:                          exposure 1.12x
-    Tier 4 NERVOUS_MARKET (VIX >= 20, not already boosted): exposure 1.15x (V18 NEW)
-    Otherwise: V12 signal passes through unchanged (defensive / crash-short / levered-recovery preserved).
+    The V12 defensive / crash-short / recovery logic is preserved. This overlay
+    only modifies V12-normal weeks.
+
+    Tiers:
+      - INTERSECTION: calm_bull AND yc_steep -> 1.40x
+      - STRONG CB-only: calm_bull only + stronger trend/credit filters -> 1.20x
+      - WEAK CB-only: calm_bull only without strong confirmation -> 1.00x
+      - YC-only: yc_steep only -> 1.22x
+      - NERVOUS_MARKET: VIX >= 20, V12 normal, not already in another tier -> 1.30x
+      - Otherwise: V12 signal passes through unchanged.
 
     YC_STEEP definition: T10Y2Y > 0 AND its 13-week change > 0.
-    NERVOUS_MARKET definition: V12 normal AND VIX >= 20 AND not already boosted by tiers 1-3.
 
-    The nervous-market sleeve captures the elevated risk premium when markets are
-    uncertain but not crashing. When VIX >= 20 and V12 hasn't gone defensive, forward
-    SPY returns are significantly higher than in low-VIX environments (Welch t=3.60,
-    p=0.0004 on all V12-normal weeks; permutation test p=0.0035).
+    STRONG CB-only definition:
+      V12 normal, calm_bull, not yc_steep, SPY > 20W MA, 13W SPY momentum > 3%,
+      VIX < VIX3M, HY OAS not worsening, and SPY drawdown from 52W high > -7%.
 
-    If T10Y2Y is missing from `weekly`, yc_steep is always False and the model
-    degrades gracefully to calm-bull + nervous-market sleeves only.
+    NERVOUS_MARKET definition: V12 normal AND VIX >= 20 AND not already boosted
+    by intersection / CB-only / YC-only.
+
+    If optional inputs such as T10Y2Y, VIX3M, or HY OAS are missing, the affected
+    tier degrades safely to False rather than fabricating a signal.
 
     Returns the same (signal, diagnostics) shape as the original V17, with
     additional diagnostic columns.
@@ -797,15 +814,47 @@ def build_v17_conservative_signal(
     cb_only      = calm_bull & ~yc_steep & v12_normal_s
     yc_only      = ~calm_bull & yc_steep & v12_normal_s
 
+    # Strong CB-only tier. This is deliberately calculated after cb_only so it
+    # cannot touch intersection / YC-only / nervous / V12 defensive/crash sleeves.
+    if "VIX3M" in weekly.columns:
+        vix3m = weekly["VIX3M"]
+        cond_vix_contango = (vix < vix3m).fillna(False)
+    else:
+        vix3m = pd.Series(np.nan, index=weekly.index)
+        cond_vix_contango = pd.Series(False, index=weekly.index)
+
+    if "BAMLH0A0HYM2" in weekly.columns:
+        hy_oas = weekly["BAMLH0A0HYM2"]
+        hy_oas_ma = hy_oas.rolling(CB_STRONG_HY_MA_WEEKS, min_periods=max(8, CB_STRONG_HY_MA_WEEKS // 2)).mean()
+        cond_credit_ok = ((hy_oas.diff(CB_STRONG_HY_DIFF_WEEKS) <= 0.0) | (hy_oas < hy_oas_ma)).fillna(False)
+    else:
+        hy_oas = pd.Series(np.nan, index=weekly.index)
+        hy_oas_ma = pd.Series(np.nan, index=weekly.index)
+        cond_credit_ok = pd.Series(False, index=weekly.index)
+
+    spy_ma20 = spy.rolling(CB_STRONG_MA_WEEKS, min_periods=max(8, CB_STRONG_MA_WEEKS // 2)).mean()
+    spy_dd_52w = spy / spy.rolling(52, min_periods=26).max() - 1.0
+    cond_strong_cb = (
+        cb_only
+        & (spy > spy_ma20)
+        & (spy.pct_change(momentum_weeks) > CB_STRONG_MOM_13W)
+        & cond_vix_contango
+        & cond_credit_ok
+        & (spy_dd_52w > CB_STRONG_MAX_DD_52W)
+    ).fillna(False)
+    cond_weak_cb = cb_only & ~cond_strong_cb
+
     v12 = v12_signal.astype(float)
     v17 = v12.copy()
     v17 = v17.where(~intersection, 1.0 + BOOST_INTERSECTION)
-    v17 = v17.where(~cb_only,      1.0 + BOOST_CB_ONLY)
-    v17 = v17.where(~yc_only,      1.0 + BOOST_YC_ONLY)
+    v17 = v17.where(~cond_weak_cb, 1.0 + BOOST_CB_ONLY)
+    v17 = v17.where(~cond_strong_cb, 1.0 + BOOST_CB_STRONG)
+    v17 = v17.where(~yc_only, 1.0 + BOOST_YC_ONLY)
 
-    # Tier 4: Nervous-market sleeve (V18)
-    # Fires when V12 normal, VIX >= threshold, and not already boosted by tiers 1-3.
-    # Captures elevated risk premium during uncertain-but-not-crashing markets.
+    # Nervous-market sleeve.
+    # Fires when V12 normal, VIX >= threshold, and not already captured by
+    # intersection / CB-only / YC-only. CB-only weeks stay CB-only even when the
+    # weak CB tier is neutral 1.00x; this matches the tested research overlay.
     already_boosted = intersection | cb_only | yc_only
     nervous_market = v12_normal_s & (vix >= NERVOUS_VIX_THRESHOLD) & ~already_boosted
     v17 = v17.where(~nervous_market, 1.0 + BOOST_NERVOUS)
@@ -827,7 +876,18 @@ def build_v17_conservative_signal(
                            else pd.Series(np.nan, index=weekly.index)),
         "tier_intersection": intersection.astype(int),
         "tier_cb_only": cb_only.astype(int),
+        "tier_cb_weak": cond_weak_cb.astype(int),
+        "tier_cb_strong": cond_strong_cb.astype(int),
         "tier_yc_only": yc_only.astype(int),
+        # Strong CB diagnostics
+        "spy_ma20": spy_ma20,
+        "spy_dd_52w": spy_dd_52w,
+        "vix3m": vix3m,
+        "vix_contango": cond_vix_contango.astype(int),
+        "hy_oas": hy_oas,
+        "hy_oas_ma_26w": hy_oas_ma,
+        "hy_oas_chg_4w": hy_oas.diff(CB_STRONG_HY_DIFF_WEEKS),
+        "credit_ok": cond_credit_ok.astype(int),
         # V18 nervous-market diagnostic
         "tier_nervous_market": nervous_market.astype(int),
     }, index=weekly.index)
@@ -1866,6 +1926,7 @@ def classify_regime(
     tier_cb_only: Optional[pd.Series] = None,
     tier_yc_only: Optional[pd.Series] = None,
     tier_nervous_market: Optional[pd.Series] = None,
+    tier_cb_strong: Optional[pd.Series] = None,
 ) -> pd.Series:
     """Map (v17_signal, tiers) → human-readable regime label.
 
@@ -1881,7 +1942,9 @@ def classify_regime(
     if tier_intersection is not None and tier_cb_only is not None and tier_yc_only is not None:
         # v18 path: distinguish the four boost tiers
         out[tier_yc_only.astype(int) == 1] = "YC_BOOST"
-        out[tier_cb_only.astype(int) == 1] = "CALM_BULL_BOOST"
+        out[tier_cb_only.astype(int) == 1] = "CALM_BULL_NEUTRAL"
+        if tier_cb_strong is not None:
+            out[tier_cb_strong.astype(int) == 1] = "STRONG_CALM_BULL"
         out[tier_intersection.astype(int) == 1] = "DUAL_BOOST"
         if tier_nervous_market is not None:
             out[tier_nervous_market.astype(int) == 1] = "NERVOUS_MARKET"
@@ -1904,10 +1967,12 @@ REGIME_REASON = {
     "CRASH_SHORT": "V12 crash-short protection retained.",
     "DEFENSIVE": "V12 defensive risk-control signal retained.",
     "NORMAL": "No high-conviction trigger; baseline 100% SPY.",
-    "CALM_BULL_BOOST": "Calm-uptrend conditions met (CB only); exposure 1.07x.",
-    "YC_BOOST": "Yield curve positive AND steepening (YC only); exposure 1.12x.",
-    "DUAL_BOOST": "Calm-uptrend AND yield-curve steepening both fire; exposure 1.25x (highest conviction).",
-    "NERVOUS_MARKET": "VIX >= 20 with V12 normal — elevated risk premium; exposure 1.15x.",
+    "CALM_BULL_NEUTRAL": "Weak CB-only conditions met; kept neutral at 1.00x.",
+    "STRONG_CALM_BULL": "Strong CB-only conditions met; exposure 1.20x.",
+    "CALM_BULL_BOOST": "Legacy calm-bull boost label.",
+    "YC_BOOST": "Yield curve positive AND steepening (YC only); exposure 1.22x.",
+    "DUAL_BOOST": "Calm-uptrend AND yield-curve steepening both fire; exposure 1.40x (highest conviction).",
+    "NERVOUS_MARKET": "VIX >= 20 with V12 normal — elevated risk premium; exposure 1.30x.",
     "LEVERAGED_LONG": "V12 high-conviction leverage signal retained (dip-buy / recovery).",
 }
 
@@ -1923,7 +1988,7 @@ def build_signal_table(
     table["v17_signal"] = v17_signal.reindex(table.index).ffill().fillna(1.0)
     table["calm_bull_trigger"] = diagnostics["calm_bull_trigger"].reindex(table.index).fillna(0).astype(int)
     # v17-pro tier flags (forwarded into classify_regime if present)
-    for col in ("tier_intersection", "tier_cb_only", "tier_yc_only", "yc_pos_steep", "tier_nervous_market"):
+    for col in ("tier_intersection", "tier_cb_only", "tier_cb_weak", "tier_cb_strong", "tier_yc_only", "yc_pos_steep", "tier_nervous_market"):
         if col in diagnostics.columns:
             table[col] = diagnostics[col].reindex(table.index).fillna(0).astype(int)
     for asset in ASSETS:
@@ -1934,7 +1999,7 @@ def build_signal_table(
         table["regime"] = classify_regime(
             table["v17_signal"], table["calm_bull_trigger"],
             table["tier_intersection"], table["tier_cb_only"], table["tier_yc_only"],
-            table.get("tier_nervous_market"))
+            table.get("tier_nervous_market"), table.get("tier_cb_strong"))
     else:
         table["regime"] = classify_regime(table["v17_signal"], table["calm_bull_trigger"])
     table["reason"] = table["regime"].map(REGIME_REASON)
