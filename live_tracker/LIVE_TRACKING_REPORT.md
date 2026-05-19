@@ -14,13 +14,13 @@ This tracker is duplicate-safe. Rerunning during the same signal week updates re
 | Closed weeks | 2 |
 | Pending next-week signals | 0 |
 | Signal rows in ledger | 3 |
-| Model equity | 10,206.99 |
-| SPY equity | 10,190.52 |
+| Model equity | 10,214.91 |
+| SPY equity | 10,198.43 |
 | Model total return | 2.1% |
-| SPY total return | 1.9% |
+| SPY total return | 2.0% |
 | Excess return | +0.2% |
-| Model Sharpe | 3.071 |
-| SPY Sharpe | 2.985 |
+| Model Sharpe | 3.222 |
+| SPY Sharpe | 3.146 |
 | Model MaxDD | -1.9% |
 | SPY MaxDD | -1.8% |
 | Latest target allocation | SPY 100.0% |
