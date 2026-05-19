@@ -12,11 +12,11 @@ _Data source: forced refresh_
 
 | Model | Total return | CAGR | Sharpe | Max drawdown | Calmar |
 | --- | --- | --- | --- | --- | --- |
-| SPY buy-and-hold | 1150.3% | 15.57% | 0.884 | -33.7% | 0.462 |
-| V12 (defensive engine) | 3213.0% | 22.21% | 1.121 | -24.2% | 0.919 |
-| **V17 Conservative** | **4810.7%** | **25.00%** | **1.165** | **-24.2%** | **1.034** |
+| SPY buy-and-hold | 1142.2% | 15.52% | 0.881 | -33.7% | 0.460 |
+| V12 (defensive engine) | 3191.6% | 22.15% | 1.119 | -24.2% | 0.917 |
+| **V17 Conservative** | **4778.4%** | **24.94%** | **1.163** | **-24.2%** | **1.032** |
 
-**V17 outperformed SPY by +3660.4% in total return, with Sharpe +0.282 higher and max drawdown +9.6% (less negative is better).**
+**V17 outperformed SPY by +3636.2% in total return, with Sharpe +0.282 higher and max drawdown +9.6% (less negative is better).**
 
 ## This week's signal
 
@@ -35,9 +35,9 @@ _Data source: forced refresh_
 
 | Model | Total return | CAGR | Sharpe | Max drawdown | Calmar |
 | --- | --- | --- | --- | --- | --- |
-| SPY buy-and-hold | 112.4% | 15.12% | 0.917 | -24.5% | 0.617 |
-| V12 | 222.1% | 24.44% | 1.222 | -16.9% | 1.442 |
-| V17 Conservative | 266.9% | 27.51% | 1.241 | -17.2% | 1.596 |
+| SPY buy-and-hold | 111.0% | 14.96% | 0.909 | -24.5% | 0.611 |
+| V12 | 220.0% | 24.25% | 1.213 | -16.9% | 1.431 |
+| V17 Conservative | 264.4% | 27.30% | 1.232 | -17.2% | 1.585 |
 
 ## Behaviour during historical stress events
 
@@ -72,27 +72,27 @@ _Data source: forced refresh_
 | 2023 | +26.2% | +26.6% | +27.7% |
 | 2024 | +24.9% | +27.6% | +30.7% |
 | 2025 | +17.7% | +36.3% | +38.4% |
-| 2026 | +8.7% | +8.6% | +8.4% |
+| 2026 | +8.0% | +7.9% | +7.6% |
 
 ## Statistical significance (paired block bootstrap)
 
 | Comparison | Period | Metric | Observed delta | p_fail | Verdict |
 | --- | --- | --- | --- | --- | --- |
-| vs V12 | full | total_return | +1597.7% | 0.0000 | highly significant (p<0.01) |
-| vs V12 | full | sharpe | +0.039 | 0.1050 | not significant |
-| vs V12 | full | calmar | +0.115 | 0.1150 | not significant |
-| vs V12 | full | max_drawdown | -0.0% | 0.8250 | not significant |
-| vs V12 | holdout_2021_plus | total_return | +44.8% | 0.0050 | highly significant (p<0.01) |
-| vs V12 | holdout_2021_plus | sharpe | -0.004 | 0.6000 | not significant |
-| vs V12 | holdout_2021_plus | calmar | +0.154 | 0.4850 | not significant |
-| vs V12 | holdout_2021_plus | max_drawdown | -0.3% | 0.9750 | not significant |
-| vs SPY | full | total_return | +3660.4% | 0.0000 | highly significant (p<0.01) |
+| vs V12 | full | total_return | +1586.8% | 0.0000 | highly significant (p<0.01) |
+| vs V12 | full | sharpe | +0.039 | 0.1000 | not significant |
+| vs V12 | full | calmar | +0.115 | 0.1100 | not significant |
+| vs V12 | full | max_drawdown | +0.0% | 0.8500 | not significant |
+| vs V12 | holdout_2021_plus | total_return | +44.5% | 0.0050 | highly significant (p<0.01) |
+| vs V12 | holdout_2021_plus | sharpe | -0.003 | 0.5850 | not significant |
+| vs V12 | holdout_2021_plus | calmar | +0.154 | 0.4300 | not significant |
+| vs V12 | holdout_2021_plus | max_drawdown | -0.3% | 0.9850 | not significant |
+| vs SPY | full | total_return | +3636.2% | 0.0000 | highly significant (p<0.01) |
 | vs SPY | full | sharpe | +0.353 | 0.0000 | highly significant (p<0.01) |
-| vs SPY | full | calmar | +0.573 | 0.0000 | highly significant (p<0.01) |
-| vs SPY | full | max_drawdown | +9.6% | 0.2150 | not significant |
-| vs SPY | holdout_2021_plus | total_return | +154.5% | 0.0150 | significant (p<0.05) |
+| vs SPY | full | calmar | +0.572 | 0.0050 | highly significant (p<0.01) |
+| vs SPY | full | max_drawdown | +9.6% | 0.1950 | not significant |
+| vs SPY | holdout_2021_plus | total_return | +153.5% | 0.0150 | significant (p<0.05) |
 | vs SPY | holdout_2021_plus | sharpe | +0.509 | 0.0400 | significant (p<0.05) |
-| vs SPY | holdout_2021_plus | calmar | +0.979 | 0.0550 | borderline |
+| vs SPY | holdout_2021_plus | calmar | +0.974 | 0.0350 | significant (p<0.05) |
 | vs SPY | holdout_2021_plus | max_drawdown | +7.3% | 0.3350 | not significant |
 
 ## Honest interpretation

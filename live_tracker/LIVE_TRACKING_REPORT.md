@@ -8,21 +8,21 @@ This tracker is duplicate-safe. Rerunning during the same signal week updates re
 | --- | --- |
 | Start signal date | 2026-05-01 |
 | Latest signal date | 2026-05-15 |
-| Last data date | 2026-05-15 |
+| Last data date | 2026-05-19 |
 | Tracker action | updated_existing_signal_no_duplicate |
-| Tracked weeks | 2 |
-| Closed weeks | 1 |
-| Pending next-week signals | 1 |
+| Tracked weeks | 3 |
+| Closed weeks | 2 |
+| Pending next-week signals | 0 |
 | Signal rows in ledger | 3 |
-| Model equity | 10,273.57 |
-| SPY equity | 10,256.99 |
-| Model total return | 2.7% |
-| SPY total return | 2.6% |
+| Model equity | 10,206.99 |
+| SPY equity | 10,190.52 |
+| Model total return | 2.1% |
+| SPY total return | 1.9% |
 | Excess return | +0.2% |
-| Model Sharpe | 4.743 |
-| SPY Sharpe | 4.749 |
-| Model MaxDD | -1.3% |
-| SPY MaxDD | -1.2% |
+| Model Sharpe | 3.071 |
+| SPY Sharpe | 2.985 |
+| Model MaxDD | -1.9% |
+| SPY MaxDD | -1.8% |
 | Latest target allocation | SPY 100.0% |
 
 ## Latest signal ledger rows
@@ -31,20 +31,15 @@ This tracker is duplicate-safe. Rerunning during the same signal week updates re
 | --- | --- | --- | --- | --- | --- |
 | 2026-05-01 | 2026-05-04 | ACTIVE | CALM_BULL_BOOST | 1.07 | SPY 96.5%,  SPXL 3.5% |
 | 2026-05-08 | 2026-05-11 | ACTIVE | CALM_BULL_BOOST | 1.07 | SPY 96.5%,  SPXL 3.5% |
-| 2026-05-15 | pending | PENDING_EXECUTION | NORMAL | 1.00 | SPY 100.0% |
+| 2026-05-15 | 2026-05-18 | ACTIVE | NORMAL | 1.00 | SPY 100.0% |
 
 ## Recent signal-period results
 
 | Signal | Trade | Status | Regime | Model | SPY | Excess |
 | --- | --- | --- | --- | --- | --- | --- |
 | 2026-05-01 | 2026-05-04 | CLOSED | CALM_BULL_BOOST | +2.5% | +2.4% | +0.2% |
-| 2026-05-08 | 2026-05-11 | OPEN | CALM_BULL_BOOST | +0.2% | +0.2% | +0.0% |
-
-## Pending next signal
-
-| Signal | Trade | Regime | Signal | Allocation |
-| --- | --- | --- | --- | --- |
-| 2026-05-15 | pending | NORMAL | 1.0 | SPY 100.0% |
+| 2026-05-08 | 2026-05-11 | CLOSED | CALM_BULL_BOOST | +0.2% | +0.2% | +0.0% |
+| 2026-05-15 | 2026-05-18 | OPEN | NORMAL | -0.6% | -0.6% | +0.0% |
 
 ## Files written
 
