@@ -2226,8 +2226,22 @@ def run(cfg: Config) -> None:
     steps.start("Writing report and CSVs")
 
     latest_row = signal_table.iloc[-1]
+    latest_date = signal_table.index[-1].date().isoformat()
+    rf_annual_pct = None
+    rf_date = latest_date
+    rf_source = "fallback"
+    if daily is not None and "DGS3MO" in daily.columns:
+        rf_series = daily["DGS3MO"].ffill()
+        rf_last_valid = rf_series.last_valid_index()
+        if pd.notna(rf_last_valid):
+            rf_annual_pct = float(rf_series.loc[rf_last_valid])
+            rf_date = pd.Timestamp(rf_last_valid).date().isoformat()
+            rf_source = "DGS3MO"
+    if rf_annual_pct is None:
+        rf_annual_pct = float(RISK_FREE_FALLBACK_ANNUAL * 100)
+
     latest_dict = {
-        "date": signal_table.index[-1].date().isoformat(),
+        "date": latest_date,
         "v12_signal": float(latest_row["v12_signal"]),
         "v17_signal": float(latest_row["v17_signal"]),
         "regime": str(latest_row["regime"]),
@@ -2237,6 +2251,9 @@ def run(cfg: Config) -> None:
         "weights": {asset: float(latest_row[f"weight_{asset}"]) for asset in ASSETS},
         "reason": str(latest_row["reason"]),
         "data_source": data_source,
+        "risk_free_rate_annual_pct": rf_annual_pct,
+        "risk_free_rate_date": rf_date,
+        "risk_free_rate_source": rf_source,
     }
 
     (cfg.out_dir / "latest_signal.json").write_text(
