@@ -14,15 +14,15 @@ This tracker is duplicate-safe. Rerunning during the same signal week updates re
 | Closed weeks | 2 |
 | Pending next-week signals | 0 |
 | Signal rows in ledger | 3 |
-| Model equity | 10,214.91 |
-| SPY equity | 10,198.43 |
-| Model total return | 2.1% |
-| SPY total return | 2.0% |
+| Model equity | 10,197.96 |
+| SPY equity | 10,181.50 |
+| Model total return | 2.0% |
+| SPY total return | 1.8% |
 | Excess return | +0.2% |
-| Model Sharpe | 3.222 |
-| SPY Sharpe | 3.146 |
-| Model MaxDD | -1.9% |
-| SPY MaxDD | -1.8% |
+| Model Sharpe | 2.899 |
+| SPY Sharpe | 2.801 |
+| Model MaxDD | -2.0% |
+| SPY MaxDD | -1.9% |
 | Latest target allocation | SPY 100.0% |
 
 ## Latest signal ledger rows
@@ -39,7 +39,7 @@ This tracker is duplicate-safe. Rerunning during the same signal week updates re
 | --- | --- | --- | --- | --- | --- | --- |
 | 2026-05-01 | 2026-05-04 | CLOSED | CALM_BULL_BOOST | +2.5% | +2.4% | +0.2% |
 | 2026-05-08 | 2026-05-11 | CLOSED | CALM_BULL_BOOST | +0.2% | +0.2% | +0.0% |
-| 2026-05-15 | 2026-05-18 | OPEN | NORMAL | -0.6% | -0.6% | +0.0% |
+| 2026-05-15 | 2026-05-18 | OPEN | NORMAL | -0.7% | -0.7% | +0.0% |
 
 ## Files written
 
