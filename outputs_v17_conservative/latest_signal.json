@@ -15,8 +15,8 @@
     "SHY": 0.0
   },
   "reason": "No high-conviction trigger; baseline 100% SPY.",
-  "data_source": "offline cache (23.7h old)",
-  "risk_free_rate_annual_pct": 3.69,
-  "risk_free_rate_date": "2026-05-15",
+  "data_source": "forced refresh",
+  "risk_free_rate_annual_pct": 3.68,
+  "risk_free_rate_date": "2026-05-20",
   "risk_free_rate_source": "DGS3MO"
 }
