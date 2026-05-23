@@ -3,7 +3,7 @@
   "start_signal_date": "2026-05-01",
   "last_data_date": "2026-05-22",
   "latest_signal_date": "2026-05-22",
-  "latest_tracker_action": "appended_new_signal",
+  "latest_tracker_action": "updated_existing_signal_no_duplicate",
   "rows_in_ledger": 4,
   "tracked_weeks": 3,
   "closed_weeks": 2,
