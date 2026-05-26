@@ -17,6 +17,6 @@
   "reason": "Strong CB-only conditions met; exposure 1.20x.",
   "data_source": "forced refresh",
   "risk_free_rate_annual_pct": 3.68,
-  "risk_free_rate_date": "2026-05-22",
+  "risk_free_rate_date": "2026-05-26",
   "risk_free_rate_source": "DGS3MO"
 }
