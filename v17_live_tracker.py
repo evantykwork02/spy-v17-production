@@ -21,7 +21,7 @@ from typing import Dict, Optional, Tuple
 import numpy as np
 import pandas as pd
 
-from runtime_config import load_runtime_config
+from runtime_config import load_runtime_config, resolve_currency
 from spy_v17_conservative import (
     ASSETS,
     allocation_text,
@@ -259,7 +259,7 @@ def update_live_tracker(
 ) -> Dict[str, object]:
     """Update live paper-tracking files. Safe to rerun multiple times per week."""
     live_dir = Path(live_dir)
-    currency = load_runtime_config().currency
+    currency = resolve_currency(load_runtime_config().currency)
     live_dir.mkdir(parents=True, exist_ok=True)
     ledger_path = live_dir / "live_signal_ledger.csv"
 
@@ -361,7 +361,7 @@ def update_live_tracker(
 
 def write_live_report(live_dir: Path, ledger: pd.DataFrame, summary: Dict[str, object], periods: pd.DataFrame) -> None:
     lines = []
-    currency = str(summary.get("currency") or load_runtime_config().currency)
+    currency = resolve_currency(summary.get("currency"), load_runtime_config().currency)
     lines.append("# V17 Live Paper Tracker")
     lines.append("")
     lines.append(

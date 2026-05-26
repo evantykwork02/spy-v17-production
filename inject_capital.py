@@ -24,7 +24,7 @@ import traceback
 
 import requests
 
-from runtime_config import load_runtime_config
+from runtime_config import load_runtime_config, resolve_currency
 
 
 # ---------------------------------------------------------------------------
@@ -114,7 +114,7 @@ def main() -> None:
         cfg = json.load(f)
 
     injections: list = cfg.get("capital_injections", [])
-    currency: str = load_runtime_config().currency
+    currency = resolve_currency(cfg.get("currency"), load_runtime_config().currency)
 
     # --- Check for duplicate on same date ---
     for inj in injections:

@@ -21,7 +21,7 @@ import traceback
 
 import requests
 
-from runtime_config import DEFAULT_CURRENCY, load_runtime_config
+from runtime_config import DEFAULT_CURRENCY, load_runtime_config, resolve_currency
 
 
 # ---------------------------------------------------------------------------
@@ -118,7 +118,7 @@ def _get_usd_to_account_rate(currency: str) -> float:
     Returns:
         Exchange rate (1 USD = X account currency)
     """
-    currency = (currency or DEFAULT_CURRENCY).upper()
+    currency = resolve_currency(currency, DEFAULT_CURRENCY)
     if currency == "USD":
         return 1.0
     if currency != "SGD":
@@ -170,7 +170,7 @@ def _parse_allocation_with_capital(alloc_str: str, equity: float, currency: str)
         e.g., "SPY 9 shares (90.0%)  SPXL 3 shares (10.0%)"
     """
     try:
-        currency = (currency or DEFAULT_CURRENCY).upper()
+        currency = resolve_currency(currency, DEFAULT_CURRENCY)
         equity = float(equity)
         if not alloc_str or alloc_str == "n/a" or equity <= 0:
             return alloc_str  # Guard: can't calculate with zero/negative equity
@@ -261,7 +261,8 @@ def _parse_allocation_with_capital(alloc_str: str, equity: float, currency: str)
 
 def build_message() -> str:
     SEP = "-" * 36
-    currency = load_runtime_config().currency
+    runtime_cfg = load_runtime_config()
+    currency = runtime_cfg.currency
 
     # --- latest_signal.json (latest signal metadata) ---
     latest_signal = {}
@@ -277,7 +278,7 @@ def build_message() -> str:
             summary = json.load(f)
     except Exception as e:
         return f"Could not read live_summary.json: {e}"
-    currency = str(summary.get("currency") or currency).upper()
+    currency = resolve_currency(summary.get("currency"), latest_signal.get("currency"), currency)
 
     # --- live_signal_ledger.csv (latest signal details) ---
     latest_ledger = {}

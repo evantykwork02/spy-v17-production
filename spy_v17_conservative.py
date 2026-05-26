@@ -67,7 +67,7 @@ warnings.filterwarnings("ignore")
 import numpy as np
 import pandas as pd
 
-from runtime_config import load_runtime_config
+from runtime_config import load_runtime_config, resolve_currency
 
 try:
     from scipy import stats
@@ -2298,7 +2298,7 @@ def run(cfg: Config) -> None:
         print(f"   Report:     {cfg.live_dir / 'LIVE_TRACKING_REPORT.md'}")
         print(f"   Ledger:     {cfg.live_dir / 'live_signal_ledger.csv'}")
         if summary:
-            currency = summary.get("currency", runtime_cfg.currency)
+            currency = resolve_currency(summary.get("currency"), runtime_cfg.currency)
             print(f"   Model eq:   {summary.get('model_equity', np.nan):,.2f} {currency}")
             print(f"   SPY eq:     {summary.get('spy_equity', np.nan):,.2f} {currency}")
             print(f"   Excess:     {fmt_pct_signed(summary.get('excess_return', np.nan))}")

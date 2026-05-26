@@ -31,6 +31,14 @@ def _coerce_currency(value: Any) -> str:
     return currency or DEFAULT_CURRENCY
 
 
+def resolve_currency(*values: Any, default: str = DEFAULT_CURRENCY) -> str:
+    for value in values:
+        currency = str(value or "").strip().upper()
+        if currency:
+            return currency
+    return _coerce_currency(default)
+
+
 def load_runtime_config(config_path: str | Path | None = None) -> RuntimeConfig:
     root = Path(__file__).resolve().parent
     path = Path(config_path) if config_path is not None else root / "config.json"
