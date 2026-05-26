@@ -13,6 +13,7 @@ Required env vars:
 
 import csv
 import json
+import math
 import os
 import subprocess
 import sys
@@ -108,11 +109,141 @@ def _eq(v) -> str:
         return "n/a"
 
 
-def _rate(v) -> str:
+def _get_usd_to_sgd_rate() -> float:
+    """
+    Fetch current USD to SGD exchange rate.
+    
+    Returns:
+        Exchange rate (1 USD = X SGD), or 1.34 as fallback
+    """
     try:
-        return f"{float(v):.2f}%"
+        import yfinance as yf
+        ticker = yf.Ticker("USDSGD=X")
+        hist = ticker.history(period="1d")
+        if not hist.empty:
+            rate = float(hist["Close"].iloc[-1])
+            return rate
     except Exception:
-        return "n/a"
+        pass
+    return 1.34  # Fallback rate
+
+
+def _get_current_prices(symbols: list) -> dict:
+    """
+    Fetch current prices for given symbols from Yahoo Finance (in USD).
+    
+    Returns:
+        Dictionary mapping symbol -> price (in USD), or empty dict if fetch fails
+    """
+    try:
+        import yfinance as yf
+        prices = {}
+        for symbol in symbols:
+            try:
+                ticker = yf.Ticker(symbol)
+                hist = ticker.history(period="1d")
+                if not hist.empty:
+                    price = float(hist["Close"].iloc[-1])
+                    prices[symbol] = price
+            except Exception:
+                continue
+        return prices
+    except Exception:
+        return {}
+
+
+def _parse_allocation_with_capital(alloc_str: str, equity: float) -> str:
+    """
+    Parse allocation string like "SPY 90.0%, SPXL 10.0%" and calculate
+    share counts based on equity (in SGD) and current prices (converted to SGD).
+    
+    Returns:
+        Formatted string with share counts and percentages
+        e.g., "SPY 9 shares (90.0%)  SPXL 3 shares (10.0%)"
+    """
+    try:
+        equity = float(equity)  # equity in SGD
+        if not alloc_str or alloc_str == "n/a" or equity <= 0:
+            return alloc_str  # Guard: can't calculate with zero/negative equity
+        
+        # Extract symbols to fetch prices
+        tokens = alloc_str.split(",")
+        symbols = []
+        for token in tokens:
+            token = token.strip()
+            if token:
+                parts = token.split()
+                if len(parts) >= 1:
+                    symbols.append(parts[0])
+        
+        # Fetch current prices (in USD) and exchange rate
+        prices_usd = _get_current_prices(symbols)
+        usd_to_sgd = _get_usd_to_sgd_rate()
+        
+        # Convert USD prices to SGD, filtering out zero/invalid prices
+        prices_sgd = {}
+        for symbol, price in prices_usd.items():
+            try:
+                price_sgd = float(price) * usd_to_sgd
+                if price_sgd > 0:
+                    prices_sgd[symbol] = price_sgd
+            except (ValueError, TypeError):
+                pass  # Skip invalid prices
+        
+        if not prices_sgd:
+            # Fallback: return allocation with SGD amounts if price fetch fails
+            result_parts = []
+            for token in tokens:
+                token = token.strip()
+                if not token:
+                    continue
+                parts = token.split()
+                if len(parts) >= 2:
+                    symbol = parts[0]
+                    pct_str = parts[1].rstrip("%")
+                    try:
+                        pct = float(pct_str)
+                        capital = equity * (pct / 100.0)
+                        result_parts.append(f"{symbol} {pct:.1f}% (SGD {capital:,.2f})")
+                    except ValueError:
+                        result_parts.append(token)
+                else:
+                    result_parts.append(token)
+            return "  ".join(result_parts) if result_parts else alloc_str
+        
+        # Calculate share counts
+        result_parts = []
+        for token in tokens:
+            token = token.strip()
+            if not token:
+                continue
+            
+            parts = token.split()
+            if len(parts) >= 2:
+                symbol = parts[0]
+                pct_str = parts[1].rstrip("%")
+                try:
+                    pct = float(pct_str)
+                    if symbol in prices_sgd:
+                        capital_sgd = equity * (pct / 100.0)
+                        price_sgd = prices_sgd[symbol]
+                        if price_sgd > 0:  # Guard against zero price
+                            shares = capital_sgd / price_sgd
+                            # Round down to be conservative (int() truncates)
+                            shares_rounded = int(math.floor(shares))
+                            result_parts.append(f"{symbol} {shares_rounded} shares ({pct:.1f}%)")
+                        else:
+                            result_parts.append(f"{symbol} {pct:.1f}%")
+                    else:
+                        result_parts.append(f"{symbol} {pct:.1f}%")
+                except (ValueError, ZeroDivisionError):
+                    result_parts.append(token)
+            else:
+                result_parts.append(token)
+        
+        return "  ".join(result_parts) if result_parts else alloc_str
+    except Exception:
+        return alloc_str
 
 
 # ---------------------------------------------------------------------------
@@ -171,7 +302,8 @@ def build_message() -> str:
     sig_val    = latest_ledger.get("v17_signal", "?")
     trade_date = (latest_ledger.get("actual_trade_date") or
                   latest_ledger.get("estimated_trade_date") or "pending")
-    rf_annual  = _rate(latest_signal.get("risk_free_rate_annual_pct"))
+    rf_pct     = latest_signal.get("risk_free_rate_annual_pct")
+    rf_annual  = f"{float(rf_pct):.2f}%" if rf_pct is not None else "n/a"
     rf_date    = latest_signal.get("risk_free_rate_date", last_data)
     rf_source  = latest_signal.get("risk_free_rate_source", "n/a")
 
@@ -180,7 +312,10 @@ def build_message() -> str:
     # ── Signal block ──────────────────────────────────────
     lines.append(f"V17 SIGNAL — {last_data}")
     lines.append("=" * 36)
-    lines.append(f"Alloc:   {alloc}")
+    # Parse allocation with capital amounts
+    equity_value = summary.get("model_equity", 0)
+    alloc_with_capital = _parse_allocation_with_capital(alloc, equity_value)
+    lines.append(f"Alloc:   {alloc_with_capital}")
     lines.append(f"Regime:  {regime}  ({sig_val}x)")
     lines.append(f"Trade:   {trade_date}")
     lines.append(f"RF 3M:   {rf_annual} annual  ({rf_date}, {rf_source})")
@@ -215,7 +350,7 @@ def build_message() -> str:
     lines.append(f"{'Model':8s}  {m_ret:>7}  {m_sh:>6}  {m_dd:>7}")
     lines.append(f"{'SPY':8s}  {s_ret:>7}  {s_sh:>6}  {s_dd:>7}")
     lines.append(f"{'Excess':8s}  {exc:>7}")
-    lines.append(f"Equity:   {equity} USD")
+    lines.append(f"Equity:   {equity} SGD")
     if tracked_weeks is not None:
         weeks_line = f"Weeks:    {tracked_weeks} tracked"
         if pending_signal_weeks:
@@ -242,11 +377,13 @@ def build_message() -> str:
         next_regime = pending_period.get("regime", "?")
         next_sig    = pending_period.get("v17_signal", "?")
         next_alloc  = pending_period.get("target_allocation", alloc)
+        # Parse next allocation with share counts (using current equity)
+        next_alloc_with_capital = _parse_allocation_with_capital(next_alloc, equity_value)
 
         lines.append("")
         lines.append(f"NEXT WEEK  (trade: {next_trade})")
         lines.append(SEP)
-        lines.append(f"{next_alloc}")
+        lines.append(f"{next_alloc_with_capital}")
         lines.append(f"{next_regime}  |  {next_sig}x")
 
     return "\n".join(lines)
