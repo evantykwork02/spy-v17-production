@@ -108,7 +108,7 @@ prices. This is configured via `config.json` in the project root:
 ```json
 {
   "capital": 10000.0,
-  "currency": "USD",
+  "currency": "SGD",
   "fractional_shares": false,
   "show_position_sizing": true
 }
@@ -131,7 +131,7 @@ Example output for a $10k DEFENSIVE week:
 ```text
 =============================  POSITION SIZING  ==============================
 
-   Capital:        USD 10,000.00
+   Capital:        SGD 10,000.00
    Reference px:   close prices as of 2026-04-24
    Sizing mode:    whole shares (round down)
 

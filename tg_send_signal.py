@@ -21,6 +21,8 @@ import traceback
 
 import requests
 
+from runtime_config import DEFAULT_CURRENCY, load_runtime_config
+
 
 # ---------------------------------------------------------------------------
 # Telegram helpers
@@ -109,13 +111,19 @@ def _eq(v) -> str:
         return "n/a"
 
 
-def _get_usd_to_sgd_rate() -> float:
+def _get_usd_to_account_rate(currency: str) -> float:
     """
-    Fetch current USD to SGD exchange rate.
-    
+    Fetch current USD to account-currency exchange rate.
+
     Returns:
-        Exchange rate (1 USD = X SGD), or 1.34 as fallback
+        Exchange rate (1 USD = X account currency)
     """
+    currency = (currency or DEFAULT_CURRENCY).upper()
+    if currency == "USD":
+        return 1.0
+    if currency != "SGD":
+        return 1.0
+
     try:
         import yfinance as yf
         ticker = yf.Ticker("USDSGD=X")
@@ -125,7 +133,7 @@ def _get_usd_to_sgd_rate() -> float:
             return rate
     except Exception:
         pass
-    return 1.34  # Fallback rate
+    return 1.34  # Fallback USD/SGD rate
 
 
 def _get_current_prices(symbols: list) -> dict:
@@ -152,17 +160,18 @@ def _get_current_prices(symbols: list) -> dict:
         return {}
 
 
-def _parse_allocation_with_capital(alloc_str: str, equity: float) -> str:
+def _parse_allocation_with_capital(alloc_str: str, equity: float, currency: str) -> str:
     """
     Parse allocation string like "SPY 90.0%, SPXL 10.0%" and calculate
-    share counts based on equity (in SGD) and current prices (converted to SGD).
-    
+    share counts based on equity in the configured account currency.
+
     Returns:
         Formatted string with share counts and percentages
         e.g., "SPY 9 shares (90.0%)  SPXL 3 shares (10.0%)"
     """
     try:
-        equity = float(equity)  # equity in SGD
+        currency = (currency or DEFAULT_CURRENCY).upper()
+        equity = float(equity)
         if not alloc_str or alloc_str == "n/a" or equity <= 0:
             return alloc_str  # Guard: can't calculate with zero/negative equity
         
@@ -178,20 +187,20 @@ def _parse_allocation_with_capital(alloc_str: str, equity: float) -> str:
         
         # Fetch current prices (in USD) and exchange rate
         prices_usd = _get_current_prices(symbols)
-        usd_to_sgd = _get_usd_to_sgd_rate()
-        
-        # Convert USD prices to SGD, filtering out zero/invalid prices
+        usd_to_account = _get_usd_to_account_rate(currency)
+
+        # Convert USD prices to account currency, filtering out zero/invalid prices
         prices_sgd = {}
         for symbol, price in prices_usd.items():
             try:
-                price_sgd = float(price) * usd_to_sgd
+                price_sgd = float(price) * usd_to_account
                 if price_sgd > 0:
                     prices_sgd[symbol] = price_sgd
             except (ValueError, TypeError):
                 pass  # Skip invalid prices
-        
+
         if not prices_sgd:
-            # Fallback: return allocation with SGD amounts if price fetch fails
+            # Fallback: return allocation with account-currency amounts if price fetch fails
             result_parts = []
             for token in tokens:
                 token = token.strip()
@@ -204,7 +213,7 @@ def _parse_allocation_with_capital(alloc_str: str, equity: float) -> str:
                     try:
                         pct = float(pct_str)
                         capital = equity * (pct / 100.0)
-                        result_parts.append(f"{symbol} {pct:.1f}% (SGD {capital:,.2f})")
+                        result_parts.append(f"{symbol} {pct:.1f}% ({currency} {capital:,.2f})")
                     except ValueError:
                         result_parts.append(token)
                 else:
@@ -252,6 +261,7 @@ def _parse_allocation_with_capital(alloc_str: str, equity: float) -> str:
 
 def build_message() -> str:
     SEP = "-" * 36
+    currency = load_runtime_config().currency
 
     # --- latest_signal.json (latest signal metadata) ---
     latest_signal = {}
@@ -267,6 +277,7 @@ def build_message() -> str:
             summary = json.load(f)
     except Exception as e:
         return f"Could not read live_summary.json: {e}"
+    currency = str(summary.get("currency") or currency).upper()
 
     # --- live_signal_ledger.csv (latest signal details) ---
     latest_ledger = {}
@@ -314,7 +325,7 @@ def build_message() -> str:
     lines.append("=" * 36)
     # Parse allocation with capital amounts
     equity_value = summary.get("model_equity", 0)
-    alloc_with_capital = _parse_allocation_with_capital(alloc, equity_value)
+    alloc_with_capital = _parse_allocation_with_capital(alloc, equity_value, currency)
     lines.append(f"Alloc:   {alloc_with_capital}")
     lines.append(f"Regime:  {regime}  ({sig_val}x)")
     lines.append(f"Trade:   {trade_date}")
@@ -350,7 +361,7 @@ def build_message() -> str:
     lines.append(f"{'Model':8s}  {m_ret:>7}  {m_sh:>6}  {m_dd:>7}")
     lines.append(f"{'SPY':8s}  {s_ret:>7}  {s_sh:>6}  {s_dd:>7}")
     lines.append(f"{'Excess':8s}  {exc:>7}")
-    lines.append(f"Equity:   {equity} SGD")
+    lines.append(f"Equity:   {equity} {currency}")
     if tracked_weeks is not None:
         weeks_line = f"Weeks:    {tracked_weeks} tracked"
         if pending_signal_weeks:
@@ -378,7 +389,7 @@ def build_message() -> str:
         next_sig    = pending_period.get("v17_signal", "?")
         next_alloc  = pending_period.get("target_allocation", alloc)
         # Parse next allocation with share counts (using current equity)
-        next_alloc_with_capital = _parse_allocation_with_capital(next_alloc, equity_value)
+        next_alloc_with_capital = _parse_allocation_with_capital(next_alloc, equity_value, currency)
 
         lines.append("")
         lines.append(f"NEXT WEEK  (trade: {next_trade})")

@@ -67,6 +67,8 @@ warnings.filterwarnings("ignore")
 import numpy as np
 import pandas as pd
 
+from runtime_config import load_runtime_config
+
 try:
     from scipy import stats
 except Exception:  # pragma: no cover
@@ -2127,6 +2129,7 @@ class Config:
 
 def run(cfg: Config) -> None:
     cfg.out_dir.mkdir(exist_ok=True, parents=True)
+    runtime_cfg = load_runtime_config()
 
     full_mode = (cfg.mode == "full")
     total_steps = 9 if full_mode else 8
@@ -2242,6 +2245,7 @@ def run(cfg: Config) -> None:
 
     latest_dict = {
         "date": latest_date,
+        "currency": runtime_cfg.currency,
         "v12_signal": float(latest_row["v12_signal"]),
         "v17_signal": float(latest_row["v17_signal"]),
         "regime": str(latest_row["regime"]),
@@ -2294,8 +2298,9 @@ def run(cfg: Config) -> None:
         print(f"   Report:     {cfg.live_dir / 'LIVE_TRACKING_REPORT.md'}")
         print(f"   Ledger:     {cfg.live_dir / 'live_signal_ledger.csv'}")
         if summary:
-            print(f"   Model eq:   {summary.get('model_equity', np.nan):,.2f}")
-            print(f"   SPY eq:     {summary.get('spy_equity', np.nan):,.2f}")
+            currency = summary.get("currency", runtime_cfg.currency)
+            print(f"   Model eq:   {summary.get('model_equity', np.nan):,.2f} {currency}")
+            print(f"   SPY eq:     {summary.get('spy_equity', np.nan):,.2f} {currency}")
             print(f"   Excess:     {fmt_pct_signed(summary.get('excess_return', np.nan))}")
         print()
         print(_hr())
@@ -2303,6 +2308,7 @@ def run(cfg: Config) -> None:
 
 
 def parse_args() -> Config:
+    runtime_cfg = load_runtime_config()
     parser = argparse.ArgumentParser(
         description="SPY V17 Conservative — self-contained weekly signal engine.",
         formatter_class=argparse.ArgumentDefaultsHelpFormatter,
@@ -2327,7 +2333,7 @@ def parse_args() -> Config:
                         help="use cache only, do not contact the network")
     parser.add_argument("--live-track", action="store_true",
                         help="update duplicate-safe live paper-tracking files for the latest completed Friday signal")
-    parser.add_argument("--live-start-cash", type=float, default=10000.0,
+    parser.add_argument("--live-start-cash", type=float, default=runtime_cfg.capital,
                         help="starting capital used by the live paper tracker")
     parser.add_argument("--live-dir", default="live_tracker",
                         help="folder where live tracking CSV/MD files are written")

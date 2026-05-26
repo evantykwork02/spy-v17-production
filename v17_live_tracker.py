@@ -21,6 +21,7 @@ from typing import Dict, Optional, Tuple
 import numpy as np
 import pandas as pd
 
+from runtime_config import load_runtime_config
 from spy_v17_conservative import (
     ASSETS,
     allocation_text,
@@ -258,6 +259,7 @@ def update_live_tracker(
 ) -> Dict[str, object]:
     """Update live paper-tracking files. Safe to rerun multiple times per week."""
     live_dir = Path(live_dir)
+    currency = load_runtime_config().currency
     live_dir.mkdir(parents=True, exist_ok=True)
     ledger_path = live_dir / "live_signal_ledger.csv"
 
@@ -324,6 +326,7 @@ def update_live_tracker(
     spy_metrics = metrics_daily(spy_ret, rf_daily=rf_daily)
 
     summary = {
+        "currency": currency,
         "initial_capital": float(initial_capital),
         "start_signal_date": pd.Timestamp(first_signal_date).date().isoformat(),
         "last_data_date": pd.Timestamp(daily_live.index.max()).date().isoformat(),
@@ -358,6 +361,7 @@ def update_live_tracker(
 
 def write_live_report(live_dir: Path, ledger: pd.DataFrame, summary: Dict[str, object], periods: pd.DataFrame) -> None:
     lines = []
+    currency = str(summary.get("currency") or load_runtime_config().currency)
     lines.append("# V17 Live Paper Tracker")
     lines.append("")
     lines.append(
@@ -377,8 +381,8 @@ def write_live_report(live_dir: Path, ledger: pd.DataFrame, summary: Dict[str, o
         ["Closed weeks", summary.get("closed_weeks", "n/a")],
         ["Pending next-week signals", summary.get("pending_signal_weeks", "n/a")],
         ["Signal rows in ledger", summary.get("rows_in_ledger", "n/a")],
-        ["Model equity", f"{summary.get('model_equity', np.nan):,.2f}" if not pd.isna(summary.get("model_equity", np.nan)) else "n/a"],
-        ["SPY equity", f"{summary.get('spy_equity', np.nan):,.2f}" if not pd.isna(summary.get("spy_equity", np.nan)) else "n/a"],
+        [f"Model equity ({currency})", f"{summary.get('model_equity', np.nan):,.2f}" if not pd.isna(summary.get("model_equity", np.nan)) else "n/a"],
+        [f"SPY equity ({currency})", f"{summary.get('spy_equity', np.nan):,.2f}" if not pd.isna(summary.get("spy_equity", np.nan)) else "n/a"],
         ["Model total return", fmt_pct(summary.get("model_total_return", np.nan))],
         ["SPY total return", fmt_pct(summary.get("spy_total_return", np.nan))],
         ["Excess return", fmt_pct_signed(summary.get("excess_return", np.nan))],
