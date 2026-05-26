@@ -14,13 +14,20 @@ This tracker is duplicate-safe. Rerunning during the same signal week updates re
 | Closed weeks | 3 |
 | Pending next-week signals | 0 |
 | Signal rows in ledger | 4 |
+<<<<<<< HEAD
 | Model equity (SGD) | 10,432.65 |
 | SPY equity (SGD) | 10,404.50 |
 | Model total return | 4.3% |
 | SPY total return | 4.0% |
+=======
+| Model equity | 10,435.31 |
+| SPY equity | 10,406.72 |
+| Model total return | 4.4% |
+| SPY total return | 4.1% |
+>>>>>>> f6d5067bcacff88ee8759a18542e1d1fed466ae5
 | Excess return | +0.3% |
-| Model Sharpe | 5.370 |
-| SPY Sharpe | 5.301 |
+| Model Sharpe | 5.397 |
+| SPY Sharpe | 5.326 |
 | Model MaxDD | -2.0% |
 | SPY MaxDD | -1.9% |
 | Latest target allocation | SPY 90.0%,  SPXL 10.0% |
