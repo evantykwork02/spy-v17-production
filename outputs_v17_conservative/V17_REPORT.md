@@ -85,7 +85,7 @@ _Data source: forced refresh_
 | vs V12 | holdout_2021_plus | total_return | +45.8% | 0.0150 | significant (p<0.05) |
 | vs V12 | holdout_2021_plus | sharpe | -0.006 | 0.5800 | not significant |
 | vs V12 | holdout_2021_plus | calmar | +0.153 | 0.5050 | not significant |
-| vs V12 | holdout_2021_plus | max_drawdown | -0.3% | 0.9600 | not significant |
+| vs V12 | holdout_2021_plus | max_drawdown | -0.3% | 0.9550 | not significant |
 | vs SPY | full | total_return | +3744.8% | 0.0000 | highly significant (p<0.01) |
 | vs SPY | full | sharpe | +0.352 | 0.0000 | highly significant (p<0.01) |
 | vs SPY | full | calmar | +0.573 | 0.0000 | highly significant (p<0.01) |
