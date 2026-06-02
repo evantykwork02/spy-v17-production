@@ -8,19 +8,19 @@ This tracker is duplicate-safe. Rerunning during the same signal week updates re
 | --- | --- |
 | Start signal date | 2026-05-01 |
 | Latest signal date | 2026-05-29 |
-| Last data date | 2026-05-29 |
+| Last data date | 2026-06-02 |
 | Tracker action | updated_existing_signal_no_duplicate |
-| Tracked weeks | 4 |
-| Closed weeks | 3 |
-| Pending next-week signals | 1 |
+| Tracked weeks | 5 |
+| Closed weeks | 4 |
+| Pending next-week signals | 0 |
 | Signal rows in ledger | 5 |
-| Model equity (SGD) | 10,542.78 |
-| SPY equity (SGD) | 10,497.19 |
-| Model total return | 5.4% |
-| SPY total return | 5.0% |
+| Model equity (SGD) | 10,560.83 |
+| SPY equity (SGD) | 10,512.32 |
+| Model total return | 5.6% |
+| SPY total return | 5.1% |
 | Excess return | +0.5% |
-| Model Sharpe | 6.085 |
-| SPY Sharpe | 5.915 |
+| Model Sharpe | 5.918 |
+| SPY Sharpe | 5.741 |
 | Model MaxDD | -2.0% |
 | SPY MaxDD | -1.9% |
 | Latest target allocation | SPY 90.0%,  SPXL 10.0% |
@@ -33,7 +33,7 @@ This tracker is duplicate-safe. Rerunning during the same signal week updates re
 | 2026-05-08 | 2026-05-11 | ACTIVE | CALM_BULL_BOOST | 1.07 | SPY 96.5%,  SPXL 3.5% |
 | 2026-05-15 | 2026-05-18 | ACTIVE | NORMAL | 1.00 | SPY 100.0% |
 | 2026-05-22 | 2026-05-26 | ACTIVE | STRONG_CALM_BULL | 1.20 | SPY 90.0%,  SPXL 10.0% |
-| 2026-05-29 | pending | PENDING_EXECUTION | STRONG_CALM_BULL | 1.20 | SPY 90.0%,  SPXL 10.0% |
+| 2026-05-29 | 2026-06-01 | ACTIVE | STRONG_CALM_BULL | 1.20 | SPY 90.0%,  SPXL 10.0% |
 
 ## Recent signal-period results
 
@@ -42,13 +42,8 @@ This tracker is duplicate-safe. Rerunning during the same signal week updates re
 | 2026-05-01 | 2026-05-04 | CLOSED | CALM_BULL_BOOST | +2.5% | +2.4% | +0.2% |
 | 2026-05-08 | 2026-05-11 | CLOSED | CALM_BULL_BOOST | +0.2% | +0.2% | +0.0% |
 | 2026-05-15 | 2026-05-18 | CLOSED | NORMAL | +0.9% | +0.9% | +0.0% |
-| 2026-05-22 | 2026-05-26 | OPEN | STRONG_CALM_BULL | +1.7% | +1.5% | +0.3% |
-
-## Pending next signal
-
-| Signal | Trade | Regime | Signal | Allocation |
-| --- | --- | --- | --- | --- |
-| 2026-05-29 | pending | STRONG_CALM_BULL | 1.2 | SPY 90.0%,  SPXL 10.0% |
+| 2026-05-22 | 2026-05-26 | CLOSED | STRONG_CALM_BULL | +1.7% | +1.5% | +0.3% |
+| 2026-05-29 | 2026-06-01 | OPEN | STRONG_CALM_BULL | +0.2% | +0.1% | +0.0% |
 
 ## Files written
 
