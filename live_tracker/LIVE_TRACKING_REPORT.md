@@ -8,19 +8,19 @@ This tracker is duplicate-safe. Rerunning during the same signal week updates re
 | --- | --- |
 | Start signal date | 2026-05-01 |
 | Latest signal date | 2026-05-29 |
-| Last data date | 2026-06-02 |
+| Last data date | 2026-06-03 |
 | Tracker action | updated_existing_signal_no_duplicate |
 | Tracked weeks | 5 |
 | Closed weeks | 4 |
 | Pending next-week signals | 0 |
 | Signal rows in ledger | 5 |
-| Model equity (SGD) | 10,588.28 |
-| SPY equity (SGD) | 10,535.00 |
-| Model total return | 5.9% |
-| SPY total return | 5.4% |
-| Excess return | +0.5% |
-| Model Sharpe | 6.269 |
-| SPY Sharpe | 6.049 |
+| Model equity (SGD) | 10,505.07 |
+| SPY equity (SGD) | 10,466.11 |
+| Model total return | 5.1% |
+| SPY total return | 4.7% |
+| Excess return | +0.4% |
+| Model Sharpe | 4.844 |
+| SPY Sharpe | 4.784 |
 | Model MaxDD | -2.0% |
 | SPY MaxDD | -1.9% |
 | Latest target allocation | SPY 90.0%,  SPXL 10.0% |
@@ -43,7 +43,7 @@ This tracker is duplicate-safe. Rerunning during the same signal week updates re
 | 2026-05-08 | 2026-05-11 | CLOSED | CALM_BULL_BOOST | +0.2% | +0.2% | +0.0% |
 | 2026-05-15 | 2026-05-18 | CLOSED | NORMAL | +0.9% | +0.9% | +0.0% |
 | 2026-05-22 | 2026-05-26 | CLOSED | STRONG_CALM_BULL | +1.7% | +1.5% | +0.3% |
-| 2026-05-29 | 2026-06-01 | OPEN | STRONG_CALM_BULL | +0.4% | +0.4% | +0.1% |
+| 2026-05-29 | 2026-06-01 | OPEN | STRONG_CALM_BULL | -0.4% | -0.3% | -0.1% |
 
 ## Files written
 
