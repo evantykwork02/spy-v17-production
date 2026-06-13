@@ -1,2 +1,2 @@
 date,currency,v12_signal,v17_signal,regime,net_equity_exposure,calm_bull_trigger,target_allocation,weights,reason,data_source,risk_free_rate_annual_pct,risk_free_rate_date,risk_free_rate_source
-2026-06-12,SGD,1.0,1.0,NORMAL,1.0,0,SPY 100.0%,"{'SPY': 1.0, 'SPXL': 0.0, 'SPXS': 0.0, 'TLT': 0.0, 'GLD': 0.0, 'SHY': 0.0}",No high-conviction trigger; baseline 100% SPY.,forced refresh,4.3,2026-06-12,fallback
+2026-06-12,SGD,1.0,1.2,STRONG_CALM_BULL,1.2,1,"SPY 90.0%,  SPXL 10.0%","{'SPY': 0.9, 'SPXL': 0.09999999999999998, 'SPXS': 0.0, 'TLT': 0.0, 'GLD': 0.0, 'SHY': 0.0}",Strong CB-only conditions met; exposure 1.20x.,forced refresh,4.3,2026-06-12,fallback
