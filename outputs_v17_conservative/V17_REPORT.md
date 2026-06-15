@@ -12,11 +12,11 @@ _Data source: forced refresh_
 
 | Model | Total return | CAGR | Sharpe | Max drawdown | Calmar |
 | --- | --- | --- | --- | --- | --- |
-| SPY buy-and-hold | 1154.6% | 15.52% | 0.882 | -33.7% | 0.460 |
-| V12 (defensive engine) | 2366.4% | 20.07% | 0.819 | -31.5% | 0.637 |
-| **V17 Conservative** | **2924.2%** | **21.47%** | **0.861** | **-31.5%** | **0.681** |
+| SPY buy-and-hold | 1174.5% | 15.62% | 0.886 | -33.7% | 0.463 |
+| V12 (defensive engine) | 2405.4% | 20.17% | 0.823 | -31.5% | 0.640 |
+| **V17 Conservative** | **2981.3%** | **21.60%** | **0.866** | **-31.5%** | **0.685** |
 
-**V17 outperformed SPY by +1769.5% in total return, with Sharpe -0.021 higher and max drawdown +2.2% (less negative is better).**
+**V17 outperformed SPY by +1806.9% in total return, with Sharpe -0.020 higher and max drawdown +2.2% (less negative is better).**
 
 ## This week's signal
 
@@ -35,9 +35,9 @@ _Data source: forced refresh_
 
 | Model | Total return | CAGR | Sharpe | Max drawdown | Calmar |
 | --- | --- | --- | --- | --- | --- |
-| SPY buy-and-hold | 113.1% | 14.97% | 0.911 | -24.5% | 0.611 |
-| V12 | 144.2% | 17.89% | 0.753 | -31.5% | 0.568 |
-| V17 Conservative | 160.6% | 19.31% | 0.800 | -31.5% | 0.613 |
+| SPY buy-and-hold | 116.5% | 15.29% | 0.927 | -24.5% | 0.624 |
+| V12 | 148.1% | 18.22% | 0.767 | -31.5% | 0.578 |
+| V17 Conservative | 165.5% | 19.71% | 0.817 | -31.5% | 0.625 |
 
 ## Behaviour during historical stress events
 
@@ -72,28 +72,28 @@ _Data source: forced refresh_
 | 2023 | +26.2% | +25.6% | +26.1% |
 | 2024 | +24.9% | +28.5% | +33.0% |
 | 2025 | +17.7% | +34.9% | +37.5% |
-| 2026 | +9.1% | +14.3% | +14.2% |
+| 2026 | +10.8% | +16.1% | +16.3% |
 
 ## Statistical significance (paired block bootstrap)
 
 | Comparison | Period | Metric | Observed delta | p_fail | Verdict |
 | --- | --- | --- | --- | --- | --- |
-| vs V12 | full | total_return | +557.8% | 0.0000 | highly significant (p<0.01) |
-| vs V12 | full | sharpe | +0.037 | 0.0200 | significant (p<0.05) |
-| vs V12 | full | calmar | +0.045 | 0.0200 | significant (p<0.05) |
-| vs V12 | full | max_drawdown | +0.0% | 0.4950 | not significant |
-| vs V12 | holdout_2021_plus | total_return | +16.4% | 0.0200 | significant (p<0.05) |
-| vs V12 | holdout_2021_plus | sharpe | +0.041 | 0.1000 | not significant |
-| vs V12 | holdout_2021_plus | calmar | +0.045 | 0.0700 | borderline |
-| vs V12 | holdout_2021_plus | max_drawdown | +0.0% | 0.6200 | not significant |
-| vs SPY | full | total_return | +1769.5% | 0.0000 | highly significant (p<0.01) |
-| vs SPY | full | sharpe | +0.196 | 0.0150 | significant (p<0.05) |
-| vs SPY | full | calmar | +0.221 | 0.0550 | borderline |
-| vs SPY | full | max_drawdown | +2.2% | 0.3450 | not significant |
-| vs SPY | holdout_2021_plus | total_return | +47.5% | 0.0700 | borderline |
-| vs SPY | holdout_2021_plus | sharpe | +0.116 | 0.2100 | not significant |
-| vs SPY | holdout_2021_plus | calmar | +0.002 | 0.3400 | not significant |
-| vs SPY | holdout_2021_plus | max_drawdown | -7.0% | 0.8200 | not significant |
+| vs V12 | full | total_return | +575.9% | 0.0000 | highly significant (p<0.01) |
+| vs V12 | full | sharpe | +0.037 | 0.0300 | significant (p<0.05) |
+| vs V12 | full | calmar | +0.045 | 0.0350 | significant (p<0.05) |
+| vs V12 | full | max_drawdown | +0.0% | 0.5400 | not significant |
+| vs V12 | holdout_2021_plus | total_return | +17.4% | 0.0250 | significant (p<0.05) |
+| vs V12 | holdout_2021_plus | sharpe | +0.043 | 0.1000 | not significant |
+| vs V12 | holdout_2021_plus | calmar | +0.047 | 0.0800 | borderline |
+| vs V12 | holdout_2021_plus | max_drawdown | -0.0% | 0.6200 | not significant |
+| vs SPY | full | total_return | +1806.9% | 0.0000 | highly significant (p<0.01) |
+| vs SPY | full | sharpe | +0.196 | 0.0100 | significant (p<0.05) |
+| vs SPY | full | calmar | +0.222 | 0.0400 | significant (p<0.05) |
+| vs SPY | full | max_drawdown | +2.2% | 0.3650 | not significant |
+| vs SPY | holdout_2021_plus | total_return | +49.0% | 0.0850 | borderline |
+| vs SPY | holdout_2021_plus | sharpe | +0.116 | 0.2000 | not significant |
+| vs SPY | holdout_2021_plus | calmar | +0.001 | 0.3500 | not significant |
+| vs SPY | holdout_2021_plus | max_drawdown | -7.0% | 0.8350 | not significant |
 
 ## Honest interpretation
 

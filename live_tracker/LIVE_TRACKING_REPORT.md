@@ -8,19 +8,19 @@ This tracker is duplicate-safe. Rerunning during the same signal week updates re
 | --- | --- |
 | Start signal date | 2026-05-01 |
 | Latest signal date | 2026-06-12 |
-| Last data date | 2026-06-12 |
+| Last data date | 2026-06-15 |
 | Tracker action | updated_existing_signal_no_duplicate |
-| Tracked weeks | 6 |
-| Closed weeks | 5 |
-| Pending next-week signals | 1 |
+| Tracked weeks | 7 |
+| Closed weeks | 6 |
+| Pending next-week signals | 0 |
 | Signal rows in ledger | 7 |
-| Model equity (SGD) | 10,296.28 |
-| SPY equity (SGD) | 10,292.79 |
-| Model total return | 3.0% |
-| SPY total return | 2.9% |
-| Excess return | +0.0% |
-| Model Sharpe | 1.336 |
-| SPY Sharpe | 1.531 |
+| Model equity (SGD) | 10,491.37 |
+| SPY equity (SGD) | 10,455.56 |
+| Model total return | 4.9% |
+| SPY total return | 4.6% |
+| Excess return | +0.4% |
+| Model Sharpe | 2.169 |
+| SPY Sharpe | 2.343 |
 | Model MaxDD | -5.6% |
 | SPY MaxDD | -4.5% |
 | Latest target allocation | SPY 90.0%,  SPXL 10.0% |
@@ -35,7 +35,7 @@ This tracker is duplicate-safe. Rerunning during the same signal week updates re
 | 2026-05-22 | 2026-05-26 | ACTIVE | STRONG_CALM_BULL | 1.20 | SPY 90.0%,  SPXL 10.0% |
 | 2026-05-29 | 2026-06-01 | ACTIVE | STRONG_CALM_BULL | 1.20 | SPY 90.0%,  SPXL 10.0% |
 | 2026-06-05 | 2026-06-08 | ACTIVE | NERVOUS_MARKET | 1.30 | SPY 85.0%,  SPXL 15.0% |
-| 2026-06-12 | pending | PENDING_EXECUTION | STRONG_CALM_BULL | 1.20 | SPY 90.0%,  SPXL 10.0% |
+| 2026-06-12 | 2026-06-15 | ACTIVE | STRONG_CALM_BULL | 1.20 | SPY 90.0%,  SPXL 10.0% |
 
 ## Recent signal-period results
 
@@ -46,13 +46,8 @@ This tracker is duplicate-safe. Rerunning during the same signal week updates re
 | 2026-05-15 | 2026-05-18 | CLOSED | NORMAL | +0.9% | +0.9% | +0.0% |
 | 2026-05-22 | 2026-05-26 | CLOSED | STRONG_CALM_BULL | +1.7% | +1.5% | +0.3% |
 | 2026-05-29 | 2026-06-01 | CLOSED | STRONG_CALM_BULL | -3.0% | -2.5% | -0.5% |
-| 2026-06-05 | 2026-06-08 | OPEN | NERVOUS_MARKET | +0.7% | +0.6% | +0.1% |
-
-## Pending next signal
-
-| Signal | Trade | Regime | Signal | Allocation |
-| --- | --- | --- | --- | --- |
-| 2026-06-12 | pending | STRONG_CALM_BULL | 1.2 | SPY 90.0%,  SPXL 10.0% |
+| 2026-06-05 | 2026-06-08 | CLOSED | NERVOUS_MARKET | +0.7% | +0.6% | +0.1% |
+| 2026-06-12 | 2026-06-15 | OPEN | STRONG_CALM_BULL | +1.9% | +1.6% | +0.3% |
 
 ## Files written
 
