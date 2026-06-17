@@ -13,7 +13,7 @@ _Data source: forced refresh_
 | Model | Total return | CAGR | Sharpe | Max drawdown | Calmar |
 | --- | --- | --- | --- | --- | --- |
 | SPY buy-and-hold | 1169.1% | 15.59% | 0.885 | -33.7% | 0.462 |
-| V12 (defensive engine) | 3263.1% | 22.20% | 1.120 | -24.2% | 0.919 |
+| V12 (defensive engine) | 3263.0% | 22.20% | 1.120 | -24.2% | 0.919 |
 | **V17 Conservative** | **4837.3%** | **24.90%** | **1.162** | **-24.2%** | **1.031** |
 
 **V17 outperformed SPY by +3668.2% in total return, with Sharpe +0.277 higher and max drawdown +9.6% (less negative is better).**
@@ -81,11 +81,11 @@ _Data source: forced refresh_
 | vs V12 | full | total_return | +1574.3% | 0.0000 | highly significant (p<0.01) |
 | vs V12 | full | sharpe | +0.035 | 0.1150 | not significant |
 | vs V12 | full | calmar | +0.112 | 0.1400 | not significant |
-| vs V12 | full | max_drawdown | +0.0% | 0.8300 | not significant |
+| vs V12 | full | max_drawdown | +0.0% | 0.8350 | not significant |
 | vs V12 | holdout_2021_plus | total_return | +41.9% | 0.0350 | significant (p<0.05) |
 | vs V12 | holdout_2021_plus | sharpe | -0.014 | 0.6700 | not significant |
 | vs V12 | holdout_2021_plus | calmar | +0.138 | 0.5300 | not significant |
-| vs V12 | holdout_2021_plus | max_drawdown | -0.3% | 0.9600 | not significant |
+| vs V12 | holdout_2021_plus | max_drawdown | -0.3% | 0.9650 | not significant |
 | vs SPY | full | total_return | +3668.2% | 0.0000 | highly significant (p<0.01) |
 | vs SPY | full | sharpe | +0.349 | 0.0000 | highly significant (p<0.01) |
 | vs SPY | full | calmar | +0.568 | 0.0100 | significant (p<0.05) |

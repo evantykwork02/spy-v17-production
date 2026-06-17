@@ -14,8 +14,10 @@ This tracker is duplicate-safe. Rerunning during the same signal week updates re
 | Closed weeks | 6 |
 | Pending next-week signals | 0 |
 | Signal rows in ledger | 7 |
-| Model equity (SGD) | 10,438.76 |
-| SPY equity (SGD) | 10,411.85 |
+| Capital injected (SGD) | 200.00 |
+| Net capital contributed (SGD) | 10,200.00 |
+| Model equity (SGD) | 10,638.76 |
+| SPY equity (SGD) | 10,611.85 |
 | Model total return | 4.4% |
 | SPY total return | 4.1% |
 | Excess return | +0.3% |
