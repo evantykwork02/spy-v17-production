@@ -250,12 +250,79 @@ def _live_signal_periods(ledger: pd.DataFrame, live_ret: pd.Series, spy_ret: pd.
     return pd.DataFrame(out)
 
 
+def _resolve_injection_cashflows(
+    capital_injections: Optional[list],
+    live_index: pd.DatetimeIndex,
+) -> Tuple[float, pd.Series]:
+    """Split capital injections into (a) amount to fold into the starting capital
+    (injections dated on/before the tracker start) and (b) a per-day cash series
+    on the live index for injections that land during the tracked period.
+
+    Conventions:
+      - Amounts are in the account currency (e.g. SGD), same unit as the capital.
+      - An injection is only counted once it has actually happened (date <= today).
+        Future-dated (scheduled) injections are ignored until their date arrives.
+      - An injection lands on the first trading day on/after its date; if its date
+        is beyond the available data (e.g. injected today but prices lag a few days)
+        it lands on the last available day so it shows immediately, and self-corrects
+        to the true date on a later run once data catches up.
+    """
+    inj_cash = pd.Series(0.0, index=live_index)
+    start_extra = 0.0
+    if not capital_injections or len(live_index) == 0:
+        return start_extra, inj_cash
+
+    today = pd.Timestamp(datetime.now().date())
+    start_date = pd.Timestamp(live_index.min()).normalize()
+    last_date = pd.Timestamp(live_index.max()).normalize()
+    norm_index = live_index.normalize()
+
+    for inj in capital_injections:
+        try:
+            d = pd.Timestamp(inj["date"]).normalize()
+            amt = float(inj["amount"])
+        except Exception:
+            continue
+        if pd.isna(d) or amt == 0.0 or d > today:
+            continue  # invalid or not-yet-funded scheduled injection
+        if d <= start_date:
+            start_extra += amt          # injected before tracking began -> base capital
+            continue
+        if d > last_date:
+            eff = live_index[-1]        # injected but data lags -> show on last day
+        else:
+            future = live_index[norm_index >= d]
+            eff = future[0] if len(future) else live_index[-1]
+        inj_cash.loc[eff] += amt
+    return start_extra, inj_cash
+
+
+def _equity_with_injections(
+    base_capital: float, daily_ret: pd.Series, inj_cash: pd.Series
+) -> pd.Series:
+    """Compound a return stream while adding external injection cash flows.
+
+    Injection cash is added at the close of its effective day (it does not earn that
+    day's market return). With no injections this equals base_capital*(1+ret).cumprod(),
+    preserving the original behaviour exactly.
+    """
+    growth = (1.0 + daily_ret).to_numpy()
+    inj = inj_cash.reindex(daily_ret.index).fillna(0.0).to_numpy()
+    out = np.empty(len(daily_ret), dtype=float)
+    eq = float(base_capital)
+    for i in range(len(daily_ret)):
+        eq = eq * growth[i] + inj[i]
+        out[i] = eq
+    return pd.Series(out, index=daily_ret.index)
+
+
 def update_live_tracker(
     live_dir: Path,
     signal_table: pd.DataFrame,
     daily: pd.DataFrame,
     initial_capital: float,
     reset: bool = False,
+    capital_injections: Optional[list] = None,
 ) -> Dict[str, object]:
     """Update live paper-tracking files. Safe to rerun multiple times per week."""
     live_dir = Path(live_dir)
@@ -284,8 +351,16 @@ def update_live_tracker(
     live_ret = (weights * asset_ret).sum(axis=1)
     spy_ret = daily_live["SPY"].ffill().pct_change().fillna(0.0)
 
-    live_equity = initial_capital * (1.0 + live_ret).cumprod()
-    spy_equity = initial_capital * (1.0 + spy_ret).cumprod()
+    # Capital injections are external cash flows: they raise the equity LEVEL but are
+    # not investment returns, so live_ret/spy_ret (and all return-based metrics) stay
+    # untouched. Both the model and SPY benchmark receive the same flows for a fair
+    # equity-level comparison.
+    start_extra, inj_cash = _resolve_injection_cashflows(capital_injections, daily_live.index)
+    base_capital = float(initial_capital) + start_extra
+    total_injected = float(start_extra + inj_cash.sum())
+
+    live_equity = _equity_with_injections(base_capital, live_ret, inj_cash)
+    spy_equity = _equity_with_injections(base_capital, spy_ret, inj_cash)
 
     equity_curve = pd.DataFrame({
         "date": daily_live.index,
@@ -328,6 +403,8 @@ def update_live_tracker(
     summary = {
         "currency": currency,
         "initial_capital": float(initial_capital),
+        "total_injected": total_injected,
+        "net_capital_contributed": float(base_capital + inj_cash.sum()),
         "start_signal_date": pd.Timestamp(first_signal_date).date().isoformat(),
         "last_data_date": pd.Timestamp(daily_live.index.max()).date().isoformat(),
         "latest_signal_date": pd.Timestamp(signal_table.index[-1]).date().isoformat(),
@@ -381,6 +458,8 @@ def write_live_report(live_dir: Path, ledger: pd.DataFrame, summary: Dict[str, o
         ["Closed weeks", summary.get("closed_weeks", "n/a")],
         ["Pending next-week signals", summary.get("pending_signal_weeks", "n/a")],
         ["Signal rows in ledger", summary.get("rows_in_ledger", "n/a")],
+        [f"Capital injected ({currency})", f"{summary.get('total_injected', 0.0):,.2f}"],
+        [f"Net capital contributed ({currency})", f"{summary.get('net_capital_contributed', np.nan):,.2f}" if not pd.isna(summary.get("net_capital_contributed", np.nan)) else "n/a"],
         [f"Model equity ({currency})", f"{summary.get('model_equity', np.nan):,.2f}" if not pd.isna(summary.get("model_equity", np.nan)) else "n/a"],
         [f"SPY equity ({currency})", f"{summary.get('spy_equity', np.nan):,.2f}" if not pd.isna(summary.get("spy_equity", np.nan)) else "n/a"],
         ["Model total return", fmt_pct(summary.get("model_total_return", np.nan))],

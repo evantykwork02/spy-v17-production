@@ -363,6 +363,12 @@ def build_message() -> str:
     lines.append(f"{'SPY':8s}  {s_ret:>7}  {s_sh:>6}  {s_dd:>7}")
     lines.append(f"{'Excess':8s}  {exc:>7}")
     lines.append(f"Equity:   {equity} {currency}")
+    try:
+        injected = float(summary.get("total_injected", 0) or 0)
+        if injected > 0:
+            lines.append(f"Injected: {injected:,.2f} {currency}")
+    except Exception:
+        pass
     if tracked_weeks is not None:
         weeks_line = f"Weeks:    {tracked_weeks} tracked"
         if pending_signal_weeks:

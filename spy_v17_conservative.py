@@ -2282,6 +2282,7 @@ def run(cfg: Config) -> None:
             daily=daily,
             initial_capital=cfg.live_start_cash,
             reset=cfg.live_reset,
+            capital_injections=runtime_cfg.capital_injections,
         )
 
     steps.done()
