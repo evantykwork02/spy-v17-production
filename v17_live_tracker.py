@@ -272,7 +272,13 @@ def _resolve_injection_cashflows(
     if not capital_injections or len(live_index) == 0:
         return start_extra, inj_cash
 
-    today = pd.Timestamp(datetime.now().date())
+    # 1-day grace: the bot stamps injections with the user's local (SGT, UTC+8)
+    # date, while this runs in UTC inside CI. Without the grace an injection made
+    # in the early SGT hours (when the UTC date is still "yesterday") would be
+    # silently treated as a future/scheduled injection and skipped for a day.
+    # 1 day covers every real timezone offset; genuinely future-scheduled
+    # injections (days/weeks out) are still correctly deferred.
+    funded_cutoff = pd.Timestamp(datetime.now().date()) + pd.Timedelta(days=1)
     start_date = pd.Timestamp(live_index.min()).normalize()
     last_date = pd.Timestamp(live_index.max()).normalize()
     norm_index = live_index.normalize()
@@ -283,7 +289,7 @@ def _resolve_injection_cashflows(
             amt = float(inj["amount"])
         except Exception:
             continue
-        if pd.isna(d) or amt == 0.0 or d > today:
+        if pd.isna(d) or amt == 0.0 or d > funded_cutoff:
             continue  # invalid or not-yet-funded scheduled injection
         if d <= start_date:
             start_extra += amt          # injected before tracking began -> base capital
