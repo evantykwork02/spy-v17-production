@@ -1,5 +1,5 @@
 {
-  "date": "2026-06-12",
+  "date": "2026-06-19",
   "currency": "SGD",
   "v12_signal": 1.0,
   "v17_signal": 1.2,
@@ -17,7 +17,7 @@
   },
   "reason": "Strong CB-only conditions met; exposure 1.20x.",
   "data_source": "forced refresh",
-  "risk_free_rate_annual_pct": 3.79,
-  "risk_free_rate_date": "2026-06-16",
+  "risk_free_rate_annual_pct": 3.83,
+  "risk_free_rate_date": "2026-06-18",
   "risk_free_rate_source": "DGS3MO"
 }
