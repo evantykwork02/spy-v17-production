@@ -8,7 +8,7 @@ This tracker is duplicate-safe. Rerunning during the same signal week updates re
 | --- | --- |
 | Start signal date | 2026-05-01 |
 | Latest signal date | 2026-06-26 |
-| Last data date | 2026-06-26 |
+| Last data date | 2026-06-25 |
 | Tracker action | updated_existing_signal_no_duplicate |
 | Tracked weeks | 8 |
 | Closed weeks | 7 |
@@ -16,13 +16,13 @@ This tracker is duplicate-safe. Rerunning during the same signal week updates re
 | Signal rows in ledger | 9 |
 | Capital injected (SGD) | 200.00 |
 | Net capital contributed (SGD) | 10,200.00 |
-| Model equity (SGD) | 10,303.11 |
-| SPY equity (SGD) | 10,339.07 |
-| Model total return | 1.1% |
-| SPY total return | 1.4% |
-| Excess return | -0.4% |
-| Model Sharpe | 0.267 |
-| SPY Sharpe | 0.446 |
+| Model equity (SGD) | 10,394.50 |
+| SPY equity (SGD) | 10,414.38 |
+| Model total return | 2.0% |
+| SPY total return | 2.2% |
+| Excess return | -0.2% |
+| Model Sharpe | 0.624 |
+| SPY Sharpe | 0.800 |
 | Model MaxDD | -5.6% |
 | SPY MaxDD | -4.5% |
 | Latest target allocation | SPY 100.0% |
@@ -51,7 +51,7 @@ This tracker is duplicate-safe. Rerunning during the same signal week updates re
 | 2026-05-29 | 2026-06-01 | CLOSED | STRONG_CALM_BULL | -3.0% | -2.5% | -0.5% |
 | 2026-06-05 | 2026-06-08 | CLOSED | NERVOUS_MARKET | +0.7% | +0.6% | +0.1% |
 | 2026-06-12 | 2026-06-15 | CLOSED | STRONG_CALM_BULL | +1.1% | +0.9% | +0.2% |
-| 2026-06-19 | 2026-06-22 | OPEN | STRONG_CALM_BULL | -2.9% | -2.4% | -0.5% |
+| 2026-06-19 | 2026-06-22 | OPEN | STRONG_CALM_BULL | -2.0% | -1.7% | -0.4% |
 
 ## Pending next signal
 
