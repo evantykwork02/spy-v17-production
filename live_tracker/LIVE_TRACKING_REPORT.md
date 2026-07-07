@@ -16,13 +16,13 @@ This tracker is duplicate-safe. Rerunning during the same signal week updates re
 | Signal rows in ledger | 10 |
 | Capital injected (SGD) | 200.00 |
 | Net capital contributed (SGD) | 10,200.00 |
-| Model equity (SGD) | 10,604.57 |
-| SPY equity (SGD) | 10,644.42 |
-| Model total return | 4.0% |
-| SPY total return | 4.4% |
-| Excess return | -0.4% |
-| Model Sharpe | 1.203 |
-| SPY Sharpe | 1.529 |
+| Model equity (SGD) | 10,557.14 |
+| SPY equity (SGD) | 10,604.99 |
+| Model total return | 3.6% |
+| SPY total return | 4.0% |
+| Excess return | -0.5% |
+| Model Sharpe | 1.046 |
+| SPY Sharpe | 1.376 |
 | Model MaxDD | -5.6% |
 | SPY MaxDD | -4.5% |
 | Latest target allocation | SPY 90.0%,  SPXL 10.0% |
@@ -51,7 +51,7 @@ This tracker is duplicate-safe. Rerunning during the same signal week updates re
 | 2026-06-12 | 2026-06-15 | CLOSED | STRONG_CALM_BULL | +1.1% | +0.9% | +0.2% |
 | 2026-06-19 | 2026-06-22 | CLOSED | STRONG_CALM_BULL | -2.9% | -2.4% | -0.5% |
 | 2026-06-26 | 2026-06-29 | CLOSED | NORMAL | +2.2% | +2.2% | +0.0% |
-| 2026-07-03 | 2026-07-06 | OPEN | STRONG_CALM_BULL | +0.7% | +0.8% | -0.0% |
+| 2026-07-03 | 2026-07-06 | OPEN | STRONG_CALM_BULL | +0.3% | +0.4% | -0.1% |
 
 ## Files written
 
