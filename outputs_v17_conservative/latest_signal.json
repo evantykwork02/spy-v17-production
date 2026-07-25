@@ -1,5 +1,5 @@
 {
-  "date": "2026-07-17",
+  "date": "2026-07-24",
   "currency": "SGD",
   "v12_signal": 1.0,
   "v17_signal": 1.0,
@@ -17,7 +17,7 @@
   },
   "reason": "No high-conviction trigger; baseline 100% SPY.",
   "data_source": "forced refresh",
-  "risk_free_rate_annual_pct": 3.85,
-  "risk_free_rate_date": "2026-07-21",
+  "risk_free_rate_annual_pct": 3.95,
+  "risk_free_rate_date": "2026-07-23",
   "risk_free_rate_source": "DGS3MO"
 }
