@@ -8,21 +8,21 @@ This tracker is duplicate-safe. Rerunning during the same signal week updates re
 | --- | --- |
 | Start signal date | 2026-05-01 |
 | Latest signal date | 2026-07-24 |
-| Last data date | 2026-07-24 |
+| Last data date | 2026-07-28 |
 | Tracker action | updated_existing_signal_no_duplicate |
-| Tracked weeks | 12 |
-| Closed weeks | 11 |
-| Pending next-week signals | 1 |
+| Tracked weeks | 13 |
+| Closed weeks | 12 |
+| Pending next-week signals | 0 |
 | Signal rows in ledger | 13 |
 | Capital injected (SGD) | 200.00 |
 | Net capital contributed (SGD) | 10,200.00 |
-| Model equity (SGD) | 10,416.58 |
-| SPY equity (SGD) | 10,480.04 |
-| Model total return | 2.2% |
-| SPY total return | 2.8% |
+| Model equity (SGD) | 10,404.67 |
+| SPY equity (SGD) | 10,468.06 |
+| Model total return | 2.1% |
+| SPY total return | 2.7% |
 | Excess return | -0.6% |
-| Model Sharpe | 0.437 |
-| SPY Sharpe | 0.683 |
+| Model Sharpe | 0.390 |
+| SPY Sharpe | 0.625 |
 | Model MaxDD | -5.6% |
 | SPY MaxDD | -4.5% |
 | Latest target allocation | SPY 100.0% |
@@ -38,26 +38,20 @@ This tracker is duplicate-safe. Rerunning during the same signal week updates re
 | 2026-07-03 | 2026-07-06 | ACTIVE | STRONG_CALM_BULL | 1.20 | SPY 90.0%,  SPXL 10.0% |
 | 2026-07-10 | 2026-07-13 | ACTIVE | STRONG_CALM_BULL | 1.20 | SPY 90.0%,  SPXL 10.0% |
 | 2026-07-17 | 2026-07-20 | ACTIVE | NORMAL | 1.00 | SPY 100.0% |
-| 2026-07-24 | pending | PENDING_EXECUTION | NORMAL | 1.00 | SPY 100.0% |
+| 2026-07-24 | 2026-07-27 | ACTIVE | NORMAL | 1.00 | SPY 100.0% |
 
 ## Recent signal-period results
 
 | Signal | Trade | Status | Regime | Model | SPY | Excess |
 | --- | --- | --- | --- | --- | --- | --- |
-| 2026-05-29 | 2026-06-01 | CLOSED | STRONG_CALM_BULL | -3.0% | -2.5% | -0.5% |
 | 2026-06-05 | 2026-06-08 | CLOSED | NERVOUS_MARKET | +0.7% | +0.6% | +0.1% |
 | 2026-06-12 | 2026-06-15 | CLOSED | STRONG_CALM_BULL | +1.1% | +0.9% | +0.2% |
 | 2026-06-19 | 2026-06-22 | CLOSED | STRONG_CALM_BULL | -2.9% | -2.4% | -0.5% |
 | 2026-06-26 | 2026-06-29 | CLOSED | NORMAL | +2.2% | +2.2% | +0.0% |
 | 2026-07-03 | 2026-07-06 | CLOSED | STRONG_CALM_BULL | +1.4% | +1.4% | +0.1% |
 | 2026-07-10 | 2026-07-13 | CLOSED | STRONG_CALM_BULL | -1.9% | -1.5% | -0.3% |
-| 2026-07-17 | 2026-07-20 | OPEN | NORMAL | -0.6% | -0.6% | +0.0% |
-
-## Pending next signal
-
-| Signal | Trade | Regime | Signal | Allocation |
-| --- | --- | --- | --- | --- |
-| 2026-07-24 | pending | NORMAL | 1.0 | SPY 100.0% |
+| 2026-07-17 | 2026-07-20 | CLOSED | NORMAL | -0.6% | -0.6% | +0.0% |
+| 2026-07-24 | 2026-07-27 | OPEN | NORMAL | -0.1% | -0.1% | +0.0% |
 
 ## Files written
 
