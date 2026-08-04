@@ -12,11 +12,11 @@ _Data source: forced refresh_
 
 | Model | Total return | CAGR | Sharpe | Max drawdown | Calmar |
 | --- | --- | --- | --- | --- | --- |
-| SPY buy-and-hold | 1194.8% | 15.60% | 0.887 | -33.7% | 0.463 |
-| V12 (defensive engine) | 3331.0% | 22.15% | 1.119 | -24.2% | 0.917 |
-| **V17 Conservative** | **4970.5%** | **24.89%** | **1.162** | **-24.2%** | **1.030** |
+| SPY buy-and-hold | 1203.2% | 15.64% | 0.888 | -33.7% | 0.464 |
+| V12 (defensive engine) | 3353.2% | 22.20% | 1.121 | -24.2% | 0.919 |
+| **V17 Conservative** | **5009.9%** | **24.94%** | **1.164** | **-24.2%** | **1.032** |
 
-**V17 outperformed SPY by +3775.7% in total return, with Sharpe +0.275 higher and max drawdown +9.6% (less negative is better).**
+**V17 outperformed SPY by +3806.7% in total return, with Sharpe +0.276 higher and max drawdown +9.6% (less negative is better).**
 
 ## This week's signal
 
@@ -35,9 +35,9 @@ _Data source: forced refresh_
 
 | Model | Total return | CAGR | Sharpe | Max drawdown | Calmar |
 | --- | --- | --- | --- | --- | --- |
-| SPY buy-and-hold | 119.9% | 15.22% | 0.927 | -24.5% | 0.621 |
-| V12 | 233.5% | 24.17% | 1.213 | -16.9% | 1.427 |
-| V17 Conservative | 278.8% | 27.05% | 1.227 | -17.2% | 1.570 |
+| SPY buy-and-hold | 121.4% | 15.35% | 0.934 | -24.5% | 0.627 |
+| V12 | 235.7% | 24.32% | 1.219 | -16.9% | 1.435 |
+| V17 Conservative | 281.7% | 27.22% | 1.234 | -17.2% | 1.580 |
 
 ## Behaviour during historical stress events
 
@@ -72,27 +72,27 @@ _Data source: forced refresh_
 | 2023 | +26.2% | +26.6% | +27.8% |
 | 2024 | +24.9% | +27.6% | +30.7% |
 | 2025 | +17.7% | +36.3% | +38.4% |
-| 2026 | +12.6% | +12.4% | +11.8% |
+| 2026 | +13.3% | +13.2% | +12.6% |
 
 ## Statistical significance (paired block bootstrap)
 
 | Comparison | Period | Metric | Observed delta | p_fail | Verdict |
 | --- | --- | --- | --- | --- | --- |
-| vs V12 | full | total_return | +1639.5% | 0.0000 | highly significant (p<0.01) |
+| vs V12 | full | total_return | +1656.6% | 0.0000 | highly significant (p<0.01) |
 | vs V12 | full | sharpe | +0.037 | 0.0950 | borderline |
-| vs V12 | full | calmar | +0.113 | 0.1400 | not significant |
-| vs V12 | full | max_drawdown | +0.0% | 0.8300 | not significant |
-| vs V12 | holdout_2021_plus | total_return | +45.3% | 0.0300 | significant (p<0.05) |
+| vs V12 | full | calmar | +0.113 | 0.1350 | not significant |
+| vs V12 | full | max_drawdown | -0.0% | 0.8300 | not significant |
+| vs V12 | holdout_2021_plus | total_return | +46.1% | 0.0300 | significant (p<0.05) |
 | vs V12 | holdout_2021_plus | sharpe | -0.008 | 0.5650 | not significant |
-| vs V12 | holdout_2021_plus | calmar | +0.143 | 0.5100 | not significant |
+| vs V12 | holdout_2021_plus | calmar | +0.145 | 0.5100 | not significant |
 | vs V12 | holdout_2021_plus | max_drawdown | -0.3% | 0.9750 | not significant |
-| vs SPY | full | total_return | +3775.7% | 0.0000 | highly significant (p<0.01) |
+| vs SPY | full | total_return | +3806.7% | 0.0000 | highly significant (p<0.01) |
 | vs SPY | full | sharpe | +0.348 | 0.0000 | highly significant (p<0.01) |
-| vs SPY | full | calmar | +0.567 | 0.0000 | highly significant (p<0.01) |
+| vs SPY | full | calmar | +0.568 | 0.0000 | highly significant (p<0.01) |
 | vs SPY | full | max_drawdown | +9.6% | 0.2050 | not significant |
-| vs SPY | holdout_2021_plus | total_return | +158.9% | 0.0150 | significant (p<0.05) |
-| vs SPY | holdout_2021_plus | sharpe | +0.488 | 0.0350 | significant (p<0.05) |
-| vs SPY | holdout_2021_plus | calmar | +0.949 | 0.0500 | borderline |
+| vs SPY | holdout_2021_plus | total_return | +160.4% | 0.0150 | significant (p<0.05) |
+| vs SPY | holdout_2021_plus | sharpe | +0.489 | 0.0350 | significant (p<0.05) |
+| vs SPY | holdout_2021_plus | calmar | +0.953 | 0.0500 | borderline |
 | vs SPY | holdout_2021_plus | max_drawdown | +7.3% | 0.3400 | not significant |
 
 ## Honest interpretation
