@@ -16,13 +16,13 @@ This tracker is duplicate-safe. Rerunning during the same signal week updates re
 | Signal rows in ledger | 15 |
 | Capital injected (SGD) | 200.00 |
 | Net capital contributed (SGD) | 10,200.00 |
-| Model equity (SGD) | 10,977.37 |
-| SPY equity (SGD) | 10,971.40 |
+| Model equity (SGD) | 10,978.15 |
+| SPY equity (SGD) | 10,972.18 |
 | Model total return | 7.7% |
 | SPY total return | 7.6% |
 | Excess return | +0.1% |
-| Model Sharpe | 1.536 |
-| SPY Sharpe | 1.729 |
+| Model Sharpe | 1.538 |
+| SPY Sharpe | 1.731 |
 | Model MaxDD | -5.6% |
 | SPY MaxDD | -4.5% |
 | Latest target allocation | SPY 100.0% |
