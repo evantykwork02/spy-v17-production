@@ -9,7 +9,7 @@ This tracker is duplicate-safe. Rerunning during the same signal week updates re
 | Start signal date | 2026-05-01 |
 | Latest signal date | 2026-08-14 |
 | Last data date | 2026-08-14 |
-| Tracker action | appended_new_signal |
+| Tracker action | updated_existing_signal_no_duplicate |
 | Tracked weeks | 15 |
 | Closed weeks | 14 |
 | Pending next-week signals | 1 |
