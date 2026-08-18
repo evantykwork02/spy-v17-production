@@ -8,7 +8,7 @@ This tracker is duplicate-safe. Rerunning during the same signal week updates re
 | --- | --- |
 | Start signal date | 2026-05-01 |
 | Latest signal date | 2026-08-14 |
-| Last data date | 2026-08-17 |
+| Last data date | 2026-08-18 |
 | Tracker action | updated_existing_signal_no_duplicate |
 | Tracked weeks | 16 |
 | Closed weeks | 15 |
@@ -16,13 +16,13 @@ This tracker is duplicate-safe. Rerunning during the same signal week updates re
 | Signal rows in ledger | 16 |
 | Capital injected (SGD) | 200.00 |
 | Net capital contributed (SGD) | 10,200.00 |
-| Model equity (SGD) | 10,998.68 |
-| SPY equity (SGD) | 10,995.58 |
-| Model total return | 7.9% |
-| SPY total return | 7.9% |
-| Excess return | +0.0% |
-| Model Sharpe | 1.517 |
-| SPY Sharpe | 1.712 |
+| Model equity (SGD) | 10,888.72 |
+| SPY equity (SGD) | 10,905.95 |
+| Model total return | 6.8% |
+| SPY total return | 7.0% |
+| Excess return | -0.2% |
+| Model Sharpe | 1.281 |
+| SPY Sharpe | 1.489 |
 | Model MaxDD | -5.6% |
 | SPY MaxDD | -4.5% |
 | Latest target allocation | SPY 89.0%,  SPXL 11.0% |
@@ -38,7 +38,7 @@ This tracker is duplicate-safe. Rerunning during the same signal week updates re
 | 2026-07-24 | 2026-07-27 | ACTIVE | NORMAL | 1.00 | SPY 100.0% |
 | 2026-07-31 | 2026-08-03 | ACTIVE | STRONG_CALM_BULL | 1.20 | SPY 90.0%,  SPXL 10.0% |
 | 2026-08-07 | 2026-08-10 | ACTIVE | NORMAL | 1.00 | SPY 100.0% |
-| 2026-08-14 | 2026-08-17 | ACTIVE | YC_BOOST | 1.22 | SPY 89.0%,  SPXL 11.0% |
+| 2026-08-14 | 2026-08-18 | ACTIVE | YC_BOOST | 1.22 | SPY 89.0%,  SPXL 11.0% |
 
 ## Recent signal-period results
 
@@ -51,7 +51,7 @@ This tracker is duplicate-safe. Rerunning during the same signal week updates re
 | 2026-07-24 | 2026-07-27 | CLOSED | NORMAL | +1.1% | +1.1% | +0.0% |
 | 2026-07-31 | 2026-08-03 | CLOSED | STRONG_CALM_BULL | +4.2% | +3.5% | +0.7% |
 | 2026-08-07 | 2026-08-10 | CLOSED | NORMAL | +0.4% | +0.4% | +0.0% |
-| 2026-08-14 | 2026-08-17 | OPEN | YC_BOOST | -0.2% | -0.1% | -0.0% |
+| 2026-08-14 | 2026-08-18 | OPEN | YC_BOOST | -1.2% | -1.0% | -0.2% |
 
 ## Files written
 
