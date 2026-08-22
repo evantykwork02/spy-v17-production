@@ -1,5 +1,5 @@
 {
-  "date": "2026-08-14",
+  "date": "2026-08-21",
   "currency": "SGD",
   "v12_signal": 1.0,
   "v17_signal": 1.22,
@@ -17,7 +17,7 @@
   },
   "reason": "Yield curve positive AND steepening (YC only); exposure 1.22x.",
   "data_source": "forced refresh",
-  "risk_free_rate_annual_pct": 3.86,
-  "risk_free_rate_date": "2026-08-18",
+  "risk_free_rate_annual_pct": 3.87,
+  "risk_free_rate_date": "2026-08-21",
   "risk_free_rate_source": "DGS3MO"
 }
