@@ -17,7 +17,7 @@
   },
   "reason": "Yield curve positive AND steepening (YC only); exposure 1.22x.",
   "data_source": "forced refresh",
-  "risk_free_rate_annual_pct": 3.87,
-  "risk_free_rate_date": "2026-08-21",
+  "risk_free_rate_annual_pct": 3.88,
+  "risk_free_rate_date": "2026-08-25",
   "risk_free_rate_source": "DGS3MO"
 }
