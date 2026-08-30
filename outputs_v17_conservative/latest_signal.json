@@ -1,23 +1,23 @@
 {
-  "date": "2026-08-21",
+  "date": "2026-08-28",
   "currency": "SGD",
   "v12_signal": 1.0,
-  "v17_signal": 1.22,
-  "regime": "YC_BOOST",
-  "net_equity_exposure": 1.22,
+  "v17_signal": 1.0,
+  "regime": "NORMAL",
+  "net_equity_exposure": 1.0,
   "calm_bull_trigger": 0,
-  "target_allocation": "SPY 89.0%,  SPXL 11.0%",
+  "target_allocation": "SPY 100.0%",
   "weights": {
-    "SPY": 0.89,
-    "SPXL": 0.10999999999999999,
+    "SPY": 1.0,
+    "SPXL": 0.0,
     "SPXS": 0.0,
     "TLT": 0.0,
     "GLD": 0.0,
     "SHY": 0.0
   },
-  "reason": "Yield curve positive AND steepening (YC only); exposure 1.22x.",
+  "reason": "No high-conviction trigger; baseline 100% SPY.",
   "data_source": "forced refresh",
-  "risk_free_rate_annual_pct": 3.88,
-  "risk_free_rate_date": "2026-08-25",
+  "risk_free_rate_annual_pct": 3.84,
+  "risk_free_rate_date": "2026-08-28",
   "risk_free_rate_source": "DGS3MO"
 }
