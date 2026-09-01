@@ -16,4 +16,4 @@ signal_date,created_at,updated_at,data_last_date_at_creation,estimated_trade_dat
 2026-08-07,2026-08-08,2026-08-11,2026-08-11,2026-08-10,2026-08-10,ACTIVE,1.0,1.0,NORMAL,1.0,SPY 100.0%,No high-conviction trigger; baseline 100% SPY.,1.0,0.0,0.0,0.0,0.0,0.0
 2026-08-14,2026-08-15,2026-08-18,2026-08-18,2026-08-17,2026-08-17,ACTIVE,1.0,1.22,YC_BOOST,1.22,"SPY 89.0%,  SPXL 11.0%",Yield curve positive AND steepening (YC only); exposure 1.22x.,0.89,0.1099999999999999,0.0,0.0,0.0,0.0
 2026-08-21,2026-08-22,2026-08-25,2026-08-25,2026-08-24,2026-08-24,ACTIVE,1.0,1.22,YC_BOOST,1.22,"SPY 89.0%,  SPXL 11.0%",Yield curve positive AND steepening (YC only); exposure 1.22x.,0.89,0.1099999999999999,0.0,0.0,0.0,0.0
-2026-08-28,2026-08-30,2026-08-30,2026-08-28,2026-08-31,,PENDING_EXECUTION,1.0,1.0,NORMAL,1.0,SPY 100.0%,No high-conviction trigger; baseline 100% SPY.,1.0,0.0,0.0,0.0,0.0,0.0
+2026-08-28,2026-08-30,2026-09-01,2026-09-01,2026-08-31,2026-08-31,ACTIVE,1.0,1.0,NORMAL,1.0,SPY 100.0%,No high-conviction trigger; baseline 100% SPY.,1.0,0.0,0.0,0.0,0.0,0.0
