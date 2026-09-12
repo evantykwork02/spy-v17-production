@@ -1,23 +1,23 @@
 {
-  "date": "2026-09-04",
+  "date": "2026-09-11",
   "currency": "SGD",
   "v12_signal": 1.0,
-  "v17_signal": 1.4,
-  "regime": "DUAL_BOOST",
-  "net_equity_exposure": 1.4,
+  "v17_signal": 1.2,
+  "regime": "STRONG_CALM_BULL",
+  "net_equity_exposure": 1.2,
   "calm_bull_trigger": 1,
-  "target_allocation": "SPY 80.0%,  SPXL 20.0%",
+  "target_allocation": "SPY 90.0%,  SPXL 10.0%",
   "weights": {
-    "SPY": 0.8,
-    "SPXL": 0.19999999999999996,
+    "SPY": 0.9,
+    "SPXL": 0.09999999999999998,
     "SPXS": 0.0,
     "TLT": 0.0,
     "GLD": 0.0,
     "SHY": 0.0
   },
-  "reason": "Calm-uptrend AND yield-curve steepening both fire; exposure 1.40x (highest conviction).",
+  "reason": "Strong CB-only conditions met; exposure 1.20x.",
   "data_source": "forced refresh",
-  "risk_free_rate_annual_pct": 3.89,
-  "risk_free_rate_date": "2026-09-08",
+  "risk_free_rate_annual_pct": 4.0,
+  "risk_free_rate_date": "2026-09-11",
   "risk_free_rate_source": "DGS3MO"
 }
