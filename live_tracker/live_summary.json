@@ -11,14 +11,14 @@
   "tracked_weeks": 20,
   "closed_weeks": 19,
   "pending_signal_weeks": 0,
-  "model_equity": 10696.369987380845,
-  "spy_equity": 10769.085380811832,
-  "model_total_return": 0.04922835808912418,
-  "spy_total_return": 0.05636043437982563,
-  "excess_return": -0.00713207629070145,
-  "model_sharpe": 0.6976669035256091,
-  "spy_sharpe": 0.9282048616673202,
+  "model_equity": 10681.315941821666,
+  "spy_equity": 10739.018071679458,
+  "model_total_return": 0.04775167660528501,
+  "spy_total_return": 0.05341107381552934,
+  "excess_return": -0.005659397210244332,
+  "model_sharpe": 0.6712229495715798,
+  "spy_sharpe": 0.8670298925091569,
   "model_max_drawdown": -0.05554611138976495,
   "spy_max_drawdown": -0.04494652583696379,
-  "latest_target_allocation": "SPY 90.0%,  SPXL 10.0%"
+  "latest_target_allocation": "SPY 100.0%"
 }
