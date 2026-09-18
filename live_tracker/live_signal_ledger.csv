@@ -19,3 +19,4 @@ signal_date,created_at,updated_at,data_last_date_at_creation,estimated_trade_dat
 2026-08-28,2026-08-30,2026-09-01,2026-09-01,2026-08-31,2026-08-31,ACTIVE,1.0,1.0,NORMAL,1.0,SPY 100.0%,No high-conviction trigger; baseline 100% SPY.,1.0,0.0,0.0,0.0,0.0,0.0
 2026-09-04,2026-09-05,2026-09-08,2026-09-08,2026-09-08,2026-09-08,ACTIVE,1.0,1.4,DUAL_BOOST,1.4,"SPY 80.0%,  SPXL 20.0%",Calm-uptrend AND yield-curve steepening both fire; exposure 1.40x (highest conviction).,0.8,0.1999999999999999,0.0,0.0,0.0,0.0
 2026-09-11,2026-09-12,2026-09-15,2026-09-15,2026-09-14,2026-09-14,ACTIVE,1.0,1.0,CALM_BULL_NEUTRAL,1.0,SPY 100.0%,Weak CB-only conditions met; kept neutral at 1.00x.,1.0,0.0,0.0,0.0,0.0,0.0
+2026-09-18,2026-09-18,2026-09-18,2026-09-17,2026-09-21,,PENDING_EXECUTION,1.0,1.0,CALM_BULL_NEUTRAL,1.0,SPY 100.0%,Weak CB-only conditions met; kept neutral at 1.00x.,1.0,0.0,0.0,0.0,0.0,0.0
