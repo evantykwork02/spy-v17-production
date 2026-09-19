@@ -8,11 +8,11 @@ Date,v12_signal,v17_signal,calm_bull_trigger,tier_intersection,tier_cb_only,tier
 2009-01-02,0.6,0.6,0,0,0,0,0,0,0,0,0.6,0.0,0.0,0.2,0.08000000000000002,0.12,0.6,DEFENSIVE,V12 defensive risk-control signal retained.
 2009-01-09,0.6,0.6,0,0,0,0,0,0,0,0,0.6,0.0,0.0,0.2,0.08000000000000002,0.12,0.6,DEFENSIVE,V12 defensive risk-control signal retained.
 2009-01-16,0.6,0.6,0,0,0,0,0,0,0,0,0.6,0.0,0.0,0.2,0.08000000000000002,0.12,0.6,DEFENSIVE,V12 defensive risk-control signal retained.
-2009-01-23,0.6,0.6,0,0,0,0,0,0,0,0,0.6,0.0,0.0,0.1674970743206887,0.09083430855977045,0.1416686171195409,0.6,DEFENSIVE,V12 defensive risk-control signal retained.
-2009-01-30,0.6,0.6,0,0,0,0,0,0,0,0,0.6,0.0,0.0,0.16164919466372582,0.09278360177875808,0.14556720355751615,0.6,DEFENSIVE,V12 defensive risk-control signal retained.
-2009-02-06,0.6,0.6,0,0,0,0,0,0,0,0,0.6,0.0,0.0,0.1725292616067282,0.08915691279775728,0.13831382559551453,0.6,DEFENSIVE,V12 defensive risk-control signal retained.
-2009-02-13,0.6,0.6,0,0,0,0,0,0,0,0,0.6,0.0,0.0,0.173963664750988,0.08867877841633734,0.13735755683267467,0.6,DEFENSIVE,V12 defensive risk-control signal retained.
-2009-02-20,0.6,0.6,0,0,0,0,0,0,0,0,0.6,0.0,0.0,0.18918837317098577,0.08360387560967142,0.12720775121934283,0.6,DEFENSIVE,V12 defensive risk-control signal retained.
+2009-01-23,0.6,0.6,0,0,0,0,0,0,0,0,0.6,0.0,0.0,0.1674969877489034,0.09083433741703222,0.1416686748340644,0.6,DEFENSIVE,V12 defensive risk-control signal retained.
+2009-01-30,0.6,0.6,0,0,0,0,0,0,0,0,0.6,0.0,0.0,0.16164916240768856,0.0927836125307705,0.14556722506154096,0.6,DEFENSIVE,V12 defensive risk-control signal retained.
+2009-02-06,0.6,0.6,0,0,0,0,0,0,0,0,0.6,0.0,0.0,0.17252978643219374,0.08915673785593543,0.13831347571187086,0.6,DEFENSIVE,V12 defensive risk-control signal retained.
+2009-02-13,0.6,0.6,0,0,0,0,0,0,0,0,0.6,0.0,0.0,0.1739646974977881,0.08867843416740398,0.13735686833480795,0.6,DEFENSIVE,V12 defensive risk-control signal retained.
+2009-02-20,0.6,0.6,0,0,0,0,0,0,0,0,0.6,0.0,0.0,0.18918884906284422,0.08360371697905195,0.12720743395810385,0.6,DEFENSIVE,V12 defensive risk-control signal retained.
 2009-02-27,0.6,0.6,0,0,0,0,0,0,1,0,0.6,0.0,0.0,0.2,0.08000000000000002,0.12,0.6,DEFENSIVE,V12 defensive risk-control signal retained.
 2009-03-06,0.6,0.6,0,0,0,0,0,0,1,0,0.6,0.0,0.0,0.2,0.08000000000000002,0.12,0.6,DEFENSIVE,V12 defensive risk-control signal retained.
 2009-03-13,0.6,0.6,0,0,0,0,0,0,1,0,0.6,0.0,0.0,0.2,0.08000000000000002,0.12,0.6,DEFENSIVE,V12 defensive risk-control signal retained.
@@ -307,7 +307,7 @@ Date,v12_signal,v17_signal,calm_bull_trigger,tier_intersection,tier_cb_only,tier
 2014-09-26,1.0,1.0,0,0,0,0,0,0,0,0,1.0,0.0,0.0,0.0,0.0,0.0,1.0,NORMAL,No high-conviction trigger; baseline 100% SPY.
 2014-10-03,1.0,1.0,0,0,0,0,0,0,0,0,1.0,0.0,0.0,0.0,0.0,0.0,1.0,NORMAL,No high-conviction trigger; baseline 100% SPY.
 2014-10-10,1.3,1.3,0,0,0,0,0,0,0,0,0.85,0.15000000000000002,0.0,0.0,0.0,0.0,1.3,LEVERAGED_LONG,V12 high-conviction leverage signal retained (dip-buy / recovery).
-2014-10-17,0.6,0.6,0,0,0,0,0,0,0,0,0.6,0.0,0.0,0.19801609661823671,0.08066130112725445,0.12132260225450886,0.6,DEFENSIVE,V12 defensive risk-control signal retained.
+2014-10-17,0.6,0.6,0,0,0,0,0,0,0,0,0.6,0.0,0.0,0.1980112026111698,0.08066293246294341,0.1213258649258868,0.6,DEFENSIVE,V12 defensive risk-control signal retained.
 2014-10-24,1.7,1.7,0,0,0,0,0,0,0,0,0.65,0.35,0.0,0.0,0.0,0.0,1.6999999999999997,LEVERAGED_LONG,V12 high-conviction leverage signal retained (dip-buy / recovery).
 2014-10-31,1.7,1.7,0,0,0,0,0,0,0,0,0.65,0.35,0.0,0.0,0.0,0.0,1.6999999999999997,LEVERAGED_LONG,V12 high-conviction leverage signal retained (dip-buy / recovery).
 2014-11-07,1.7,1.7,0,0,0,0,0,0,0,0,0.65,0.35,0.0,0.0,0.0,0.0,1.6999999999999997,LEVERAGED_LONG,V12 high-conviction leverage signal retained (dip-buy / recovery).
@@ -589,9 +589,9 @@ Date,v12_signal,v17_signal,calm_bull_trigger,tier_intersection,tier_cb_only,tier
 2020-02-21,1.0,1.0,0,0,0,0,0,0,0,0,1.0,0.0,0.0,0.0,0.0,0.0,1.0,NORMAL,No high-conviction trigger; baseline 100% SPY.
 2020-02-28,0.6,0.6,0,0,0,0,0,0,1,0,0.6,0.0,0.0,0.2,0.08000000000000002,0.12,0.6,DEFENSIVE,V12 defensive risk-control signal retained.
 2020-03-06,0.6,0.6,0,0,0,0,0,0,1,0,0.6,0.0,0.0,0.2,0.08000000000000002,0.12,0.6,DEFENSIVE,V12 defensive risk-control signal retained.
-2020-03-13,0.6,0.6,0,0,0,0,0,0,1,0,0.6,0.0,0.0,0.16512573734240302,0.09162475421919901,0.14324950843839798,0.6,DEFENSIVE,V12 defensive risk-control signal retained.
+2020-03-13,0.6,0.6,0,0,0,0,0,0,1,0,0.6,0.0,0.0,0.1651250195333913,0.0916249934888696,0.14324998697773914,0.6,DEFENSIVE,V12 defensive risk-control signal retained.
 2020-03-20,0.6,0.6,0,0,0,0,0,0,1,0,0.6,0.0,0.0,0.2,0.08000000000000002,0.12,0.6,DEFENSIVE,V12 defensive risk-control signal retained.
-2020-03-27,0.6,0.6,0,0,0,0,0,0,1,0,0.6,0.0,0.0,0.14223755455026607,0.09925414848324465,0.15850829696648927,0.6,DEFENSIVE,V12 defensive risk-control signal retained.
+2020-03-27,0.6,0.6,0,0,0,0,0,0,1,0,0.6,0.0,0.0,0.14223789005238519,0.09925403664920496,0.15850807329840988,0.6,DEFENSIVE,V12 defensive risk-control signal retained.
 2020-04-03,1.7,1.7,0,0,0,0,0,0,1,0,0.65,0.35,0.0,0.0,0.0,0.0,1.6999999999999997,LEVERAGED_LONG,V12 high-conviction leverage signal retained (dip-buy / recovery).
 2020-04-10,1.7,1.7,0,0,0,0,0,0,1,0,0.65,0.35,0.0,0.0,0.0,0.0,1.6999999999999997,LEVERAGED_LONG,V12 high-conviction leverage signal retained (dip-buy / recovery).
 2020-04-17,1.7,1.7,0,0,0,0,0,0,1,0,0.65,0.35,0.0,0.0,0.0,0.0,1.6999999999999997,LEVERAGED_LONG,V12 high-conviction leverage signal retained (dip-buy / recovery).
@@ -699,19 +699,19 @@ Date,v12_signal,v17_signal,calm_bull_trigger,tier_intersection,tier_cb_only,tier
 2022-04-01,1.0,1.0,0,0,0,0,0,0,0,0,1.0,0.0,0.0,0.0,0.0,0.0,1.0,NORMAL,No high-conviction trigger; baseline 100% SPY.
 2022-04-08,1.0,1.3,0,0,0,0,0,0,0,1,0.85,0.15000000000000002,0.0,0.0,0.0,0.0,1.3,NERVOUS_MARKET,VIX >= 20 with V12 normal — elevated risk premium; exposure 1.30x.
 2022-04-15,0.6,0.6,0,0,0,0,0,0,0,0,0.6,0.0,0.0,0.2,0.08000000000000002,0.12,0.6,DEFENSIVE,V12 defensive risk-control signal retained.
-2022-04-22,0.6,0.6,0,0,0,0,0,0,0,0,0.6,0.0,0.0,0.18377238448953048,0.08540920517015652,0.13081841034031302,0.6,DEFENSIVE,V12 defensive risk-control signal retained.
+2022-04-22,0.6,0.6,0,0,0,0,0,0,0,0,0.6,0.0,0.0,0.18377085170599955,0.08540971609800016,0.1308194321960003,0.6,DEFENSIVE,V12 defensive risk-control signal retained.
 2022-04-29,-1.0,-1.0,0,0,0,0,0,0,0,0,0.0,0.0,0.3333333333333333,0.33333333333333337,0.13333333333333336,0.2,-1.0,CRASH_SHORT,V12 crash-short protection retained.
-2022-05-06,-1.0,-1.0,0,0,0,0,0,0,0,0,0.0,0.0,0.3333333333333333,0.3272023067215445,0.1353770088705963,0.20408735107452594,-1.0,CRASH_SHORT,V12 crash-short protection retained.
+2022-05-06,-1.0,-1.0,0,0,0,0,0,0,0,0,0.0,0.0,0.3333333333333333,0.32720054688165273,0.13537759548389358,0.20408852430112043,-1.0,CRASH_SHORT,V12 crash-short protection retained.
 2022-05-13,-1.0,-1.0,0,0,0,0,0,0,0,0,0.0,0.0,0.3333333333333333,0.33333333333333337,0.13333333333333336,0.2,-1.0,CRASH_SHORT,V12 crash-short protection retained.
 2022-05-20,-1.0,-1.0,0,0,0,0,0,0,0,0,0.0,0.0,0.3333333333333333,0.33333333333333337,0.13333333333333336,0.2,-1.0,CRASH_SHORT,V12 crash-short protection retained.
 2022-05-27,-1.0,-1.0,0,0,0,0,0,0,0,0,0.0,0.0,0.3333333333333333,0.33333333333333337,0.13333333333333336,0.2,-1.0,CRASH_SHORT,V12 crash-short protection retained.
-2022-06-03,-1.0,-1.0,0,0,0,0,0,0,1,0,0.0,0.0,0.3333333333333333,0.30690608139870335,0.14214241731154337,0.21761816795642003,-1.0,CRASH_SHORT,V12 crash-short protection retained.
-2022-06-10,-1.0,-1.0,0,0,0,0,0,0,0,0,0.0,0.0,0.3333333333333333,0.32510831683560637,0.13607500549924237,0.205483344331818,-1.0,CRASH_SHORT,V12 crash-short protection retained.
+2022-06-03,-1.0,-1.0,0,0,0,0,0,0,1,0,0.0,0.0,0.3333333333333333,0.3069086052314034,0.14214157603397667,0.21761648540128667,-1.0,CRASH_SHORT,V12 crash-short protection retained.
+2022-06-10,-1.0,-1.0,0,0,0,0,0,0,0,0,0.0,0.0,0.3333333333333333,0.32511152177209884,0.1360739371870782,0.2054812077074897,-1.0,CRASH_SHORT,V12 crash-short protection retained.
 2022-06-17,1.0,1.3,0,0,0,0,0,0,0,1,0.85,0.15000000000000002,0.0,0.0,0.0,0.0,1.3,NERVOUS_MARKET,VIX >= 20 with V12 normal — elevated risk premium; exposure 1.30x.
-2022-06-24,0.6,0.6,0,0,0,0,0,0,0,0,0.6,0.0,0.0,0.12951974117865614,0.10349341960711463,0.16698683921422927,0.6,DEFENSIVE,V12 defensive risk-control signal retained.
-2022-07-01,0.6,0.6,0,0,0,0,0,0,1,0,0.6,0.0,0.0,0.16081771576692508,0.09306076141102498,0.14612152282204996,0.6,DEFENSIVE,V12 defensive risk-control signal retained.
-2022-07-08,0.6,0.6,0,0,0,0,0,0,0,0,0.6,0.0,0.0,0.1810025808927585,0.08633247303574719,0.13266494607149434,0.6,DEFENSIVE,V12 defensive risk-control signal retained.
-2022-07-15,0.6,0.6,0,0,0,0,0,0,0,0,0.6,0.0,0.0,0.19471217027126175,0.08176260990957943,0.12352521981915883,0.6,DEFENSIVE,V12 defensive risk-control signal retained.
+2022-06-24,0.6,0.6,0,0,0,0,0,0,0,0,0.6,0.0,0.0,0.1295221026267424,0.10349263245775256,0.16698526491550508,0.6,DEFENSIVE,V12 defensive risk-control signal retained.
+2022-07-01,0.6,0.6,0,0,0,0,0,0,1,0,0.6,0.0,0.0,0.16082020542702588,0.09305993152432473,0.1461198630486494,0.6,DEFENSIVE,V12 defensive risk-control signal retained.
+2022-07-08,0.6,0.6,0,0,0,0,0,0,0,0,0.6,0.0,0.0,0.18100584284607285,0.08633138571797573,0.13266277143595145,0.6,DEFENSIVE,V12 defensive risk-control signal retained.
+2022-07-15,0.6,0.6,0,0,0,0,0,0,0,0,0.6,0.0,0.0,0.19471543840085068,0.08176152053304979,0.12352304106609956,0.6,DEFENSIVE,V12 defensive risk-control signal retained.
 2022-07-22,1.0,1.3,0,0,0,0,0,0,0,1,0.85,0.15000000000000002,0.0,0.0,0.0,0.0,1.3,NERVOUS_MARKET,VIX >= 20 with V12 normal — elevated risk premium; exposure 1.30x.
 2022-07-29,1.0,1.3,0,0,0,0,0,0,0,1,0.85,0.15000000000000002,0.0,0.0,0.0,0.0,1.3,NERVOUS_MARKET,VIX >= 20 with V12 normal — elevated risk premium; exposure 1.30x.
 2022-08-05,1.0,1.3,0,0,0,0,0,0,0,1,0.85,0.15000000000000002,0.0,0.0,0.0,0.0,1.3,NERVOUS_MARKET,VIX >= 20 with V12 normal — elevated risk premium; exposure 1.30x.
@@ -722,11 +722,11 @@ Date,v12_signal,v17_signal,calm_bull_trigger,tier_intersection,tier_cb_only,tier
 2022-09-09,1.0,1.3,0,0,0,0,0,0,0,1,0.85,0.15000000000000002,0.0,0.0,0.0,0.0,1.3,NERVOUS_MARKET,VIX >= 20 with V12 normal — elevated risk premium; exposure 1.30x.
 2022-09-16,-1.0,-1.0,0,0,0,0,0,0,0,0,0.0,0.0,0.3333333333333333,0.33333333333333337,0.13333333333333336,0.2,-1.0,CRASH_SHORT,V12 crash-short protection retained.
 2022-09-23,-1.0,-1.0,0,0,0,0,0,0,0,0,0.0,0.0,0.3333333333333333,0.33333333333333337,0.13333333333333336,0.2,-1.0,CRASH_SHORT,V12 crash-short protection retained.
-2022-09-30,-1.0,-1.0,0,0,0,0,0,0,0,0,0.0,0.0,0.3333333333333333,0.2573228518855936,0.15867016048257995,0.2506736542984932,-1.0,CRASH_SHORT,V12 crash-short protection retained.
-2022-10-07,-1.0,-1.0,0,0,0,0,0,0,0,0,0.0,0.0,0.3333333333333333,0.21414322429687382,0.17306336967881988,0.27946007269097306,-1.0,CRASH_SHORT,V12 crash-short protection retained.
-2022-10-14,-1.0,-1.0,0,0,0,0,0,0,0,0,0.0,0.0,0.3333333333333333,0.13961717438072857,0.19790538631753493,0.3291441059684032,-1.0,CRASH_SHORT,V12 crash-short protection retained.
+2022-09-30,-1.0,-1.0,0,0,0,0,0,0,0,0,0.0,0.0,0.3333333333333333,0.25732185763529786,0.1586704918993452,0.2506743171320237,-1.0,CRASH_SHORT,V12 crash-short protection retained.
+2022-10-07,-1.0,-1.0,0,0,0,0,0,0,0,0,0.0,0.0,0.3333333333333333,0.21414236382548427,0.1730636565026164,0.2794606463385661,-1.0,CRASH_SHORT,V12 crash-short protection retained.
+2022-10-14,-1.0,-1.0,0,0,0,0,0,0,0,0,0.0,0.0,0.3333333333333333,0.13961682564002767,0.19790550256443526,0.32914433846220387,-1.0,CRASH_SHORT,V12 crash-short protection retained.
 2022-10-21,-1.0,-1.0,0,0,0,0,0,0,0,0,0.0,0.0,0.3333333333333333,0.33333333333333337,0.13333333333333336,0.2,-1.0,CRASH_SHORT,V12 crash-short protection retained.
-2022-10-28,-1.0,-1.0,0,0,0,0,0,0,0,0,0.0,0.0,0.3333333333333333,0.29246562746561505,0.14695590195590616,0.2272451372451456,-1.0,CRASH_SHORT,V12 crash-short protection retained.
+2022-10-28,-1.0,-1.0,0,0,0,0,0,0,0,0,0.0,0.0,0.3333333333333333,0.2924619721028688,0.14695712041015488,0.22724757415364308,-1.0,CRASH_SHORT,V12 crash-short protection retained.
 2022-11-04,1.0,1.3,0,0,0,0,0,0,0,1,0.85,0.15000000000000002,0.0,0.0,0.0,0.0,1.3,NERVOUS_MARKET,VIX >= 20 with V12 normal — elevated risk premium; exposure 1.30x.
 2022-11-11,1.0,1.3,0,0,0,0,0,0,0,1,0.85,0.15000000000000002,0.0,0.0,0.0,0.0,1.3,NERVOUS_MARKET,VIX >= 20 with V12 normal — elevated risk premium; exposure 1.30x.
 2022-11-18,1.0,1.3,0,0,0,0,0,0,0,1,0.85,0.15000000000000002,0.0,0.0,0.0,0.0,1.3,NERVOUS_MARKET,VIX >= 20 with V12 normal — elevated risk premium; exposure 1.30x.
@@ -735,7 +735,7 @@ Date,v12_signal,v17_signal,calm_bull_trigger,tier_intersection,tier_cb_only,tier
 2022-12-09,1.0,1.3,0,0,0,0,0,0,0,1,0.85,0.15000000000000002,0.0,0.0,0.0,0.0,1.3,NERVOUS_MARKET,VIX >= 20 with V12 normal — elevated risk premium; exposure 1.30x.
 2022-12-16,1.0,1.3,0,0,0,0,0,0,0,1,0.85,0.15000000000000002,0.0,0.0,0.0,0.0,1.3,NERVOUS_MARKET,VIX >= 20 with V12 normal — elevated risk premium; exposure 1.30x.
 2022-12-23,1.0,1.3,0,0,0,0,0,0,0,1,0.85,0.15000000000000002,0.0,0.0,0.0,0.0,1.3,NERVOUS_MARKET,VIX >= 20 with V12 normal — elevated risk premium; exposure 1.30x.
-2022-12-30,0.6,0.6,0,0,0,0,0,0,0,0,0.6,0.0,0.0,0.08760596715662539,0.11746467761445821,0.1949293552289164,0.6,DEFENSIVE,V12 defensive risk-control signal retained.
+2022-12-30,0.6,0.6,0,0,0,0,0,0,0,0,0.6,0.0,0.0,0.08760476350242624,0.1174650788325246,0.19493015766504918,0.6,DEFENSIVE,V12 defensive risk-control signal retained.
 2023-01-06,0.6,0.6,0,0,0,0,0,0,0,0,0.6,0.0,0.0,0.08000000000000002,0.12000000000000002,0.2,0.6,DEFENSIVE,V12 defensive risk-control signal retained.
 2023-01-13,1.0,1.0,0,0,0,0,0,0,0,0,1.0,0.0,0.0,0.0,0.0,0.0,1.0,NORMAL,No high-conviction trigger; baseline 100% SPY.
 2023-01-20,1.0,1.0,0,0,0,0,0,0,0,0,1.0,0.0,0.0,0.0,0.0,0.0,1.0,NORMAL,No high-conviction trigger; baseline 100% SPY.
@@ -745,7 +745,7 @@ Date,v12_signal,v17_signal,calm_bull_trigger,tier_intersection,tier_cb_only,tier
 2023-02-17,1.0,1.3,0,0,0,0,0,0,0,1,0.85,0.15000000000000002,0.0,0.0,0.0,0.0,1.3,NERVOUS_MARKET,VIX >= 20 with V12 normal — elevated risk premium; exposure 1.30x.
 2023-02-24,1.0,1.3,0,0,0,0,0,0,0,1,0.85,0.15000000000000002,0.0,0.0,0.0,0.0,1.3,NERVOUS_MARKET,VIX >= 20 with V12 normal — elevated risk premium; exposure 1.30x.
 2023-03-03,1.0,1.0,0,0,0,0,0,0,0,0,1.0,0.0,0.0,0.0,0.0,0.0,1.0,NORMAL,No high-conviction trigger; baseline 100% SPY.
-2023-03-10,0.6,0.6,0,0,0,0,0,0,0,0,0.6,0.0,0.0,0.16614687544972942,0.09128437485009021,0.14256874970018038,0.6,DEFENSIVE,V12 defensive risk-control signal retained.
+2023-03-10,0.6,0.6,0,0,0,0,0,0,0,0,0.6,0.0,0.0,0.16614897510068746,0.09128367496643752,0.14256734993287504,0.6,DEFENSIVE,V12 defensive risk-control signal retained.
 2023-03-17,1.3,1.3,0,0,0,0,0,0,0,0,0.85,0.15000000000000002,0.0,0.0,0.0,0.0,1.3,LEVERAGED_LONG,V12 high-conviction leverage signal retained (dip-buy / recovery).
 2023-03-24,1.0,1.3,0,0,0,0,0,0,0,1,0.85,0.15000000000000002,0.0,0.0,0.0,0.0,1.3,NERVOUS_MARKET,VIX >= 20 with V12 normal — elevated risk premium; exposure 1.30x.
 2023-03-31,1.0,1.0,0,0,0,0,0,0,0,0,1.0,0.0,0.0,0.0,0.0,0.0,1.0,NORMAL,No high-conviction trigger; baseline 100% SPY.
@@ -781,41 +781,41 @@ Date,v12_signal,v17_signal,calm_bull_trigger,tier_intersection,tier_cb_only,tier
 2023-10-27,0.6,0.6,0,0,0,0,0,0,0,0,0.6,0.0,0.0,0.08000000000000002,0.12000000000000002,0.2,0.6,DEFENSIVE,V12 defensive risk-control signal retained.
 2023-11-03,1.0,1.0,0,0,0,0,0,0,0,0,1.0,0.0,0.0,0.0,0.0,0.0,1.0,NORMAL,No high-conviction trigger; baseline 100% SPY.
 2023-11-10,1.0,1.0,0,0,0,0,0,0,0,0,1.0,0.0,0.0,0.0,0.0,0.0,1.0,NORMAL,No high-conviction trigger; baseline 100% SPY.
-2023-11-17,1.0,1.0,1,0,1,1,0,0,0,0,1.0,0.0,0.0,0.0,0.0,0.0,1.0,CALM_BULL_NEUTRAL,Weak CB-only conditions met; kept neutral at 1.00x.
-2023-11-24,1.0,1.0,1,0,1,1,0,0,0,0,1.0,0.0,0.0,0.0,0.0,0.0,1.0,CALM_BULL_NEUTRAL,Weak CB-only conditions met; kept neutral at 1.00x.
+2023-11-17,1.0,1.2,1,0,1,0,1,0,0,0,0.9,0.09999999999999998,0.0,0.0,0.0,0.0,1.2,STRONG_CALM_BULL,Strong CB-only conditions met; exposure 1.20x.
+2023-11-24,1.0,1.2,1,0,1,0,1,0,0,0,0.9,0.09999999999999998,0.0,0.0,0.0,0.0,1.2,STRONG_CALM_BULL,Strong CB-only conditions met; exposure 1.20x.
 2023-12-01,1.2,1.2,0,0,0,0,0,0,0,0,0.9,0.09999999999999998,0.0,0.0,0.0,0.0,1.2,LEVERAGED_LONG,V12 high-conviction leverage signal retained (dip-buy / recovery).
 2023-12-08,1.2,1.2,0,0,0,0,0,0,0,0,0.9,0.09999999999999998,0.0,0.0,0.0,0.0,1.2,LEVERAGED_LONG,V12 high-conviction leverage signal retained (dip-buy / recovery).
-2023-12-15,1.0,1.0,1,0,1,1,0,0,0,0,1.0,0.0,0.0,0.0,0.0,0.0,1.0,CALM_BULL_NEUTRAL,Weak CB-only conditions met; kept neutral at 1.00x.
+2023-12-15,1.0,1.2,1,0,1,0,1,0,0,0,0.9,0.09999999999999998,0.0,0.0,0.0,0.0,1.2,STRONG_CALM_BULL,Strong CB-only conditions met; exposure 1.20x.
 2023-12-22,1.2,1.2,0,0,0,0,0,0,0,0,0.9,0.09999999999999998,0.0,0.0,0.0,0.0,1.2,LEVERAGED_LONG,V12 high-conviction leverage signal retained (dip-buy / recovery).
-2023-12-29,1.0,1.0,1,0,1,1,0,0,0,0,1.0,0.0,0.0,0.0,0.0,0.0,1.0,CALM_BULL_NEUTRAL,Weak CB-only conditions met; kept neutral at 1.00x.
-2024-01-05,1.0,1.0,1,0,1,1,0,0,0,0,1.0,0.0,0.0,0.0,0.0,0.0,1.0,CALM_BULL_NEUTRAL,Weak CB-only conditions met; kept neutral at 1.00x.
+2023-12-29,1.0,1.2,1,0,1,0,1,0,0,0,0.9,0.09999999999999998,0.0,0.0,0.0,0.0,1.2,STRONG_CALM_BULL,Strong CB-only conditions met; exposure 1.20x.
+2024-01-05,1.0,1.2,1,0,1,0,1,0,0,0,0.9,0.09999999999999998,0.0,0.0,0.0,0.0,1.2,STRONG_CALM_BULL,Strong CB-only conditions met; exposure 1.20x.
 2024-01-12,1.2,1.2,0,0,0,0,0,0,0,0,0.9,0.09999999999999998,0.0,0.0,0.0,0.0,1.2,LEVERAGED_LONG,V12 high-conviction leverage signal retained (dip-buy / recovery).
-2024-01-19,1.0,1.0,1,0,1,1,0,0,0,0,1.0,0.0,0.0,0.0,0.0,0.0,1.0,CALM_BULL_NEUTRAL,Weak CB-only conditions met; kept neutral at 1.00x.
-2024-01-26,1.0,1.0,1,0,1,1,0,0,0,0,1.0,0.0,0.0,0.0,0.0,0.0,1.0,CALM_BULL_NEUTRAL,Weak CB-only conditions met; kept neutral at 1.00x.
-2024-02-02,1.0,1.0,1,0,1,1,0,0,0,0,1.0,0.0,0.0,0.0,0.0,0.0,1.0,CALM_BULL_NEUTRAL,Weak CB-only conditions met; kept neutral at 1.00x.
-2024-02-09,1.0,1.0,1,0,1,1,0,0,0,0,1.0,0.0,0.0,0.0,0.0,0.0,1.0,CALM_BULL_NEUTRAL,Weak CB-only conditions met; kept neutral at 1.00x.
-2024-02-16,1.0,1.0,1,0,1,1,0,0,0,0,1.0,0.0,0.0,0.0,0.0,0.0,1.0,CALM_BULL_NEUTRAL,Weak CB-only conditions met; kept neutral at 1.00x.
-2024-02-23,1.0,1.0,1,0,1,1,0,0,0,0,1.0,0.0,0.0,0.0,0.0,0.0,1.0,CALM_BULL_NEUTRAL,Weak CB-only conditions met; kept neutral at 1.00x.
-2024-03-01,1.0,1.0,1,0,1,1,0,0,0,0,1.0,0.0,0.0,0.0,0.0,0.0,1.0,CALM_BULL_NEUTRAL,Weak CB-only conditions met; kept neutral at 1.00x.
-2024-03-08,1.0,1.0,1,0,1,1,0,0,0,0,1.0,0.0,0.0,0.0,0.0,0.0,1.0,CALM_BULL_NEUTRAL,Weak CB-only conditions met; kept neutral at 1.00x.
-2024-03-15,1.0,1.0,1,0,1,1,0,0,0,0,1.0,0.0,0.0,0.0,0.0,0.0,1.0,CALM_BULL_NEUTRAL,Weak CB-only conditions met; kept neutral at 1.00x.
-2024-03-22,1.0,1.0,1,0,1,1,0,0,0,0,1.0,0.0,0.0,0.0,0.0,0.0,1.0,CALM_BULL_NEUTRAL,Weak CB-only conditions met; kept neutral at 1.00x.
-2024-03-29,1.0,1.0,1,0,1,1,0,0,0,0,1.0,0.0,0.0,0.0,0.0,0.0,1.0,CALM_BULL_NEUTRAL,Weak CB-only conditions met; kept neutral at 1.00x.
+2024-01-19,1.0,1.2,1,0,1,0,1,0,0,0,0.9,0.09999999999999998,0.0,0.0,0.0,0.0,1.2,STRONG_CALM_BULL,Strong CB-only conditions met; exposure 1.20x.
+2024-01-26,1.0,1.2,1,0,1,0,1,0,0,0,0.9,0.09999999999999998,0.0,0.0,0.0,0.0,1.2,STRONG_CALM_BULL,Strong CB-only conditions met; exposure 1.20x.
+2024-02-02,1.0,1.2,1,0,1,0,1,0,0,0,0.9,0.09999999999999998,0.0,0.0,0.0,0.0,1.2,STRONG_CALM_BULL,Strong CB-only conditions met; exposure 1.20x.
+2024-02-09,1.0,1.2,1,0,1,0,1,0,0,0,0.9,0.09999999999999998,0.0,0.0,0.0,0.0,1.2,STRONG_CALM_BULL,Strong CB-only conditions met; exposure 1.20x.
+2024-02-16,1.0,1.2,1,0,1,0,1,0,0,0,0.9,0.09999999999999998,0.0,0.0,0.0,0.0,1.2,STRONG_CALM_BULL,Strong CB-only conditions met; exposure 1.20x.
+2024-02-23,1.0,1.2,1,0,1,0,1,0,0,0,0.9,0.09999999999999998,0.0,0.0,0.0,0.0,1.2,STRONG_CALM_BULL,Strong CB-only conditions met; exposure 1.20x.
+2024-03-01,1.0,1.2,1,0,1,0,1,0,0,0,0.9,0.09999999999999998,0.0,0.0,0.0,0.0,1.2,STRONG_CALM_BULL,Strong CB-only conditions met; exposure 1.20x.
+2024-03-08,1.0,1.2,1,0,1,0,1,0,0,0,0.9,0.09999999999999998,0.0,0.0,0.0,0.0,1.2,STRONG_CALM_BULL,Strong CB-only conditions met; exposure 1.20x.
+2024-03-15,1.0,1.2,1,0,1,0,1,0,0,0,0.9,0.09999999999999998,0.0,0.0,0.0,0.0,1.2,STRONG_CALM_BULL,Strong CB-only conditions met; exposure 1.20x.
+2024-03-22,1.0,1.2,1,0,1,0,1,0,0,0,0.9,0.09999999999999998,0.0,0.0,0.0,0.0,1.2,STRONG_CALM_BULL,Strong CB-only conditions met; exposure 1.20x.
+2024-03-29,1.0,1.2,1,0,1,0,1,0,0,0,0.9,0.09999999999999998,0.0,0.0,0.0,0.0,1.2,STRONG_CALM_BULL,Strong CB-only conditions met; exposure 1.20x.
 2024-04-05,1.0,1.0,0,0,0,0,0,0,0,0,1.0,0.0,0.0,0.0,0.0,0.0,1.0,NORMAL,No high-conviction trigger; baseline 100% SPY.
 2024-04-12,1.0,1.0,0,0,0,0,0,0,0,0,1.0,0.0,0.0,0.0,0.0,0.0,1.0,NORMAL,No high-conviction trigger; baseline 100% SPY.
 2024-04-19,1.0,1.0,0,0,0,0,0,0,0,0,1.0,0.0,0.0,0.0,0.0,0.0,1.0,NORMAL,No high-conviction trigger; baseline 100% SPY.
 2024-04-26,1.0,1.0,0,0,0,0,0,0,0,0,1.0,0.0,0.0,0.0,0.0,0.0,1.0,NORMAL,No high-conviction trigger; baseline 100% SPY.
-2024-05-03,1.0,1.0,1,0,1,1,0,0,0,0,1.0,0.0,0.0,0.0,0.0,0.0,1.0,CALM_BULL_NEUTRAL,Weak CB-only conditions met; kept neutral at 1.00x.
-2024-05-10,1.0,1.0,1,0,1,1,0,0,0,0,1.0,0.0,0.0,0.0,0.0,0.0,1.0,CALM_BULL_NEUTRAL,Weak CB-only conditions met; kept neutral at 1.00x.
-2024-05-17,1.0,1.0,1,0,1,1,0,0,0,0,1.0,0.0,0.0,0.0,0.0,0.0,1.0,CALM_BULL_NEUTRAL,Weak CB-only conditions met; kept neutral at 1.00x.
-2024-05-24,1.0,1.0,1,0,1,1,0,0,0,0,1.0,0.0,0.0,0.0,0.0,0.0,1.0,CALM_BULL_NEUTRAL,Weak CB-only conditions met; kept neutral at 1.00x.
-2024-05-31,1.0,1.0,1,0,1,1,0,0,0,0,1.0,0.0,0.0,0.0,0.0,0.0,1.0,CALM_BULL_NEUTRAL,Weak CB-only conditions met; kept neutral at 1.00x.
-2024-06-07,1.0,1.0,1,0,1,1,0,0,0,0,1.0,0.0,0.0,0.0,0.0,0.0,1.0,CALM_BULL_NEUTRAL,Weak CB-only conditions met; kept neutral at 1.00x.
+2024-05-03,1.0,1.2,1,0,1,0,1,0,0,0,0.9,0.09999999999999998,0.0,0.0,0.0,0.0,1.2,STRONG_CALM_BULL,Strong CB-only conditions met; exposure 1.20x.
+2024-05-10,1.0,1.2,1,0,1,0,1,0,0,0,0.9,0.09999999999999998,0.0,0.0,0.0,0.0,1.2,STRONG_CALM_BULL,Strong CB-only conditions met; exposure 1.20x.
+2024-05-17,1.0,1.2,1,0,1,0,1,0,0,0,0.9,0.09999999999999998,0.0,0.0,0.0,0.0,1.2,STRONG_CALM_BULL,Strong CB-only conditions met; exposure 1.20x.
+2024-05-24,1.0,1.2,1,0,1,0,1,0,0,0,0.9,0.09999999999999998,0.0,0.0,0.0,0.0,1.2,STRONG_CALM_BULL,Strong CB-only conditions met; exposure 1.20x.
+2024-05-31,1.0,1.2,1,0,1,0,1,0,0,0,0.9,0.09999999999999998,0.0,0.0,0.0,0.0,1.2,STRONG_CALM_BULL,Strong CB-only conditions met; exposure 1.20x.
+2024-06-07,1.0,1.2,1,0,1,0,1,0,0,0,0.9,0.09999999999999998,0.0,0.0,0.0,0.0,1.2,STRONG_CALM_BULL,Strong CB-only conditions met; exposure 1.20x.
 2024-06-14,1.0,1.0,1,0,1,1,0,0,0,0,1.0,0.0,0.0,0.0,0.0,0.0,1.0,CALM_BULL_NEUTRAL,Weak CB-only conditions met; kept neutral at 1.00x.
-2024-06-21,1.0,1.0,1,0,1,1,0,0,0,0,1.0,0.0,0.0,0.0,0.0,0.0,1.0,CALM_BULL_NEUTRAL,Weak CB-only conditions met; kept neutral at 1.00x.
-2024-06-28,1.0,1.0,1,0,1,1,0,0,0,0,1.0,0.0,0.0,0.0,0.0,0.0,1.0,CALM_BULL_NEUTRAL,Weak CB-only conditions met; kept neutral at 1.00x.
+2024-06-21,1.0,1.2,1,0,1,0,1,0,0,0,0.9,0.09999999999999998,0.0,0.0,0.0,0.0,1.2,STRONG_CALM_BULL,Strong CB-only conditions met; exposure 1.20x.
+2024-06-28,1.0,1.2,1,0,1,0,1,0,0,0,0.9,0.09999999999999998,0.0,0.0,0.0,0.0,1.2,STRONG_CALM_BULL,Strong CB-only conditions met; exposure 1.20x.
 2024-07-05,1.0,1.0,1,0,1,1,0,0,0,0,1.0,0.0,0.0,0.0,0.0,0.0,1.0,CALM_BULL_NEUTRAL,Weak CB-only conditions met; kept neutral at 1.00x.
-2024-07-12,1.0,1.0,1,0,1,1,0,0,0,0,1.0,0.0,0.0,0.0,0.0,0.0,1.0,CALM_BULL_NEUTRAL,Weak CB-only conditions met; kept neutral at 1.00x.
+2024-07-12,1.0,1.2,1,0,1,0,1,0,0,0,0.9,0.09999999999999998,0.0,0.0,0.0,0.0,1.2,STRONG_CALM_BULL,Strong CB-only conditions met; exposure 1.20x.
 2024-07-19,1.0,1.0,0,0,0,0,0,0,0,0,1.0,0.0,0.0,0.0,0.0,0.0,1.0,NORMAL,No high-conviction trigger; baseline 100% SPY.
 2024-07-26,1.0,1.0,0,0,0,0,0,0,0,0,1.0,0.0,0.0,0.0,0.0,0.0,1.0,NORMAL,No high-conviction trigger; baseline 100% SPY.
 2024-08-02,1.3,1.3,0,0,0,0,0,0,0,0,0.85,0.15000000000000002,0.0,0.0,0.0,0.0,1.3,LEVERAGED_LONG,V12 high-conviction leverage signal retained (dip-buy / recovery).
@@ -883,12 +883,12 @@ Date,v12_signal,v17_signal,calm_bull_trigger,tier_intersection,tier_cb_only,tier
 2025-10-10,1.0,1.3,0,0,0,0,0,0,0,1,0.85,0.15000000000000002,0.0,0.0,0.0,0.0,1.3,NERVOUS_MARKET,VIX >= 20 with V12 normal — elevated risk premium; exposure 1.30x.
 2025-10-17,1.0,1.3,0,0,0,0,0,0,0,1,0.85,0.15000000000000002,0.0,0.0,0.0,0.0,1.3,NERVOUS_MARKET,VIX >= 20 with V12 normal — elevated risk premium; exposure 1.30x.
 2025-10-24,1.0,1.4,1,1,0,0,0,0,1,0,0.8,0.19999999999999996,0.0,0.0,0.0,0.0,1.4,DUAL_BOOST,Calm-uptrend AND yield-curve steepening both fire; exposure 1.40x (highest conviction).
-2025-10-31,1.0,1.0,1,0,1,1,0,0,0,0,1.0,0.0,0.0,0.0,0.0,0.0,1.0,CALM_BULL_NEUTRAL,Weak CB-only conditions met; kept neutral at 1.00x.
+2025-10-31,1.0,1.2,1,0,1,0,1,0,0,0,0.9,0.09999999999999998,0.0,0.0,0.0,0.0,1.2,STRONG_CALM_BULL,Strong CB-only conditions met; exposure 1.20x.
 2025-11-07,1.0,1.22,0,0,0,0,0,1,1,0,0.89,0.10999999999999999,0.0,0.0,0.0,0.0,1.22,YC_BOOST,Yield curve positive AND steepening (YC only); exposure 1.22x.
 2025-11-14,1.0,1.0,0,0,0,0,0,0,0,0,1.0,0.0,0.0,0.0,0.0,0.0,1.0,NORMAL,No high-conviction trigger; baseline 100% SPY.
 2025-11-21,1.3,1.3,0,0,0,0,0,0,0,0,0.85,0.15000000000000002,0.0,0.0,0.0,0.0,1.3,LEVERAGED_LONG,V12 high-conviction leverage signal retained (dip-buy / recovery).
-2025-11-28,1.0,1.0,1,0,1,1,0,0,0,0,1.0,0.0,0.0,0.0,0.0,0.0,1.0,CALM_BULL_NEUTRAL,Weak CB-only conditions met; kept neutral at 1.00x.
-2025-12-05,1.0,1.0,1,0,1,1,0,0,0,0,1.0,0.0,0.0,0.0,0.0,0.0,1.0,CALM_BULL_NEUTRAL,Weak CB-only conditions met; kept neutral at 1.00x.
+2025-11-28,1.0,1.2,1,0,1,0,1,0,0,0,0.9,0.09999999999999998,0.0,0.0,0.0,0.0,1.2,STRONG_CALM_BULL,Strong CB-only conditions met; exposure 1.20x.
+2025-12-05,1.0,1.2,1,0,1,0,1,0,0,0,0.9,0.09999999999999998,0.0,0.0,0.0,0.0,1.2,STRONG_CALM_BULL,Strong CB-only conditions met; exposure 1.20x.
 2025-12-12,1.0,1.4,1,1,0,0,0,0,1,0,0.8,0.19999999999999996,0.0,0.0,0.0,0.0,1.4,DUAL_BOOST,Calm-uptrend AND yield-curve steepening both fire; exposure 1.40x (highest conviction).
 2025-12-19,1.0,1.4,1,1,0,0,0,0,1,0,0.8,0.19999999999999996,0.0,0.0,0.0,0.0,1.4,DUAL_BOOST,Calm-uptrend AND yield-curve steepening both fire; exposure 1.40x (highest conviction).
 2025-12-26,1.0,1.4,1,1,0,0,0,0,1,0,0.8,0.19999999999999996,0.0,0.0,0.0,0.0,1.4,DUAL_BOOST,Calm-uptrend AND yield-curve steepening both fire; exposure 1.40x (highest conviction).
@@ -909,24 +909,24 @@ Date,v12_signal,v17_signal,calm_bull_trigger,tier_intersection,tier_cb_only,tier
 2026-04-10,1.0,1.0,0,0,0,0,0,0,0,0,1.0,0.0,0.0,0.0,0.0,0.0,1.0,NORMAL,No high-conviction trigger; baseline 100% SPY.
 2026-04-17,1.0,1.0,1,0,1,1,0,0,0,0,1.0,0.0,0.0,0.0,0.0,0.0,1.0,CALM_BULL_NEUTRAL,Weak CB-only conditions met; kept neutral at 1.00x.
 2026-04-24,1.0,1.0,0,0,0,0,0,0,0,0,1.0,0.0,0.0,0.0,0.0,0.0,1.0,NORMAL,No high-conviction trigger; baseline 100% SPY.
-2026-05-01,1.0,1.0,1,0,1,1,0,0,0,0,1.0,0.0,0.0,0.0,0.0,0.0,1.0,CALM_BULL_NEUTRAL,Weak CB-only conditions met; kept neutral at 1.00x.
-2026-05-08,1.0,1.0,1,0,1,1,0,0,0,0,1.0,0.0,0.0,0.0,0.0,0.0,1.0,CALM_BULL_NEUTRAL,Weak CB-only conditions met; kept neutral at 1.00x.
+2026-05-01,1.0,1.2,1,0,1,0,1,0,0,0,0.9,0.09999999999999998,0.0,0.0,0.0,0.0,1.2,STRONG_CALM_BULL,Strong CB-only conditions met; exposure 1.20x.
+2026-05-08,1.0,1.2,1,0,1,0,1,0,0,0,0.9,0.09999999999999998,0.0,0.0,0.0,0.0,1.2,STRONG_CALM_BULL,Strong CB-only conditions met; exposure 1.20x.
 2026-05-15,1.0,1.0,0,0,0,0,0,0,0,0,1.0,0.0,0.0,0.0,0.0,0.0,1.0,NORMAL,No high-conviction trigger; baseline 100% SPY.
-2026-05-22,1.0,1.0,1,0,1,1,0,0,0,0,1.0,0.0,0.0,0.0,0.0,0.0,1.0,CALM_BULL_NEUTRAL,Weak CB-only conditions met; kept neutral at 1.00x.
-2026-05-29,1.0,1.0,1,0,1,1,0,0,0,0,1.0,0.0,0.0,0.0,0.0,0.0,1.0,CALM_BULL_NEUTRAL,Weak CB-only conditions met; kept neutral at 1.00x.
+2026-05-22,1.0,1.2,1,0,1,0,1,0,0,0,0.9,0.09999999999999998,0.0,0.0,0.0,0.0,1.2,STRONG_CALM_BULL,Strong CB-only conditions met; exposure 1.20x.
+2026-05-29,1.0,1.2,1,0,1,0,1,0,0,0,0.9,0.09999999999999998,0.0,0.0,0.0,0.0,1.2,STRONG_CALM_BULL,Strong CB-only conditions met; exposure 1.20x.
 2026-06-05,1.0,1.3,0,0,0,0,0,0,0,1,0.85,0.15000000000000002,0.0,0.0,0.0,0.0,1.3,NERVOUS_MARKET,VIX >= 20 with V12 normal — elevated risk premium; exposure 1.30x.
-2026-06-12,1.0,1.0,1,0,1,1,0,0,0,0,1.0,0.0,0.0,0.0,0.0,0.0,1.0,CALM_BULL_NEUTRAL,Weak CB-only conditions met; kept neutral at 1.00x.
-2026-06-19,1.0,1.0,1,0,1,1,0,0,0,0,1.0,0.0,0.0,0.0,0.0,0.0,1.0,CALM_BULL_NEUTRAL,Weak CB-only conditions met; kept neutral at 1.00x.
+2026-06-12,1.0,1.2,1,0,1,0,1,0,0,0,0.9,0.09999999999999998,0.0,0.0,0.0,0.0,1.2,STRONG_CALM_BULL,Strong CB-only conditions met; exposure 1.20x.
+2026-06-19,1.0,1.2,1,0,1,0,1,0,0,0,0.9,0.09999999999999998,0.0,0.0,0.0,0.0,1.2,STRONG_CALM_BULL,Strong CB-only conditions met; exposure 1.20x.
 2026-06-26,1.0,1.0,0,0,0,0,0,0,0,0,1.0,0.0,0.0,0.0,0.0,0.0,1.0,NORMAL,No high-conviction trigger; baseline 100% SPY.
-2026-07-03,1.0,1.0,1,0,1,1,0,0,0,0,1.0,0.0,0.0,0.0,0.0,0.0,1.0,CALM_BULL_NEUTRAL,Weak CB-only conditions met; kept neutral at 1.00x.
-2026-07-10,1.0,1.0,1,0,1,1,0,0,0,0,1.0,0.0,0.0,0.0,0.0,0.0,1.0,CALM_BULL_NEUTRAL,Weak CB-only conditions met; kept neutral at 1.00x.
+2026-07-03,1.0,1.2,1,0,1,0,1,0,0,0,0.9,0.09999999999999998,0.0,0.0,0.0,0.0,1.2,STRONG_CALM_BULL,Strong CB-only conditions met; exposure 1.20x.
+2026-07-10,1.0,1.2,1,0,1,0,1,0,0,0,0.9,0.09999999999999998,0.0,0.0,0.0,0.0,1.2,STRONG_CALM_BULL,Strong CB-only conditions met; exposure 1.20x.
 2026-07-17,1.0,1.0,0,0,0,0,0,0,0,0,1.0,0.0,0.0,0.0,0.0,0.0,1.0,NORMAL,No high-conviction trigger; baseline 100% SPY.
 2026-07-24,1.0,1.0,0,0,0,0,0,0,0,0,1.0,0.0,0.0,0.0,0.0,0.0,1.0,NORMAL,No high-conviction trigger; baseline 100% SPY.
-2026-07-31,1.0,1.0,1,0,1,1,0,0,0,0,1.0,0.0,0.0,0.0,0.0,0.0,1.0,CALM_BULL_NEUTRAL,Weak CB-only conditions met; kept neutral at 1.00x.
+2026-07-31,1.0,1.2,1,0,1,0,1,0,0,0,0.9,0.09999999999999998,0.0,0.0,0.0,0.0,1.2,STRONG_CALM_BULL,Strong CB-only conditions met; exposure 1.20x.
 2026-08-07,1.0,1.0,0,0,0,0,0,0,0,0,1.0,0.0,0.0,0.0,0.0,0.0,1.0,NORMAL,No high-conviction trigger; baseline 100% SPY.
 2026-08-14,1.0,1.22,0,0,0,0,0,1,1,0,0.89,0.10999999999999999,0.0,0.0,0.0,0.0,1.22,YC_BOOST,Yield curve positive AND steepening (YC only); exposure 1.22x.
 2026-08-21,1.0,1.22,0,0,0,0,0,1,1,0,0.89,0.10999999999999999,0.0,0.0,0.0,0.0,1.22,YC_BOOST,Yield curve positive AND steepening (YC only); exposure 1.22x.
 2026-08-28,1.0,1.0,0,0,0,0,0,0,0,0,1.0,0.0,0.0,0.0,0.0,0.0,1.0,NORMAL,No high-conviction trigger; baseline 100% SPY.
 2026-09-04,1.0,1.4,1,1,0,0,0,0,1,0,0.8,0.19999999999999996,0.0,0.0,0.0,0.0,1.4,DUAL_BOOST,Calm-uptrend AND yield-curve steepening both fire; exposure 1.40x (highest conviction).
-2026-09-11,1.0,1.0,1,0,1,1,0,0,0,0,1.0,0.0,0.0,0.0,0.0,0.0,1.0,CALM_BULL_NEUTRAL,Weak CB-only conditions met; kept neutral at 1.00x.
+2026-09-11,1.0,1.2,1,0,1,0,1,0,0,0,0.9,0.09999999999999998,0.0,0.0,0.0,0.0,1.2,STRONG_CALM_BULL,Strong CB-only conditions met; exposure 1.20x.
 2026-09-18,1.0,1.0,1,0,1,1,0,0,0,0,1.0,0.0,0.0,0.0,0.0,0.0,1.0,CALM_BULL_NEUTRAL,Weak CB-only conditions met; kept neutral at 1.00x.

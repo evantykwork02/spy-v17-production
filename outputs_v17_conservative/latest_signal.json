@@ -17,7 +17,7 @@
   },
   "reason": "Weak CB-only conditions met; kept neutral at 1.00x.",
   "data_source": "forced refresh",
-  "risk_free_rate_annual_pct": 4.14,
-  "risk_free_rate_date": "2026-09-17",
+  "risk_free_rate_annual_pct": 4.12,
+  "risk_free_rate_date": "2026-09-18",
   "risk_free_rate_source": "DGS3MO"
 }

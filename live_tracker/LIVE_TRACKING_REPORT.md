@@ -8,21 +8,21 @@ This tracker is duplicate-safe. Rerunning during the same signal week updates re
 | --- | --- |
 | Start signal date | 2026-05-01 |
 | Latest signal date | 2026-09-18 |
-| Last data date | 2026-09-17 |
-| Tracker action | appended_new_signal |
+| Last data date | 2026-09-18 |
+| Tracker action | updated_existing_signal_no_duplicate |
 | Tracked weeks | 20 |
 | Closed weeks | 19 |
 | Pending next-week signals | 1 |
 | Signal rows in ledger | 21 |
 | Capital injected (SGD) | 200.00 |
 | Net capital contributed (SGD) | 10,200.00 |
-| Model equity (SGD) | 10,757.63 |
-| SPY equity (SGD) | 10,815.75 |
-| Model total return | 5.5% |
-| SPY total return | 6.1% |
+| Model equity (SGD) | 10,771.48 |
+| SPY equity (SGD) | 10,829.67 |
+| Model total return | 5.7% |
+| SPY total return | 6.2% |
 | Excess return | -0.6% |
-| Model Sharpe | 0.783 |
-| SPY Sharpe | 0.991 |
+| Model Sharpe | 0.799 |
+| SPY Sharpe | 1.009 |
 | Model MaxDD | -5.6% |
 | SPY MaxDD | -4.5% |
 | Latest target allocation | SPY 100.0% |
@@ -51,7 +51,7 @@ This tracker is duplicate-safe. Rerunning during the same signal week updates re
 | 2026-08-21 | 2026-08-24 | CLOSED | YC_BOOST | +0.6% | +0.5% | +0.1% |
 | 2026-08-28 | 2026-08-31 | CLOSED | NORMAL | +0.1% | +0.1% | +0.0% |
 | 2026-09-04 | 2026-09-08 | CLOSED | DUAL_BOOST | -1.1% | -0.8% | -0.4% |
-| 2026-09-11 | 2026-09-14 | OPEN | CALM_BULL_NEUTRAL | -0.2% | -0.2% | +0.0% |
+| 2026-09-11 | 2026-09-14 | OPEN | CALM_BULL_NEUTRAL | -0.1% | -0.1% | +0.0% |
 
 ## Pending next signal
 
