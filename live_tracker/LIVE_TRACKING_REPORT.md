@@ -8,21 +8,21 @@ This tracker is duplicate-safe. Rerunning during the same signal week updates re
 | --- | --- |
 | Start signal date | 2026-05-01 |
 | Latest signal date | 2026-09-25 |
-| Last data date | 2026-09-25 |
-| Tracker action | appended_new_signal |
-| Tracked weeks | 21 |
-| Closed weeks | 20 |
-| Pending next-week signals | 1 |
+| Last data date | 2026-09-29 |
+| Tracker action | updated_existing_signal_no_duplicate |
+| Tracked weeks | 22 |
+| Closed weeks | 21 |
+| Pending next-week signals | 0 |
 | Signal rows in ledger | 22 |
 | Capital injected (SGD) | 200.00 |
 | Net capital contributed (SGD) | 10,200.00 |
-| Model equity (SGD) | 10,908.08 |
-| SPY equity (SGD) | 10,967.01 |
-| Model total return | 7.0% |
-| SPY total return | 7.6% |
-| Excess return | -0.6% |
-| Model Sharpe | 0.971 |
-| SPY Sharpe | 1.196 |
+| Model equity (SGD) | 10,793.49 |
+| SPY equity (SGD) | 10,885.68 |
+| Model total return | 5.9% |
+| SPY total return | 6.8% |
+| Excess return | -0.9% |
+| Model Sharpe | 0.770 |
+| SPY Sharpe | 1.027 |
 | Model MaxDD | -5.6% |
 | SPY MaxDD | -4.5% |
 | Latest target allocation | SPY 80.0%,  SPXL 20.0% |
@@ -38,26 +38,20 @@ This tracker is duplicate-safe. Rerunning during the same signal week updates re
 | 2026-09-04 | 2026-09-08 | ACTIVE | DUAL_BOOST | 1.40 | SPY 80.0%,  SPXL 20.0% |
 | 2026-09-11 | 2026-09-14 | ACTIVE | CALM_BULL_NEUTRAL | 1.00 | SPY 100.0% |
 | 2026-09-18 | 2026-09-21 | ACTIVE | CALM_BULL_NEUTRAL | 1.00 | SPY 100.0% |
-| 2026-09-25 | pending | PENDING_EXECUTION | DUAL_BOOST | 1.40 | SPY 80.0%,  SPXL 20.0% |
+| 2026-09-25 | 2026-09-28 | ACTIVE | DUAL_BOOST | 1.40 | SPY 80.0%,  SPXL 20.0% |
 
 ## Recent signal-period results
 
 | Signal | Trade | Status | Regime | Model | SPY | Excess |
 | --- | --- | --- | --- | --- | --- | --- |
-| 2026-07-31 | 2026-08-03 | CLOSED | STRONG_CALM_BULL | +4.2% | +3.5% | +0.7% |
 | 2026-08-07 | 2026-08-10 | CLOSED | NORMAL | +0.4% | +0.4% | +0.0% |
 | 2026-08-14 | 2026-08-17 | CLOSED | YC_BOOST | -1.7% | -1.4% | -0.3% |
 | 2026-08-21 | 2026-08-24 | CLOSED | YC_BOOST | +0.6% | +0.5% | +0.1% |
 | 2026-08-28 | 2026-08-31 | CLOSED | NORMAL | +0.1% | +0.1% | +0.0% |
 | 2026-09-04 | 2026-09-08 | CLOSED | DUAL_BOOST | -1.1% | -0.8% | -0.4% |
 | 2026-09-11 | 2026-09-14 | CLOSED | CALM_BULL_NEUTRAL | -0.1% | -0.1% | +0.0% |
-| 2026-09-18 | 2026-09-21 | OPEN | CALM_BULL_NEUTRAL | +1.3% | +1.3% | +0.0% |
-
-## Pending next signal
-
-| Signal | Trade | Regime | Signal | Allocation |
-| --- | --- | --- | --- | --- |
-| 2026-09-25 | pending | DUAL_BOOST | 1.4 | SPY 80.0%,  SPXL 20.0% |
+| 2026-09-18 | 2026-09-21 | CLOSED | CALM_BULL_NEUTRAL | +1.3% | +1.3% | +0.0% |
+| 2026-09-25 | 2026-09-28 | OPEN | DUAL_BOOST | -1.1% | -0.7% | -0.3% |
 
 ## Files written
 
