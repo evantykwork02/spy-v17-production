@@ -17,7 +17,7 @@
   },
   "reason": "Calm-uptrend AND yield-curve steepening both fire; exposure 1.40x (highest conviction).",
   "data_source": "forced refresh",
-  "risk_free_rate_annual_pct": 4.17,
-  "risk_free_rate_date": "2026-10-02",
+  "risk_free_rate_annual_pct": 4.19,
+  "risk_free_rate_date": "2026-10-06",
   "risk_free_rate_source": "DGS3MO"
 }
