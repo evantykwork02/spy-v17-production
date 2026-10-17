@@ -8,11 +8,11 @@ Date,v12_signal,v17_signal,calm_bull_trigger,tier_intersection,tier_cb_only,tier
 2009-01-02,0.6,0.6,0,0,0,0,0,0,0,0,0.6,0.0,0.0,0.2,0.08000000000000002,0.12,0.6,DEFENSIVE,V12 defensive risk-control signal retained.
 2009-01-09,0.6,0.6,0,0,0,0,0,0,0,0,0.6,0.0,0.0,0.2,0.08000000000000002,0.12,0.6,DEFENSIVE,V12 defensive risk-control signal retained.
 2009-01-16,0.6,0.6,0,0,0,0,0,0,0,0,0.6,0.0,0.0,0.2,0.08000000000000002,0.12,0.6,DEFENSIVE,V12 defensive risk-control signal retained.
-2009-01-23,0.6,0.6,0,0,0,0,0,0,0,0,0.6,0.0,0.0,0.16749548166959388,0.09083483944346872,0.14166967888693743,0.6,DEFENSIVE,V12 defensive risk-control signal retained.
-2009-01-30,0.6,0.6,0,0,0,0,0,0,0,0,0.6,0.0,0.0,0.1616476617884535,0.09278411273718218,0.14556822547436435,0.6,DEFENSIVE,V12 defensive risk-control signal retained.
-2009-02-06,0.6,0.6,0,0,0,0,0,0,0,0,0.6,0.0,0.0,0.17252846305605768,0.08915717898131413,0.13831435796262823,0.6,DEFENSIVE,V12 defensive risk-control signal retained.
-2009-02-13,0.6,0.6,0,0,0,0,0,0,0,0,0.6,0.0,0.0,0.1739633817956497,0.08867887273478343,0.1373577454695669,0.6,DEFENSIVE,V12 defensive risk-control signal retained.
-2009-02-20,0.6,0.6,0,0,0,0,0,0,0,0,0.6,0.0,0.0,0.18918854342702476,0.08360381885765843,0.12720763771531682,0.6,DEFENSIVE,V12 defensive risk-control signal retained.
+2009-01-23,0.6,0.6,0,0,0,0,0,0,0,0,0.6,0.0,0.0,0.16749845006580794,0.09083384997806404,0.14166769995612807,0.6,DEFENSIVE,V12 defensive risk-control signal retained.
+2009-01-30,0.6,0.6,0,0,0,0,0,0,0,0,0.6,0.0,0.0,0.1616506892842094,0.09278310357193022,0.14556620714386043,0.6,DEFENSIVE,V12 defensive risk-control signal retained.
+2009-02-06,0.6,0.6,0,0,0,0,0,0,0,0,0.6,0.0,0.0,0.17253061228661837,0.08915646257112722,0.13831292514225443,0.6,DEFENSIVE,V12 defensive risk-control signal retained.
+2009-02-13,0.6,0.6,0,0,0,0,0,0,0,0,0.6,0.0,0.0,0.17396537305368784,0.08867820898210407,0.13735641796420814,0.6,DEFENSIVE,V12 defensive risk-control signal retained.
+2009-02-20,0.6,0.6,0,0,0,0,0,0,0,0,0.6,0.0,0.0,0.1891893227200085,0.08360355909333052,0.12720711818666103,0.6,DEFENSIVE,V12 defensive risk-control signal retained.
 2009-02-27,0.6,0.6,0,0,0,0,0,0,1,0,0.6,0.0,0.0,0.2,0.08000000000000002,0.12,0.6,DEFENSIVE,V12 defensive risk-control signal retained.
 2009-03-06,0.6,0.6,0,0,0,0,0,0,1,0,0.6,0.0,0.0,0.2,0.08000000000000002,0.12,0.6,DEFENSIVE,V12 defensive risk-control signal retained.
 2009-03-13,0.6,0.6,0,0,0,0,0,0,1,0,0.6,0.0,0.0,0.2,0.08000000000000002,0.12,0.6,DEFENSIVE,V12 defensive risk-control signal retained.
@@ -307,7 +307,7 @@ Date,v12_signal,v17_signal,calm_bull_trigger,tier_intersection,tier_cb_only,tier
 2014-09-26,1.0,1.0,0,0,0,0,0,0,0,0,1.0,0.0,0.0,0.0,0.0,0.0,1.0,NORMAL,No high-conviction trigger; baseline 100% SPY.
 2014-10-03,1.0,1.0,0,0,0,0,0,0,0,0,1.0,0.0,0.0,0.0,0.0,0.0,1.0,NORMAL,No high-conviction trigger; baseline 100% SPY.
 2014-10-10,1.3,1.3,0,0,0,0,0,0,0,0,0.85,0.15000000000000002,0.0,0.0,0.0,0.0,1.3,LEVERAGED_LONG,V12 high-conviction leverage signal retained (dip-buy / recovery).
-2014-10-17,0.6,0.6,0,0,0,0,0,0,0,0,0.6,0.0,0.0,0.19801733212674755,0.08066088929108417,0.1213217785821683,0.6,DEFENSIVE,V12 defensive risk-control signal retained.
+2014-10-17,0.6,0.6,0,0,0,0,0,0,0,0,0.6,0.0,0.0,0.19801145226654715,0.08066284924448429,0.12132569848896856,0.6,DEFENSIVE,V12 defensive risk-control signal retained.
 2014-10-24,1.7,1.7,0,0,0,0,0,0,0,0,0.65,0.35,0.0,0.0,0.0,0.0,1.6999999999999997,LEVERAGED_LONG,V12 high-conviction leverage signal retained (dip-buy / recovery).
 2014-10-31,1.7,1.7,0,0,0,0,0,0,0,0,0.65,0.35,0.0,0.0,0.0,0.0,1.6999999999999997,LEVERAGED_LONG,V12 high-conviction leverage signal retained (dip-buy / recovery).
 2014-11-07,1.7,1.7,0,0,0,0,0,0,0,0,0.65,0.35,0.0,0.0,0.0,0.0,1.6999999999999997,LEVERAGED_LONG,V12 high-conviction leverage signal retained (dip-buy / recovery).
@@ -589,9 +589,9 @@ Date,v12_signal,v17_signal,calm_bull_trigger,tier_intersection,tier_cb_only,tier
 2020-02-21,1.0,1.0,0,0,0,0,0,0,0,0,1.0,0.0,0.0,0.0,0.0,0.0,1.0,NORMAL,No high-conviction trigger; baseline 100% SPY.
 2020-02-28,0.6,0.6,0,0,0,0,0,0,1,0,0.6,0.0,0.0,0.2,0.08000000000000002,0.12,0.6,DEFENSIVE,V12 defensive risk-control signal retained.
 2020-03-06,0.6,0.6,0,0,0,0,0,0,1,0,0.6,0.0,0.0,0.2,0.08000000000000002,0.12,0.6,DEFENSIVE,V12 defensive risk-control signal retained.
-2020-03-13,0.6,0.6,0,0,0,0,0,0,1,0,0.6,0.0,0.0,0.16512804232212128,0.09162398589262626,0.14324797178525248,0.6,DEFENSIVE,V12 defensive risk-control signal retained.
+2020-03-13,0.6,0.6,0,0,0,0,0,0,1,0,0.6,0.0,0.0,0.16512194338822586,0.0916260188705914,0.14325203774118275,0.6,DEFENSIVE,V12 defensive risk-control signal retained.
 2020-03-20,0.6,0.6,0,0,0,0,0,0,1,0,0.6,0.0,0.0,0.2,0.08000000000000002,0.12,0.6,DEFENSIVE,V12 defensive risk-control signal retained.
-2020-03-27,0.6,0.6,0,0,0,0,0,0,1,0,0.6,0.0,0.0,0.1422409773238936,0.09925300755870214,0.15850601511740425,0.6,DEFENSIVE,V12 defensive risk-control signal retained.
+2020-03-27,0.6,0.6,0,0,0,0,0,0,1,0,0.6,0.0,0.0,0.1422345468270129,0.09925515105766239,0.15851030211532474,0.6,DEFENSIVE,V12 defensive risk-control signal retained.
 2020-04-03,1.7,1.7,0,0,0,0,0,0,1,0,0.65,0.35,0.0,0.0,0.0,0.0,1.6999999999999997,LEVERAGED_LONG,V12 high-conviction leverage signal retained (dip-buy / recovery).
 2020-04-10,1.7,1.7,0,0,0,0,0,0,1,0,0.65,0.35,0.0,0.0,0.0,0.0,1.6999999999999997,LEVERAGED_LONG,V12 high-conviction leverage signal retained (dip-buy / recovery).
 2020-04-17,1.7,1.7,0,0,0,0,0,0,1,0,0.65,0.35,0.0,0.0,0.0,0.0,1.6999999999999997,LEVERAGED_LONG,V12 high-conviction leverage signal retained (dip-buy / recovery).
@@ -699,19 +699,19 @@ Date,v12_signal,v17_signal,calm_bull_trigger,tier_intersection,tier_cb_only,tier
 2022-04-01,1.0,1.0,0,0,0,0,0,0,0,0,1.0,0.0,0.0,0.0,0.0,0.0,1.0,NORMAL,No high-conviction trigger; baseline 100% SPY.
 2022-04-08,1.0,1.3,0,0,0,0,0,0,0,1,0.85,0.15000000000000002,0.0,0.0,0.0,0.0,1.3,NERVOUS_MARKET,VIX >= 20 with V12 normal — elevated risk premium; exposure 1.30x.
 2022-04-15,0.6,0.6,0,0,0,0,0,0,0,0,0.6,0.0,0.0,0.2,0.08000000000000002,0.12,0.6,DEFENSIVE,V12 defensive risk-control signal retained.
-2022-04-22,0.6,0.6,0,0,0,0,0,0,0,0,0.6,0.0,0.0,0.18377272790371366,0.08540909069876212,0.13081818139752424,0.6,DEFENSIVE,V12 defensive risk-control signal retained.
+2022-04-22,0.6,0.6,0,0,0,0,0,0,0,0,0.6,0.0,0.0,0.1837730183785447,0.08540899387381845,0.13081798774763687,0.6,DEFENSIVE,V12 defensive risk-control signal retained.
 2022-04-29,-1.0,-1.0,0,0,0,0,0,0,0,0,0.0,0.0,0.3333333333333333,0.33333333333333337,0.13333333333333336,0.2,-1.0,CRASH_SHORT,V12 crash-short protection retained.
-2022-05-06,-1.0,-1.0,0,0,0,0,0,0,0,0,0.0,0.0,0.3333333333333333,0.32720142394500457,0.13537730312944296,0.20408793959221921,-1.0,CRASH_SHORT,V12 crash-short protection retained.
+2022-05-06,-1.0,-1.0,0,0,0,0,0,0,0,0,0.0,0.0,0.3333333333333333,0.3272040771423013,0.13537641873034403,0.2040861707940214,-1.0,CRASH_SHORT,V12 crash-short protection retained.
 2022-05-13,-1.0,-1.0,0,0,0,0,0,0,0,0,0.0,0.0,0.3333333333333333,0.33333333333333337,0.13333333333333336,0.2,-1.0,CRASH_SHORT,V12 crash-short protection retained.
 2022-05-20,-1.0,-1.0,0,0,0,0,0,0,0,0,0.0,0.0,0.3333333333333333,0.33333333333333337,0.13333333333333336,0.2,-1.0,CRASH_SHORT,V12 crash-short protection retained.
 2022-05-27,-1.0,-1.0,0,0,0,0,0,0,0,0,0.0,0.0,0.3333333333333333,0.33333333333333337,0.13333333333333336,0.2,-1.0,CRASH_SHORT,V12 crash-short protection retained.
-2022-06-03,-1.0,-1.0,0,0,0,0,0,0,1,0,0.0,0.0,0.3333333333333333,0.3069064243440013,0.14214230299644406,0.21761793932622142,-1.0,CRASH_SHORT,V12 crash-short protection retained.
-2022-06-10,-1.0,-1.0,0,0,0,0,0,0,0,0,0.0,0.0,0.3333333333333333,0.32510945309561834,0.13607462674590504,0.20548258682514337,-1.0,CRASH_SHORT,V12 crash-short protection retained.
+2022-06-03,-1.0,-1.0,0,0,0,0,0,0,1,0,0.0,0.0,0.3333333333333333,0.3069075354647138,0.14214193262287322,0.21761719857907974,-1.0,CRASH_SHORT,V12 crash-short protection retained.
+2022-06-10,-1.0,-1.0,0,0,0,0,0,0,0,0,0.0,0.0,0.3333333333333333,0.3251093070841763,0.1360746754163857,0.20548268416610474,-1.0,CRASH_SHORT,V12 crash-short protection retained.
 2022-06-17,1.0,1.3,0,0,0,0,0,0,0,1,0.85,0.15000000000000002,0.0,0.0,0.0,0.0,1.3,NERVOUS_MARKET,VIX >= 20 with V12 normal — elevated risk premium; exposure 1.30x.
-2022-06-24,0.6,0.6,0,0,0,0,0,0,0,0,0.6,0.0,0.0,0.1295217517654086,0.10349274941153049,0.16698549882306093,0.6,DEFENSIVE,V12 defensive risk-control signal retained.
-2022-07-01,0.6,0.6,0,0,0,0,0,0,1,0,0.6,0.0,0.0,0.16081988546500708,0.09306003817833099,0.14612007635666197,0.6,DEFENSIVE,V12 defensive risk-control signal retained.
-2022-07-08,0.6,0.6,0,0,0,0,0,0,0,0,0.6,0.0,0.0,0.18100514374634308,0.08633161875121899,0.13266323750243797,0.6,DEFENSIVE,V12 defensive risk-control signal retained.
-2022-07-15,0.6,0.6,0,0,0,0,0,0,0,0,0.6,0.0,0.0,0.19471450560127912,0.0817618314662403,0.12352366293248059,0.6,DEFENSIVE,V12 defensive risk-control signal retained.
+2022-06-24,0.6,0.6,0,0,0,0,0,0,0,0,0.6,0.0,0.0,0.12951919915598378,0.10349360028133875,0.1669872005626775,0.6,DEFENSIVE,V12 defensive risk-control signal retained.
+2022-07-01,0.6,0.6,0,0,0,0,0,0,1,0,0.6,0.0,0.0,0.16081764325838543,0.09306078558053821,0.14612157116107638,0.6,DEFENSIVE,V12 defensive risk-control signal retained.
+2022-07-08,0.6,0.6,0,0,0,0,0,0,0,0,0.6,0.0,0.0,0.18100347108426398,0.08633217630524535,0.13266435261049067,0.6,DEFENSIVE,V12 defensive risk-control signal retained.
+2022-07-15,0.6,0.6,0,0,0,0,0,0,0,0,0.6,0.0,0.0,0.1947131232693533,0.08176229224354892,0.1235245844870978,0.6,DEFENSIVE,V12 defensive risk-control signal retained.
 2022-07-22,1.0,1.3,0,0,0,0,0,0,0,1,0.85,0.15000000000000002,0.0,0.0,0.0,0.0,1.3,NERVOUS_MARKET,VIX >= 20 with V12 normal — elevated risk premium; exposure 1.30x.
 2022-07-29,1.0,1.3,0,0,0,0,0,0,0,1,0.85,0.15000000000000002,0.0,0.0,0.0,0.0,1.3,NERVOUS_MARKET,VIX >= 20 with V12 normal — elevated risk premium; exposure 1.30x.
 2022-08-05,1.0,1.3,0,0,0,0,0,0,0,1,0.85,0.15000000000000002,0.0,0.0,0.0,0.0,1.3,NERVOUS_MARKET,VIX >= 20 with V12 normal — elevated risk premium; exposure 1.30x.
@@ -722,11 +722,11 @@ Date,v12_signal,v17_signal,calm_bull_trigger,tier_intersection,tier_cb_only,tier
 2022-09-09,1.0,1.3,0,0,0,0,0,0,0,1,0.85,0.15000000000000002,0.0,0.0,0.0,0.0,1.3,NERVOUS_MARKET,VIX >= 20 with V12 normal — elevated risk premium; exposure 1.30x.
 2022-09-16,-1.0,-1.0,0,0,0,0,0,0,0,0,0.0,0.0,0.3333333333333333,0.33333333333333337,0.13333333333333336,0.2,-1.0,CRASH_SHORT,V12 crash-short protection retained.
 2022-09-23,-1.0,-1.0,0,0,0,0,0,0,0,0,0.0,0.0,0.3333333333333333,0.33333333333333337,0.13333333333333336,0.2,-1.0,CRASH_SHORT,V12 crash-short protection retained.
-2022-09-30,-1.0,-1.0,0,0,0,0,0,0,0,0,0.0,0.0,0.3333333333333333,0.2573224761262479,0.15867028573569517,0.2506739048047237,-1.0,CRASH_SHORT,V12 crash-short protection retained.
-2022-10-07,-1.0,-1.0,0,0,0,0,0,0,0,0,0.0,0.0,0.3333333333333333,0.2141430688658678,0.17306342148915518,0.2794601763116437,-1.0,CRASH_SHORT,V12 crash-short protection retained.
-2022-10-14,-1.0,-1.0,0,0,0,0,0,0,0,0,0.0,0.0,0.3333333333333333,0.1396188233235986,0.1979048366699116,0.32914300667315655,-1.0,CRASH_SHORT,V12 crash-short protection retained.
+2022-09-30,-1.0,-1.0,0,0,0,0,0,0,0,0,0.0,0.0,0.3333333333333333,0.25732337294938074,0.1586699867946509,0.2506733069226351,-1.0,CRASH_SHORT,V12 crash-short protection retained.
+2022-10-07,-1.0,-1.0,0,0,0,0,0,0,0,0,0.0,0.0,0.3333333333333333,0.214143868917571,0.17306315480525417,0.2794596429438416,-1.0,CRASH_SHORT,V12 crash-short protection retained.
+2022-10-14,-1.0,-1.0,0,0,0,0,0,0,0,0,0.0,0.0,0.3333333333333333,0.1396184919631753,0.19790494712338605,0.3291432275801054,-1.0,CRASH_SHORT,V12 crash-short protection retained.
 2022-10-21,-1.0,-1.0,0,0,0,0,0,0,0,0,0.0,0.0,0.3333333333333333,0.33333333333333337,0.13333333333333336,0.2,-1.0,CRASH_SHORT,V12 crash-short protection retained.
-2022-10-28,-1.0,-1.0,0,0,0,0,0,0,0,0,0.0,0.0,0.3333333333333333,0.2924649777692319,0.14695611852136717,0.22724557037606766,-1.0,CRASH_SHORT,V12 crash-short protection retained.
+2022-10-28,-1.0,-1.0,0,0,0,0,0,0,0,0,0.0,0.0,0.3333333333333333,0.29246569648066356,0.14695587895088996,0.22724509123511322,-1.0,CRASH_SHORT,V12 crash-short protection retained.
 2022-11-04,1.0,1.3,0,0,0,0,0,0,0,1,0.85,0.15000000000000002,0.0,0.0,0.0,0.0,1.3,NERVOUS_MARKET,VIX >= 20 with V12 normal — elevated risk premium; exposure 1.30x.
 2022-11-11,1.0,1.3,0,0,0,0,0,0,0,1,0.85,0.15000000000000002,0.0,0.0,0.0,0.0,1.3,NERVOUS_MARKET,VIX >= 20 with V12 normal — elevated risk premium; exposure 1.30x.
 2022-11-18,1.0,1.3,0,0,0,0,0,0,0,1,0.85,0.15000000000000002,0.0,0.0,0.0,0.0,1.3,NERVOUS_MARKET,VIX >= 20 with V12 normal — elevated risk premium; exposure 1.30x.
@@ -735,7 +735,7 @@ Date,v12_signal,v17_signal,calm_bull_trigger,tier_intersection,tier_cb_only,tier
 2022-12-09,1.0,1.3,0,0,0,0,0,0,0,1,0.85,0.15000000000000002,0.0,0.0,0.0,0.0,1.3,NERVOUS_MARKET,VIX >= 20 with V12 normal — elevated risk premium; exposure 1.30x.
 2022-12-16,1.0,1.3,0,0,0,0,0,0,0,1,0.85,0.15000000000000002,0.0,0.0,0.0,0.0,1.3,NERVOUS_MARKET,VIX >= 20 with V12 normal — elevated risk premium; exposure 1.30x.
 2022-12-23,1.0,1.3,0,0,0,0,0,0,0,1,0.85,0.15000000000000002,0.0,0.0,0.0,0.0,1.3,NERVOUS_MARKET,VIX >= 20 with V12 normal — elevated risk premium; exposure 1.30x.
-2022-12-30,0.6,0.6,0,0,0,0,0,0,0,0,0.6,0.0,0.0,0.08760627363009484,0.11746457545663508,0.19492915091327012,0.6,DEFENSIVE,V12 defensive risk-control signal retained.
+2022-12-30,0.6,0.6,0,0,0,0,0,0,0,0,0.6,0.0,0.0,0.08760545283118566,0.11746484905627147,0.1949296981125429,0.6,DEFENSIVE,V12 defensive risk-control signal retained.
 2023-01-06,0.6,0.6,0,0,0,0,0,0,0,0,0.6,0.0,0.0,0.08000000000000002,0.12000000000000002,0.2,0.6,DEFENSIVE,V12 defensive risk-control signal retained.
 2023-01-13,1.0,1.0,0,0,0,0,0,0,0,0,1.0,0.0,0.0,0.0,0.0,0.0,1.0,NORMAL,No high-conviction trigger; baseline 100% SPY.
 2023-01-20,1.0,1.0,0,0,0,0,0,0,0,0,1.0,0.0,0.0,0.0,0.0,0.0,1.0,NORMAL,No high-conviction trigger; baseline 100% SPY.
@@ -745,7 +745,7 @@ Date,v12_signal,v17_signal,calm_bull_trigger,tier_intersection,tier_cb_only,tier
 2023-02-17,1.0,1.3,0,0,0,0,0,0,0,1,0.85,0.15000000000000002,0.0,0.0,0.0,0.0,1.3,NERVOUS_MARKET,VIX >= 20 with V12 normal — elevated risk premium; exposure 1.30x.
 2023-02-24,1.0,1.3,0,0,0,0,0,0,0,1,0.85,0.15000000000000002,0.0,0.0,0.0,0.0,1.3,NERVOUS_MARKET,VIX >= 20 with V12 normal — elevated risk premium; exposure 1.30x.
 2023-03-03,1.0,1.0,0,0,0,0,0,0,0,0,1.0,0.0,0.0,0.0,0.0,0.0,1.0,NORMAL,No high-conviction trigger; baseline 100% SPY.
-2023-03-10,0.6,0.6,0,0,0,0,0,0,0,0,0.6,0.0,0.0,0.16614482753764498,0.09128505748745169,0.14257011497490335,0.6,DEFENSIVE,V12 defensive risk-control signal retained.
+2023-03-10,0.6,0.6,0,0,0,0,0,0,0,0,0.6,0.0,0.0,0.16614769594935352,0.0912841013502155,0.142568202700431,0.6,DEFENSIVE,V12 defensive risk-control signal retained.
 2023-03-17,1.3,1.3,0,0,0,0,0,0,0,0,0.85,0.15000000000000002,0.0,0.0,0.0,0.0,1.3,LEVERAGED_LONG,V12 high-conviction leverage signal retained (dip-buy / recovery).
 2023-03-24,1.0,1.3,0,0,0,0,0,0,0,1,0.85,0.15000000000000002,0.0,0.0,0.0,0.0,1.3,NERVOUS_MARKET,VIX >= 20 with V12 normal — elevated risk premium; exposure 1.30x.
 2023-03-31,1.0,1.0,0,0,0,0,0,0,0,0,1.0,0.0,0.0,0.0,0.0,0.0,1.0,NORMAL,No high-conviction trigger; baseline 100% SPY.
@@ -933,3 +933,4 @@ Date,v12_signal,v17_signal,calm_bull_trigger,tier_intersection,tier_cb_only,tier
 2026-09-25,1.0,1.4,1,1,0,0,0,0,1,0,0.8,0.19999999999999996,0.0,0.0,0.0,0.0,1.4,DUAL_BOOST,Calm-uptrend AND yield-curve steepening both fire; exposure 1.40x (highest conviction).
 2026-10-02,1.0,1.4,1,1,0,0,0,0,1,0,0.8,0.19999999999999996,0.0,0.0,0.0,0.0,1.4,DUAL_BOOST,Calm-uptrend AND yield-curve steepening both fire; exposure 1.40x (highest conviction).
 2026-10-09,1.0,1.4,1,1,0,0,0,0,1,0,0.8,0.19999999999999996,0.0,0.0,0.0,0.0,1.4,DUAL_BOOST,Calm-uptrend AND yield-curve steepening both fire; exposure 1.40x (highest conviction).
+2026-10-16,1.0,1.0,0,0,0,0,0,0,0,0,1.0,0.0,0.0,0.0,0.0,0.0,1.0,NORMAL,No high-conviction trigger; baseline 100% SPY.
