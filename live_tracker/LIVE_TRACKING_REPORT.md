@@ -16,13 +16,13 @@ This tracker is duplicate-safe. Rerunning during the same signal week updates re
 | Signal rows in ledger | 26 |
 | Capital injected (SGD) | 200.00 |
 | Net capital contributed (SGD) | 10,200.00 |
-| Model equity (SGD) | 10,795.22 |
-| SPY equity (SGD) | 10,913.41 |
-| Model total return | 5.9% |
-| SPY total return | 7.1% |
+| Model equity (SGD) | 10,818.57 |
+| SPY equity (SGD) | 10,937.01 |
+| Model total return | 6.1% |
+| SPY total return | 7.3% |
 | Excess return | -1.2% |
-| Model Sharpe | 0.623 |
-| SPY Sharpe | 0.884 |
+| Model Sharpe | 0.654 |
+| SPY Sharpe | 0.919 |
 | Model MaxDD | -5.6% |
 | SPY MaxDD | -4.5% |
 | Latest target allocation | SPY 100.0% |
@@ -51,7 +51,7 @@ This tracker is duplicate-safe. Rerunning during the same signal week updates re
 | 2026-10-02 | 2026-10-05 | CLOSED | DUAL_BOOST | +1.6% | +1.2% | +0.4% |
 | 2026-10-09 | 2026-10-12 | CLOSED | DUAL_BOOST | -2.8% | -2.0% | -0.8% |
 | 2026-10-16 | 2026-10-19 | CLOSED | NORMAL | -0.4% | -0.4% | +0.0% |
-| 2026-10-23 | 2026-10-26 | OPEN | NORMAL | +1.0% | +1.0% | +0.0% |
+| 2026-10-23 | 2026-10-26 | OPEN | NORMAL | +1.2% | +1.2% | +0.0% |
 
 ## Files written
 
