@@ -17,7 +17,7 @@
   },
   "reason": "VIX >= 20 with V12 normal \u2014 elevated risk premium; exposure 1.30x.",
   "data_source": "forced refresh",
-  "risk_free_rate_annual_pct": 4.17,
-  "risk_free_rate_date": "2026-11-06",
+  "risk_free_rate_annual_pct": 4.19,
+  "risk_free_rate_date": "2026-11-09",
   "risk_free_rate_source": "DGS3MO"
 }
