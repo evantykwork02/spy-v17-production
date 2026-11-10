@@ -8,7 +8,7 @@ This tracker is duplicate-safe. Rerunning during the same signal week updates re
 | --- | --- |
 | Start signal date | 2026-05-01 |
 | Latest signal date | 2026-11-06 |
-| Last data date | 2026-11-09 |
+| Last data date | 2026-11-10 |
 | Tracker action | updated_existing_signal_no_duplicate |
 | Tracked weeks | 28 |
 | Closed weeks | 27 |
@@ -16,13 +16,13 @@ This tracker is duplicate-safe. Rerunning during the same signal week updates re
 | Signal rows in ledger | 28 |
 | Capital injected (SGD) | 200.00 |
 | Net capital contributed (SGD) | 10,200.00 |
-| Model equity (SGD) | 10,657.61 |
-| SPY equity (SGD) | 10,701.70 |
-| Model total return | 4.5% |
-| SPY total return | 5.0% |
-| Excess return | -0.4% |
-| Model Sharpe | 0.362 |
-| SPY Sharpe | 0.445 |
+| Model equity (SGD) | 10,592.41 |
+| SPY equity (SGD) | 10,652.08 |
+| Model total return | 3.9% |
+| SPY total return | 4.5% |
+| Excess return | -0.6% |
+| Model Sharpe | 0.285 |
+| SPY Sharpe | 0.378 |
 | Model MaxDD | -6.8% |
 | SPY MaxDD | -5.9% |
 | Latest target allocation | SPY 85.0%,  SPXL 15.0% |
@@ -51,7 +51,7 @@ This tracker is duplicate-safe. Rerunning during the same signal week updates re
 | 2026-10-16 | 2026-10-19 | CLOSED | NORMAL | -0.4% | -0.4% | +0.0% |
 | 2026-10-23 | 2026-10-26 | CLOSED | NORMAL | -0.6% | -0.6% | +0.0% |
 | 2026-10-30 | 2026-11-02 | CLOSED | NORMAL | -2.7% | -2.7% | +0.0% |
-| 2026-11-06 | 2026-11-09 | OPEN | NERVOUS_MARKET | +3.1% | +2.4% | +0.7% |
+| 2026-11-06 | 2026-11-09 | OPEN | NERVOUS_MARKET | +2.4% | +1.9% | +0.5% |
 
 ## Files written
 
