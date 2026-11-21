@@ -1,23 +1,23 @@
 {
-  "date": "2026-11-13",
+  "date": "2026-11-20",
   "currency": "SGD",
-  "v12_signal": 1.0,
-  "v17_signal": 1.0,
-  "regime": "NORMAL",
-  "net_equity_exposure": 1.0,
+  "v12_signal": -1.0,
+  "v17_signal": -1.0,
+  "regime": "CRASH_SHORT",
+  "net_equity_exposure": -1.0,
   "calm_bull_trigger": 0,
-  "target_allocation": "SPY 100.0%",
+  "target_allocation": "SPXS 33.3%,  TLT 33.3%,  GLD 13.3%,  SHY 20.0%",
   "weights": {
-    "SPY": 1.0,
+    "SPY": 0.0,
     "SPXL": 0.0,
-    "SPXS": 0.0,
-    "TLT": 0.0,
-    "GLD": 0.0,
-    "SHY": 0.0
+    "SPXS": 0.3333333333333333,
+    "TLT": 0.33333333333333337,
+    "GLD": 0.13333333333333336,
+    "SHY": 0.2
   },
-  "reason": "No high-conviction trigger; baseline 100% SPY.",
+  "reason": "V12 crash-short protection retained.",
   "data_source": "forced refresh",
   "risk_free_rate_annual_pct": 4.34,
-  "risk_free_rate_date": "2026-11-17",
+  "risk_free_rate_date": "2026-11-20",
   "risk_free_rate_source": "DGS3MO"
 }
