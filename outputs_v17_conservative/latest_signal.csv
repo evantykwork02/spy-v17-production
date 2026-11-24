@@ -1,2 +1,2 @@
 date,currency,v12_signal,v17_signal,regime,net_equity_exposure,calm_bull_trigger,target_allocation,weights,reason,data_source,risk_free_rate_annual_pct,risk_free_rate_date,risk_free_rate_source
-2026-11-20,SGD,-1.0,-1.0,CRASH_SHORT,-1.0,0,"SPXS 33.3%,  TLT 33.3%,  GLD 13.3%,  SHY 20.0%","{'SPY': 0.0, 'SPXL': 0.0, 'SPXS': 0.3333333333333333, 'TLT': 0.33333333333333337, 'GLD': 0.13333333333333336, 'SHY': 0.2}",V12 crash-short protection retained.,forced refresh,4.32,2026-11-23,DGS3MO
+2026-11-20,SGD,-1.0,-1.0,CRASH_SHORT,-1.0,0,"SPXS 33.3%,  TLT 33.3%,  GLD 13.3%,  SHY 20.0%","{'SPY': 0.0, 'SPXL': 0.0, 'SPXS': 0.3333333333333333, 'TLT': 0.33333333333333337, 'GLD': 0.13333333333333336, 'SHY': 0.2}",V12 crash-short protection retained.,forced refresh,4.37,2026-11-24,DGS3MO
