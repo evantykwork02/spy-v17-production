@@ -7,23 +7,23 @@ This tracker is duplicate-safe. Rerunning during the same signal week updates re
 | Field | Value |
 | --- | --- |
 | Start signal date | 2026-05-01 |
-| Latest signal date | 2026-11-20 |
-| Last data date | 2026-11-24 |
-| Tracker action | updated_existing_signal_no_duplicate |
+| Latest signal date | 2026-11-27 |
+| Last data date | 2026-11-27 |
+| Tracker action | appended_new_signal |
 | Tracked weeks | 30 |
 | Closed weeks | 29 |
-| Pending next-week signals | 0 |
-| Signal rows in ledger | 30 |
+| Pending next-week signals | 1 |
+| Signal rows in ledger | 31 |
 | Capital injected (SGD) | 200.00 |
 | Net capital contributed (SGD) | 10,200.00 |
-| Model equity (SGD) | 9,379.22 |
-| SPY equity (SGD) | 10,219.57 |
-| Model total return | -8.0% |
-| SPY total return | 0.2% |
-| Excess return | -8.2% |
-| Model Sharpe | -0.976 |
-| SPY Sharpe | -0.138 |
-| Model MaxDD | -15.3% |
+| Model equity (SGD) | 9,277.41 |
+| SPY equity (SGD) | 10,355.21 |
+| Model total return | -9.0% |
+| SPY total return | 1.6% |
+| Excess return | -10.6% |
+| Model Sharpe | -1.069 |
+| SPY Sharpe | 0.002 |
+| Model MaxDD | -16.1% |
 | SPY MaxDD | -11.5% |
 | Latest target allocation | SPXS 33.3%,  TLT 33.3%,  GLD 13.3%,  SHY 20.0% |
 
@@ -31,7 +31,6 @@ This tracker is duplicate-safe. Rerunning during the same signal week updates re
 
 | Signal date | Trade date | Status | Regime | Signal | Allocation |
 | --- | --- | --- | --- | --- | --- |
-| 2026-10-02 | 2026-10-05 | ACTIVE | DUAL_BOOST | 1.40 | SPY 80.0%,  SPXL 20.0% |
 | 2026-10-09 | 2026-10-12 | ACTIVE | DUAL_BOOST | 1.40 | SPY 80.0%,  SPXL 20.0% |
 | 2026-10-16 | 2026-10-19 | ACTIVE | NORMAL | 1.00 | SPY 100.0% |
 | 2026-10-23 | 2026-10-26 | ACTIVE | NORMAL | 1.00 | SPY 100.0% |
@@ -39,6 +38,7 @@ This tracker is duplicate-safe. Rerunning during the same signal week updates re
 | 2026-11-06 | 2026-11-09 | ACTIVE | NERVOUS_MARKET | 1.30 | SPY 85.0%,  SPXL 15.0% |
 | 2026-11-13 | 2026-11-16 | ACTIVE | NORMAL | 1.00 | SPY 100.0% |
 | 2026-11-20 | 2026-11-23 | ACTIVE | CRASH_SHORT | -1.00 | SPXS 33.3%,  TLT 33.3%,  GLD 13.3%,  SHY 20.0% |
+| 2026-11-27 | pending | PENDING_EXECUTION | CRASH_SHORT | -1.00 | SPXS 33.3%,  TLT 33.3%,  GLD 13.3%,  SHY 20.0% |
 
 ## Recent signal-period results
 
@@ -51,7 +51,13 @@ This tracker is duplicate-safe. Rerunning during the same signal week updates re
 | 2026-10-30 | 2026-11-02 | CLOSED | NORMAL | -2.7% | -2.7% | +0.0% |
 | 2026-11-06 | 2026-11-09 | CLOSED | NERVOUS_MARKET | +3.3% | +2.6% | +0.7% |
 | 2026-11-13 | 2026-11-16 | CLOSED | NORMAL | -8.6% | -8.6% | +0.0% |
-| 2026-11-20 | 2026-11-23 | OPEN | CRASH_SHORT | -4.0% | +4.2% | -8.2% |
+| 2026-11-20 | 2026-11-23 | OPEN | CRASH_SHORT | -5.0% | +5.6% | -10.6% |
+
+## Pending next signal
+
+| Signal | Trade | Regime | Signal | Allocation |
+| --- | --- | --- | --- | --- |
+| 2026-11-27 | pending | CRASH_SHORT | -1.0 | SPXS 33.3%,  TLT 33.3%,  GLD 13.3%,  SHY 20.0% |
 
 ## Files written
 
